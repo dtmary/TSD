@@ -1,0 +1,1 @@
+select * from skladuser.pki p where p.pki = '000003'
