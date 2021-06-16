@@ -177,8 +177,6 @@ public class AnoQuery {
             try {
                 PreparedStatement stmt = null;
                 stmt = dbconnection.prepareStatement(sql);
-                //stmt.setString(1,"000003");
-
                 for (Map.Entry<String, SQLParameter> pair : params.entrySet()) {
                     SQLParameter p = pair.getValue();
                     int j = 0;
@@ -193,7 +191,6 @@ public class AnoQuery {
                 stmt.execute();
                 rs = stmt.getResultSet();
                 stmt = null;
-                rs.next();
                 _status = stactive;
             } catch (SQLException throwables) {
                 throwables.printStackTrace();

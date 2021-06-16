@@ -49,26 +49,21 @@ public class MainActivity extends AppCompatActivity    {
         edtPKI.setOnEditorActionListener( new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if(event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_ENTER){
-                    //ts.setText(edtPKI.getText().toString());
                     try {
+                        String PKI = edtPKI.getText().toString();
+                        edtPKI.setText("");
                         qPki.Close();
-                        qPki.setParamString("PKI", edtPKI.getText().toString());
+                        qPki.setParamString("PKI", PKI);
                         qPki.Open();
-                        while (!qPki.active()) {
-                            try {
-                                sleep(100);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        };
-                        ts.setText(edtPKI.getText() + " " + qPki.resultSet.getString(3));
+                        if (qPki.resultSet.next()) {
+                            ts.setText(PKI + " " + qPki.resultSet.getString(3));
+                        } else {
+                            ts.setText(PKI + " " + "НЕ НАЙДЕН!");
+                        }
+                        edtPKI.setSelection(0);
                     } catch (SQLException throwables) {
                         throwables.printStackTrace();
                     }
-                    edtPKI.setText("");
-                    edtPKI.setFocusableInTouchMode(true);
-                    edtPKI.requestFocus();
-                    edtPKI.setSelection(0);
                 }
                 return true;
             }});
