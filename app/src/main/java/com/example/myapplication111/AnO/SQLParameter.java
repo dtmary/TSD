@@ -11,6 +11,7 @@ public class SQLParameter {
     // 2 - Float
     // 3 - int
     Object val;
+    String sVal;
 
     public List<Integer> positions;
 
@@ -31,9 +32,14 @@ public class SQLParameter {
         return val;
     }
 
+    public String getString() {
+        return sVal;
+    }
+
     public void setString(String newVal){
         val = newVal;
         typeVal = 1;
+        sVal = newVal;
     }
 
     public void setFloat(Float newVal){

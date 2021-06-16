@@ -1,10 +1,7 @@
 package com.example.myapplication111;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -20,6 +17,8 @@ import com.example.myapplication111.databinding.ActivityMainBinding;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.SQLException;
+
+import static java.lang.Thread.sleep;
 
 public class MainActivity extends AppCompatActivity    {
 
@@ -49,12 +48,29 @@ public class MainActivity extends AppCompatActivity    {
 
         edtPKI.setOnEditorActionListener( new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if(actionId == KeyEvent.KEYCODE_HOME){
-                    ts.setText(edtPKI.getText().toString());
-                    // обработка нажатия Enter
-                    //return true;
+                if(event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_ENTER){
+                    //ts.setText(edtPKI.getText().toString());
+                    try {
+                        qPki.Close();
+                        qPki.setParamString("PKI", edtPKI.getText().toString());
+                        qPki.Open();
+                        while (!qPki.active()) {
+                            try {
+                                sleep(100);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        };
+                        ts.setText(edtPKI.getText() + " " + qPki.resultSet.getString(3));
+                    } catch (SQLException throwables) {
+                        throwables.printStackTrace();
+                    }
+                    edtPKI.setText("");
+                    edtPKI.setFocusableInTouchMode(true);
+                    edtPKI.requestFocus();
+                    edtPKI.setSelection(0);
                 }
-                return false;
+                return true;
             }});
     }
 
@@ -78,6 +94,7 @@ public class MainActivity extends AppCompatActivity    {
         @Override
         public void onClick(View v) {
             try {
+                qPki.setParam("PKI", "000003");
                 qPki.Open();
                 ts.setText(qPki.resultSet.getString(3));
             } catch (SQLException throwables) {
@@ -85,4 +102,6 @@ public class MainActivity extends AppCompatActivity    {
             }
         }
     };
+
+
 }

@@ -42,6 +42,16 @@ public class AnoQuery {
 
     //TODO: конвертация запроса, работа с параметрами
 
+    public void setParamString(String ParamName, String ParamValue) {
+        SQLParameter param = params.get(ParamName.toUpperCase());
+        param.setString(ParamValue);
+    }
+
+    public void setParam(String ParamName, Object ParamValue) {
+        SQLParameter param = params.get(ParamName.toUpperCase());
+        param.set(ParamValue);
+    }
+
     private String parseParam(int pos) {
         int cur = pos+1;
         String paramName = "";
@@ -55,8 +65,6 @@ public class AnoQuery {
     }
 
     private void parseParams () {
-        //query = query.replaceAll("\n", "\n ");
-        //query = query.replaceAll("\r", "\r ");
         Map paramPositions = new HashMap();
         SQLParameter param;
         int curParam = 0;
@@ -101,7 +109,7 @@ public class AnoQuery {
             baos.write(i);
             i = is.read();
         }
-        return  baos.toString();
+        return  baos.toString()+"  ";
     }
 
     private class InitDB extends AsyncTask<Void,Void,Integer> {
@@ -139,7 +147,10 @@ public class AnoQuery {
 
     public AnoQuery(Activity client, Integer SQLID) {
         activity = client;
+        params = new HashMap<String,SQLParameter> ();
         sql = getStringFromRawFile(SQLID);
+        parseParams();
+
         if (connected==false) {
             try {
                 Class.forName("oracle.jdbc.driver.OracleDriver");
@@ -167,6 +178,18 @@ public class AnoQuery {
                 PreparedStatement stmt = null;
                 stmt = dbconnection.prepareStatement(sql);
                 //stmt.setString(1,"000003");
+
+                for (Map.Entry<String, SQLParameter> pair : params.entrySet()) {
+                    SQLParameter p = pair.getValue();
+                    int j = 0;
+                    while (p.positions.size() > j) {
+                        Integer pos = p.positions.get(j);
+                        String s = p.getString();
+                        stmt.setString(pos, s);
+                        j++;
+                    }
+                }
+
                 stmt.execute();
                 rs = stmt.getResultSet();
                 stmt = null;
