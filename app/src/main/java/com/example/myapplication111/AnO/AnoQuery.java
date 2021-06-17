@@ -204,6 +204,7 @@ public class AnoQuery {
     }
 
     public void Open() {
+        Close();
         ExecQuery execQuery = new ExecQuery();
         execQuery.execute();
         while (_status != stactive) {

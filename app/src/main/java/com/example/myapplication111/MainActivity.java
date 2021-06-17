@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.navigation.ui.AppBarConfiguration;
 
 import com.example.myapplication111.AnO.AnoQuery;
@@ -17,6 +18,8 @@ import com.example.myapplication111.databinding.ActivityMainBinding;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static java.lang.Thread.sleep;
 
@@ -31,12 +34,15 @@ public class MainActivity extends AppCompatActivity    {
     private TextView ts;
     private EditText edtPKI;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+
         //Инициализация переменных
         btnq = findViewById(R.id.btnq);
         ts = findViewById(R.id.ts);
@@ -52,7 +58,6 @@ public class MainActivity extends AppCompatActivity    {
                     try {
                         String PKI = edtPKI.getText().toString();
                         edtPKI.setText("");
-                        qPki.Close();
                         qPki.setParamString("PKI", PKI);
                         qPki.Open();
                         if (qPki.resultSet.next()) {
@@ -72,7 +77,7 @@ public class MainActivity extends AppCompatActivity    {
     // сохранение состояния
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putSerializable(String.valueOf(ts.getId()), (Serializable) ts.getText());
+        outState.putSerializable(String.valueOf(ts.getId()), (Serializable) ts.getText().toString());
         outState.putSerializable(String.valueOf(edtPKI.getId()), (Serializable) edtPKI.getText().toString());
         super.onSaveInstanceState(outState);
     }
@@ -89,8 +94,9 @@ public class MainActivity extends AppCompatActivity    {
         @Override
         public void onClick(View v) {
             try {
-                qPki.setParam("PKI", "000003");
+                qPki.setParamString("PKI", "000003");
                 qPki.Open();
+                qPki.resultSet.next();
                 ts.setText(qPki.resultSet.getString(3));
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
