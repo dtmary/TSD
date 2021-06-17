@@ -19,19 +19,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:background="@drawable/sheadercell"
                 android:gravity="fill_horizontal"
                 android:text="Ном. поз."
-                android:textSize="16sp"
-                android:background="@drawable/sheadercell"/>
+                android:textSize="16sp" />
 
             <TextView
                 android:layout_width="120dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:background="@drawable/sheadercell"
                 android:gravity="fill_horizontal"
                 android:text="Кол-во."
-                android:textSize="16sp"
-                android:background="@drawable/sheadercell"/>
+                android:textSize="16sp" />
 
         </LinearLayout>
 
@@ -57,20 +57,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:background="@drawable/scell"
                     android:gravity="fill_horizontal"
                     android:text="pki"
-                    android:textSize="16sp"
-                    android:background="@drawable/scell" />
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/cnt"
                     android:layout_width="120dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:background="@drawable/scell"
                     android:gravity="fill_horizontal"
                     android:text="cnt"
-                    android:textSize="16sp"
-                    android:background="@drawable/scell"/>
+                    android:textSize="16sp" />
 
             </LinearLayout>
 
@@ -78,8 +78,8 @@
                 android:id="@+id/namepki"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="TextView"
                 android:background="@drawable/scell"
+                android:text="TextView"
                 android:textSize="16sp" />
 
         </LinearLayout>

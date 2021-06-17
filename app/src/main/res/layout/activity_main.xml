@@ -17,7 +17,7 @@
         app:layout_constraintHorizontal_bias="0.577"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.401" />
+        app:layout_constraintVertical_bias="0.687" />
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
@@ -38,7 +38,7 @@
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
-        app:layout_constraintVertical_bias="0.335" />
+        app:layout_constraintVertical_bias="0.882" />
 
     <EditText
         android:id="@+id/edtPKI"
@@ -54,7 +54,6 @@
         app:layout_constraintVertical_bias="0.766" />
 
     <TextView
-        android:id="@+id/textView"
         android:layout_width="74dp"
         android:layout_height="28dp"
         android:text="Ном. поз."
@@ -69,15 +68,12 @@
         app:layout_constraintTop_toBottomOf="@+id/ts"
         app:layout_constraintVertical_bias="0.548" />
 
-    <ProgressBar
-        android:layout_width="218dp"
-        android:layout_height="230dp"
-        android:indeterminateDrawable="@drawable/spinner_ring"
-        android:indeterminateOnly="true"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <include
+        android:id="@+id/textView"
+        layout="@layout/pkitable"
+        android:layout_width="233dp"
+        android:layout_height="305dp"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="94dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
