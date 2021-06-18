@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity    {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         ts.setText(savedInstanceState.getString(String.valueOf(ts.getId())));
-        edtPKI.setText(savedInstanceState.getString(String.valueOf(edtPKI.getId())));
+        //edtPKI.setText(savedInstanceState.getString(String.valueOf(edtPKI.getId())));
     }
 
     View.OnClickListener btnqOnClickListener = new View.OnClickListener() {
