@@ -1,0 +1,62 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.example.myapplication111"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="24"
+8-->D:\project\android\TSD\app\src\main\AndroidManifest.xml
+9        android:targetSdkVersion="30" />
+9-->D:\project\android\TSD\app\src\main\AndroidManifest.xml
+10
+11    <uses-permission android:name="android.permission.INTERNET" />
+11-->D:\project\android\TSD\app\src\main\AndroidManifest.xml:4:5-67
+11-->D:\project\android\TSD\app\src\main\AndroidManifest.xml:4:22-64
+12    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+12-->D:\project\android\TSD\app\src\main\AndroidManifest.xml:5:5-79
+12-->D:\project\android\TSD\app\src\main\AndroidManifest.xml:5:22-76
+13
+14    <application
+14-->D:\project\android\TSD\app\src\main\AndroidManifest.xml:7:5-25:19
+15        android:allowBackup="true"
+15-->D:\project\android\TSD\app\src\main\AndroidManifest.xml:8:9-35
+16        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+16-->[androidx.core:core:1.3.1] C:\Users\mitya\.gradle\caches\transforms-2\files-2.1\aed2d48291dbe4779678b4bb5ca34b78\core-1.3.1\AndroidManifest.xml:24:18-86
+17        android:debuggable="true"
+18        android:extractNativeLibs="false"
+19        android:icon="@mipmap/ic_launcher"
+19-->D:\project\android\TSD\app\src\main\AndroidManifest.xml:9:9-43
+20        android:label="@string/app_name"
+20-->D:\project\android\TSD\app\src\main\AndroidManifest.xml:10:9-41
+21        android:roundIcon="@mipmap/ic_launcher_round"
+21-->D:\project\android\TSD\app\src\main\AndroidManifest.xml:11:9-54
+22        android:supportsRtl="true"
+22-->D:\project\android\TSD\app\src\main\AndroidManifest.xml:12:9-35
+23        android:testOnly="true"
+24        android:theme="@style/Theme.MyApplication111" >
+24-->D:\project\android\TSD\app\src\main\AndroidManifest.xml:13:9-54
+25        <activity
+25-->D:\project\android\TSD\app\src\main\AndroidManifest.xml:14:9-24:20
+26            android:name="com.example.myapplication111.MainActivity"
+26-->D:\project\android\TSD\app\src\main\AndroidManifest.xml:15:13-41
+27            android:label="@string/app_name"
+27-->D:\project\android\TSD\app\src\main\AndroidManifest.xml:16:13-45
+28            android:theme="@style/Theme.MyApplication111.NoActionBar"
+28-->D:\project\android\TSD\app\src\main\AndroidManifest.xml:17:13-70
+29            android:windowSoftInputMode="stateHidden" >
+29-->D:\project\android\TSD\app\src\main\AndroidManifest.xml:18:13-54
+30            <intent-filter>
+30-->D:\project\android\TSD\app\src\main\AndroidManifest.xml:19:13-23:29
+31                <action android:name="android.intent.action.MAIN" />
+31-->D:\project\android\TSD\app\src\main\AndroidManifest.xml:20:17-69
+31-->D:\project\android\TSD\app\src\main\AndroidManifest.xml:20:25-66
+32
+33                <category android:name="android.intent.category.LAUNCHER" />
+33-->D:\project\android\TSD\app\src\main\AndroidManifest.xml:22:17-77
+33-->D:\project\android\TSD\app\src\main\AndroidManifest.xml:22:27-74
+34            </intent-filter>
+35        </activity>
+36    </application>
+37
+38</manifest>
