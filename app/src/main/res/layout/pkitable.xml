@@ -15,23 +15,42 @@
             android:gravity="fill_horizontal"
             android:orientation="horizontal">
 
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/sheadercell">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="fill_horizontal"
+                    android:layout_marginLeft="10dp"
+                    android:text="Ном. поз."
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:focusable="false"/>
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="140dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/sheadercell">
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/sheadercell"
                 android:gravity="fill_horizontal"
-                android:text="Ном. поз."
+                android:focusable="false"
+                android:text="Кол-во."
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/black"
                 android:textSize="16sp" />
 
-            <TextView
-                android:layout_width="120dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@drawable/sheadercell"
-                android:gravity="fill_horizontal"
-                android:text="Кол-во."
-                android:textSize="16sp" />
+            </FrameLayout>
 
         </LinearLayout>
 
@@ -52,35 +71,64 @@
                 android:gravity="fill_horizontal"
                 android:orientation="horizontal">
 
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/scell">
+
                 <TextView
                     android:id="@+id/pki"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="@drawable/scell"
+                    android:textColor="@color/black"
                     android:gravity="fill_horizontal"
+                    android:focusable="false"
                     android:text="pki"
+                    android:layout_marginLeft="10dp"
                     android:textSize="16sp" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="140dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/scell">
 
                 <TextView
                     android:id="@+id/cnt"
-                    android:layout_width="120dp"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="@drawable/scell"
                     android:gravity="fill_horizontal"
+                    android:textColor="@color/black"
+                    android:focusable="false"
                     android:text="cnt"
+                    android:layout_marginLeft="10dp"
                     android:textSize="16sp" />
 
+                </FrameLayout>
+
             </LinearLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/scell">
 
             <TextView
                 android:id="@+id/namepki"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/scell"
                 android:text="TextView"
+                android:focusable="false"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/black"
                 android:textSize="16sp" />
+
+            </FrameLayout>
 
         </LinearLayout>
     </ScrollView>
