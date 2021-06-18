@@ -3,69 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <?xml version="1.0" encoding="utf-8"?>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="25dp"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="25dp"
-                android:gravity="fill_horizontal"
-                android:orientation="horizontal">
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@drawable/sheadercell">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:gravity="fill_horizontal"
-                        android:layout_marginLeft="10dp"
-                        android:text="Ном. поз."
-                        android:textColor="@color/black"
-                        android:textSize="16sp"
-                        android:focusable="false"/>
-                </FrameLayout>
-
-                <FrameLayout
-                    android:layout_width="140dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@drawable/sheadercell">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:gravity="fill_horizontal"
-                        android:focusable="false"
-                        android:text="Кол-во."
-                        android:layout_marginLeft="10dp"
-                        android:textColor="@color/black"
-                        android:textSize="16sp" />
-
-                </FrameLayout>
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <ScrollView
-            android:id="@+id/pkitablecontent"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -80,7 +18,7 @@
                         android:background="@drawable/scell">
 
                         <TextView
-                            android:id="@+id/pki"
+                            android:id="@+id/rpki"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_marginLeft="10dp"
@@ -99,7 +37,7 @@
                         android:background="@drawable/scell">
 
                         <TextView
-                            android:id="@+id/cnt"
+                            android:id="@+id/rcnt"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_marginLeft="10dp"
@@ -121,7 +59,7 @@
                     android:background="@drawable/scell">
 
                     <TextView
-                        android:id="@+id/namepki"
+                        android:id="@+id/rnamepki"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
@@ -131,7 +69,4 @@
                         android:textSize="16sp" />
 
                 </FrameLayout>
-
-            </LinearLayout>
-        </ScrollView>
     </LinearLayout>
