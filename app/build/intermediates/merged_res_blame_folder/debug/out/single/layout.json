@@ -1,0 +1,26 @@
+[
+    {
+        "merged": "D:\\project\\android\\TSD\\app\\build\\intermediates\\incremental\\mergeDebugResources\\stripped.dir\\layout\\fragment_first.xml",
+        "source": "D:\\project\\android\\TSD\\app\\src\\main\\res\\layout\\fragment_first.xml"
+    },
+    {
+        "merged": "D:\\project\\android\\TSD\\app\\build\\intermediates\\incremental\\mergeDebugResources\\stripped.dir\\layout\\activity_main.xml",
+        "source": "D:\\project\\android\\TSD\\app\\src\\main\\res\\layout\\activity_main.xml"
+    },
+    {
+        "merged": "D:\\project\\android\\TSD\\app\\build\\intermediates\\incremental\\mergeDebugResources\\stripped.dir\\layout\\content_main.xml",
+        "source": "D:\\project\\android\\TSD\\app\\src\\main\\res\\layout\\content_main.xml"
+    },
+    {
+        "merged": "D:\\project\\android\\TSD\\app\\build\\intermediates\\incremental\\mergeDebugResources\\stripped.dir\\layout\\pkitable.xml",
+        "source": "D:\\project\\android\\TSD\\app\\src\\main\\res\\layout\\pkitable.xml"
+    },
+    {
+        "merged": "D:\\project\\android\\TSD\\app\\build\\intermediates\\incremental\\mergeDebugResources\\stripped.dir\\layout\\fragment_second.xml",
+        "source": "D:\\project\\android\\TSD\\app\\src\\main\\res\\layout\\fragment_second.xml"
+    },
+    {
+        "merged": "D:\\project\\android\\TSD\\app\\build\\intermediates\\incremental\\mergeDebugResources\\stripped.dir\\layout\\wait.xml",
+        "source": "D:\\project\\android\\TSD\\app\\src\\main\\res\\layout\\wait.xml"
+    }
+]
