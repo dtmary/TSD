@@ -24,7 +24,7 @@
                     android:layout_marginLeft="10dp"
                     android:text="Ном. поз."
                     android:textColor="@color/black"
-                    android:textSize="16sp"
+                    android:textSize="20sp"
                     android:focusable="false"/>
             </FrameLayout>
 
@@ -43,7 +43,7 @@
                     android:text="Кол-во."
                     android:layout_marginLeft="10dp"
                     android:textColor="@color/black"
-                    android:textSize="16sp" />
+                    android:textSize="20sp" />
 
             </FrameLayout>
 

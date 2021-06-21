@@ -3,9 +3,11 @@ package com.example.myapplication111;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,6 +32,7 @@ public class MainActivity extends AppCompatActivity    {
     private Connection dbconnection = null;
     private Activity activity = this;
     private AnoQuery qPki;
+    private AnoQuery qTreb;
     private Button btnq;
     private TextView ts;
     private EditText edtPKI;
@@ -48,6 +51,8 @@ public class MainActivity extends AppCompatActivity    {
         ts = findViewById(R.id.ts);
         edtPKI =  (EditText) findViewById(R.id.edtPKI);
         qPki = new AnoQuery(activity,R.raw.qpki);
+        qTreb = new AnoQuery(activity,R.raw.qtreb);
+        LinearLayout pkiRaws = findViewById(R.id.pkiraws);
 
         //Назначение обработчиков
         btnq.setOnClickListener(btnqOnClickListener);
@@ -72,6 +77,50 @@ public class MainActivity extends AppCompatActivity    {
                 }
                 return true;
             }});
+
+        LayoutInflater inflater = getLayoutInflater();
+        try {
+            qTreb.Open();
+            while (qTreb.resultSet.next()) {
+                LinearLayout item = (LinearLayout)inflater.inflate(R.layout.pkiraw, pkiRaws,false);
+                TextView pki = (TextView)item.findViewById(R.id.pki);
+                pki.setText(qTreb.resultSet.getString(1));
+                TextView cnt = (TextView)item.findViewById(R.id.cnt);
+                cnt.setText(qTreb.resultSet.getString(2));
+                TextView namepki = (TextView)item.findViewById(R.id.namepki);
+                namepki.setText(qTreb.resultSet.getString(3));
+                pkiRaws.addView(item);
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+       /* LayoutInflater inflater = getLayoutInflater();
+        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
+        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
+        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
+        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
+        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
+        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
+        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
+        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
+        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
+        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
+        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
+        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
+        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
+        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
+        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
+        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
+        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
+        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
+        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
+        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
+        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
+        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
+        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
+        inflater.inflate(R.layout.pkiraw,pkiRaws,true);*/
+
     }
 
     // сохранение состояния

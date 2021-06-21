@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    >
 
 
                 <LinearLayout
@@ -18,7 +19,7 @@
                         android:background="@drawable/scell">
 
                         <TextView
-                            android:id="@+id/rpki"
+                            android:id="@+id/pki"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_marginLeft="10dp"
@@ -27,7 +28,7 @@
                             android:gravity="fill_horizontal"
                             android:text="pki"
                             android:textColor="@color/black"
-                            android:textSize="16sp" />
+                            android:textSize="20sp" />
                     </FrameLayout>
 
                     <FrameLayout
@@ -37,7 +38,7 @@
                         android:background="@drawable/scell">
 
                         <TextView
-                            android:id="@+id/rcnt"
+                            android:id="@+id/cnt"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_marginLeft="10dp"
@@ -46,7 +47,7 @@
                             android:gravity="fill_horizontal"
                             android:text="cnt"
                             android:textColor="@color/black"
-                            android:textSize="16sp" />
+                            android:textSize="20sp" />
 
                     </FrameLayout>
 
@@ -59,14 +60,13 @@
                     android:background="@drawable/scell">
 
                     <TextView
-                        android:id="@+id/rnamepki"
+                        android:id="@+id/namepki"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
                         android:focusable="false"
                         android:text="TextView"
-                        android:textColor="@color/black"
-                        android:textSize="16sp" />
+                        android:textSize="20sp" />
 
                 </FrameLayout>
     </LinearLayout>

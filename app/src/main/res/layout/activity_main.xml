@@ -45,9 +45,11 @@
     <TextView
         android:id="@+id/ts"
         android:layout_width="276dp"
-        android:layout_height="74dp"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toTopOf="@+id/edtPKI"
         app:layout_constraintEnd_toEndOf="parent"
+        android:textSize="20sp"
+        android:textColor="#0000FF"
         app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
