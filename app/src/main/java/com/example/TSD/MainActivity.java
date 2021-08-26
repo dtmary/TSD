@@ -1,4 +1,4 @@
-package com.example.myapplication111;
+package com.example.TSD;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -11,17 +11,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.navigation.ui.AppBarConfiguration;
 
-import com.example.myapplication111.AnO.AnoQuery;
+import com.example.TSD.AnO.AnoQuery;
+import com.example.myapplication111.R;
 import com.example.myapplication111.databinding.ActivityMainBinding;
 
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

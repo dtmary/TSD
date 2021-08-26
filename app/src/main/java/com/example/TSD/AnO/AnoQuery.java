@@ -1,12 +1,8 @@
-package com.example.myapplication111.AnO;
+package com.example.TSD.AnO;
 
 import android.app.Activity;
 import android.content.res.Resources;
 import android.os.AsyncTask;
-import android.widget.TextView;
-
-import com.example.myapplication111.MainActivity;
-import com.example.myapplication111.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
