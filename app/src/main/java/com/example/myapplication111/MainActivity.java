@@ -23,6 +23,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 import static java.lang.Thread.sleep;
 
 public class MainActivity extends AppCompatActivity    {
@@ -33,50 +36,24 @@ public class MainActivity extends AppCompatActivity    {
     private Activity activity = this;
     private AnoQuery qPki;
     private AnoQuery qTreb;
-    private Button btnq;
-    private TextView ts;
-    private EditText edtPKI;
-
+    @BindView(R.id.btnq) Button btnq;
+    @BindView(R.id.ts) TextView ts;
+    @BindView(R.id.edtPKI) EditText edtPKI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        ButterKnife.bind(this);
 
         //Инициализация переменных
-        btnq = findViewById(R.id.btnq);
-        ts = findViewById(R.id.ts);
-        edtPKI =  (EditText) findViewById(R.id.edtPKI);
         qPki = new AnoQuery(activity,R.raw.qpki);
         qTreb = new AnoQuery(activity,R.raw.qtreb);
         LinearLayout pkiRaws = findViewById(R.id.pkiraws);
-
         //Назначение обработчиков
         btnq.setOnClickListener(btnqOnClickListener);
-
-        edtPKI.setOnEditorActionListener( new TextView.OnEditorActionListener() {
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if(event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_ENTER){
-                    try {
-                        String PKI = edtPKI.getText().toString();
-                        edtPKI.setText("");
-                        qPki.setParamString("PKI", PKI);
-                        qPki.Open();
-                        if (qPki.resultSet.next()) {
-                            ts.setText(PKI + " " + qPki.resultSet.getString(3));
-                        } else {
-                            ts.setText(PKI + " " + "НЕ НАЙДЕН!");
-                        }
-                        edtPKI.setSelection(0);
-                    } catch (SQLException throwables) {
-                        throwables.printStackTrace();
-                    }
-                }
-                return true;
-            }});
+        edtPKI.setOnEditorActionListener(edtPKIOnEditorActionListener);
 
         LayoutInflater inflater = getLayoutInflater();
         try {
@@ -94,33 +71,6 @@ public class MainActivity extends AppCompatActivity    {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-
-       /* LayoutInflater inflater = getLayoutInflater();
-        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
-        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
-        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
-        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
-        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
-        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
-        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
-        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
-        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
-        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
-        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
-        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
-        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
-        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
-        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
-        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
-        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
-        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
-        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
-        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
-        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
-        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
-        inflater.inflate(R.layout.pkiraw,pkiRaws,true);
-        inflater.inflate(R.layout.pkiraw,pkiRaws,true);*/
-
     }
 
     // сохранение состояния
@@ -136,7 +86,6 @@ public class MainActivity extends AppCompatActivity    {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         ts.setText(savedInstanceState.getString(String.valueOf(ts.getId())));
-        //edtPKI.setText(savedInstanceState.getString(String.valueOf(edtPKI.getId())));
     }
 
     View.OnClickListener btnqOnClickListener = new View.OnClickListener() {
@@ -153,5 +102,26 @@ public class MainActivity extends AppCompatActivity    {
         }
     };
 
-
+    TextView.OnEditorActionListener edtPKIOnEditorActionListener = new TextView.OnEditorActionListener() {
+        @Override
+        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            if(event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_ENTER){
+                try {
+                    String PKI = edtPKI.getText().toString();
+                    edtPKI.setText("");
+                    qPki.setParamString("PKI", PKI);
+                    qPki.Open();
+                    if (qPki.resultSet.next()) {
+                        ts.setText(PKI + " " + qPki.resultSet.getString(3));
+                    } else {
+                        ts.setText(PKI + " " + "НЕ НАЙДЕН!");
+                    }
+                    edtPKI.setSelection(0);
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+            }
+            return true;
+        }
+    };
 }
