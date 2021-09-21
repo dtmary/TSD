@@ -20,6 +20,7 @@
                 android:layout_width="115dp"
                 android:layout_height="wrap_content"
                 android:text="Номер партии"
+                android:textSize="18sp"
                 android:textColor="@color/black" />
 
             <TextView
@@ -27,6 +28,7 @@
                 android:layout_width="76dp"
                 android:layout_height="wrap_content"
                 android:text="ШПЗ"
+                android:textSize="18sp"
                 android:textColor="@color/black" />
 
             <TextView
@@ -34,6 +36,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Дата создания"
+                android:textSize="18sp"
                 android:textColor="@color/black" />
         </LinearLayout>
 
@@ -42,6 +45,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Информация об изделии"
+        android:textSize="18sp"
         android:textColor="@color/black"
         />
 

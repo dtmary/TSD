@@ -35,8 +35,13 @@ public class AnoQuery {
     private String jsql;
     public Map<String,SQLParameter>  params;
     private char paramSimb = ':';
+    private  int _recordcount = 0;
 
     //TODO: конвертация запроса, работа с параметрами
+
+    public int recordcount() {
+        return _recordcount;
+    }
 
     public void setParamString(String ParamName, String ParamValue) {
         SQLParameter param = params.get(ParamName.toUpperCase());
@@ -113,14 +118,15 @@ public class AnoQuery {
         protected Integer doInBackground(Void... voids) {
             try {
                 dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.5:1521:ORA","skladuser","sklad");
-                connected = true;
+                //connected = true;
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
             catch (Exception throwables) {
                 throwables.printStackTrace();
             }
-            return null;
+            connected = true;
+            return 0;
         }
         @Override
         protected void onPostExecute(Integer i) {
@@ -142,6 +148,7 @@ public class AnoQuery {
     }
 
     public AnoQuery(Activity client, Integer SQLID) {
+        try {
         activity = client;
         params = new HashMap<String,SQLParameter> ();
         sql = getStringFromRawFile(SQLID);
@@ -163,6 +170,9 @@ public class AnoQuery {
                 }
             };
         }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
     }
 
     private class ExecQuery extends AsyncTask<Void,Void,Integer> {
@@ -187,15 +197,28 @@ public class AnoQuery {
                 stmt.execute();
                 rs = stmt.getResultSet();
                 stmt = null;
-                _status = stactive;
+
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
             catch (Exception throwables) {
                 throwables.printStackTrace();
             }
+            try {
+                rs.last();
+            _recordcount = rs.getRow();
+            rs.first();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
             resultSet = rs;
+            _status = stactive;
             return 0;
+        }
+
+        @Override
+        protected void onPostExecute(Integer i) {
+            _status = stactive;
         }
     }
 
