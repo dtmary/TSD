@@ -3,10 +3,14 @@ package com.example.TSD;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -24,6 +28,7 @@ import java.util.Map;
 
 public class TrebList extends AppCompatActivity {
 
+  static String LOG_TAG = "mainlog";
   String attrbatch = "attrbatch";
   String attrspz = "attrspz";
   String attrcreatedate = "attrcreatedate";
@@ -61,6 +66,18 @@ public class TrebList extends AppCompatActivity {
             }
         };
         RefreshThread refreshThread = new RefreshThread();
+
+        ltreblistroot.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                Intent intent = new Intent(activity, rsx.class);
+                Map<String, Object> m = (HashMap)data.get(position);
+                String s = (String)m.get(attrbatch);
+                intent.putExtra("batch",s);
+                startActivity(intent);
+            }
+        });
+
 
     }
 
