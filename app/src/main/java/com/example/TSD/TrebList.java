@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.example.myapplication111.R.string.streblisthead;
+
 
 public class TrebList extends AppCompatActivity {
 
@@ -33,6 +35,7 @@ public class TrebList extends AppCompatActivity {
   String attrspz = "attrspz";
   String attrcreatedate = "attrcreatedate";
   String attrpkiinfo = "attrpkiinfo";
+  String sklad;
   String[] from = {attrbatch, attrspz, attrcreatedate,attrpkiinfo};
   int[] to = {R.id.batch,R.id.spz,R.id.createdate,R.id.pkiinfo};
 
@@ -57,6 +60,11 @@ public class TrebList extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_treb_list);
+
+        Bundle arguments = getIntent().getExtras();
+        sklad= arguments.get("sklad").toString();
+        TextView txtBatch = (TextView)findViewById(R.id.treblisthead);
+        txtBatch.setText(sklad.concat(getString(streblisthead)));
 
         ltreblistroot = (ListView)findViewById(R.id.ltRoot);
 
@@ -85,6 +93,7 @@ public class TrebList extends AppCompatActivity {
     void refreshlist() {
         try {
             qTreblist = new AnoQuery(activity, R.raw.qtreblist);
+            qTreblist.setParamString("sklad",sklad);
             qTreblist.Open();
             data = new ArrayList<Map<String, Object>>(qTreblist.recordcount());
             Map<String, Object> m;
