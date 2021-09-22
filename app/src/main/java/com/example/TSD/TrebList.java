@@ -65,6 +65,7 @@ public class TrebList extends AppCompatActivity {
                 drawlist();
             }
         };
+
         RefreshThread refreshThread = new RefreshThread();
 
         ltreblistroot.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -103,7 +104,6 @@ public class TrebList extends AppCompatActivity {
     }
 
     void drawlist() {
-        LayoutInflater inflater = getLayoutInflater();
         try {
             SimpleAdapter sAdapter = new SimpleAdapter(this, data, R.layout.trebraw, from, to);
             ltreblistroot.setAdapter(sAdapter);
