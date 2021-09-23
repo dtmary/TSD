@@ -83,6 +83,7 @@ public class TrebList extends AppCompatActivity {
                 Map<String, Object> m = (HashMap)data.get(position);
                 String s = (String)m.get(attrbatch);
                 intent.putExtra("batch",s);
+                intent.putExtra("sklad",sklad);
                 startActivity(intent);
             }
         });

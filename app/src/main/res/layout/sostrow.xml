@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="@android:color/darker_gray"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:gravity="fill_horizontal"
+        android:orientation="horizontal"
+        >
+
+        <TextView
+            android:layout_width="102dp"
+            android:layout_height="wrap_content"
+            android:text="Ном.поз"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:background="@color/Silver"/>
+
+        <TextView
+            android:id="@+id/pki"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="инфа по ном.поз."
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:gravity="fill_horizontal"
+        android:orientation="horizontal"
+        >
+
+        <TextView
+            android:layout_width="102dp"
+            android:layout_height="wrap_content"
+            android:background="@color/Silver"
+            android:text="Требуется:"
+            android:textColor="@color/black"
+            android:textSize="18sp" />
+        <TextView
+            android:id="@+id/treb"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="сколько требуется"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:gravity="fill_horizontal"
+        android:orientation="horizontal"
+        >
+        <TextView
+            android:layout_width="102dp"
+            android:layout_height="wrap_content"
+            android:text="Отпущено:"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            android:background="@color/Silver"
+            />
+        <TextView
+            android:id="@+id/otp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="сколько отпущено"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:gravity="fill_horizontal"
+        android:orientation="horizontal"
+        >
+        <TextView
+            android:layout_width="102dp"
+            android:layout_height="wrap_content"
+            android:text="Голов.изд:"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            android:background="@color/Silver"
+            />
+        <TextView
+            android:id="@+id/headizd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="инфа по головному изделию"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            />
+    </LinearLayout>
+
+</LinearLayout>
