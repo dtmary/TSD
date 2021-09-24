@@ -3,6 +3,9 @@ package com.example.TSD;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.content.Context;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -38,6 +41,8 @@ public class rsx extends AppCompatActivity {
     private SimpleAdapter sAdapter;
     private String scanCode = "";
     private EditText tScan;
+    private SoundPool mSoundPool;
+    private int soundId;
     ArrayList<Map<String, Object>> data;
 
     @Override
@@ -52,6 +57,9 @@ public class rsx extends AppCompatActivity {
         sklad = arguments.get("sklad").toString();
         TextView txtBatch = (TextView)findViewById(R.id.txtBatch);
         txtBatch.setText(batch);
+
+        mSoundPool = new SoundPool.Builder().build();
+        soundId = mSoundPool.load(this, R.raw.bad01, 1);
 
         tScan.setOnEditorActionListener(edtPKIOnEditorActionListener);
 
@@ -117,7 +125,27 @@ public class rsx extends AppCompatActivity {
         @Override
         public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
             if(keyEvent.getAction() == KeyEvent.ACTION_UP && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER){
-                tScan.setFocusableInTouchMode(false);
+                try {
+                    tScan.setFocusableInTouchMode(false);
+                    //Проверка на наличие
+                    int findPos = 0;
+                    for (int idx = 0; idx < data.size(); idx++) {
+                        Map<String, Object> m = (HashMap)data.get(idx);
+                        String s = (String)m.get(attrpki);
+                        String s1 = tScan.getText().toString();
+                        if (s.equals(s1)) {
+                            findPos = idx;
+                        }
+                    }
+                    if (findPos == 0) {
+                        mSoundPool.play(soundId, 1, 1, 1, 0, 1f);
+                    }
+                    //TODO: Ввод коичества
+                }
+                catch (Exception throwables) {
+                    throwables.printStackTrace();
+                }
+
             }
             return true;
         }
