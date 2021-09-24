@@ -7,6 +7,13 @@
     android:orientation="vertical"
     tools:context="com.example.TSD.rsx">
 
+    <EditText
+        android:id="@+id/tScan"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text=""
+        android:textSize="20sp"/>
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="30dp"
@@ -45,6 +52,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     </ListView>
+
+
 
 
 </LinearLayout>

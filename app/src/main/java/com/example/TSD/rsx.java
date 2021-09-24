@@ -6,6 +6,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.KeyEvent;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -34,19 +36,24 @@ public class rsx extends AppCompatActivity {
     private Handler handler;
     private ListView ltRoot;
     private SimpleAdapter sAdapter;
+    private String scanCode = "";
+    private EditText tScan;
     ArrayList<Map<String, Object>> data;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rsx);
         ltRoot = findViewById(R.id.ltRoot);
+        tScan = findViewById(R.id.tScan);
+        tScan.setFocusableInTouchMode(false);
         Bundle arguments = getIntent().getExtras();
         batch = arguments.get("batch").toString();
         sklad = arguments.get("sklad").toString();
         TextView txtBatch = (TextView)findViewById(R.id.txtBatch);
         txtBatch.setText(batch);
+
+        tScan.setOnEditorActionListener(edtPKIOnEditorActionListener);
 
         handler = new Handler(getBaseContext().getMainLooper()) {
             public void handleMessage(Message msg) {
@@ -94,4 +101,25 @@ public class rsx extends AppCompatActivity {
             throwables.printStackTrace();
         }
     }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        tScan.setText("");
+        tScan.setFocusableInTouchMode(true);
+        tScan.requestFocus();
+        tScan.setSelection(0);
+        super.onKeyDown(keyCode, event);
+        return true;
+    }
+
+    TextView.OnEditorActionListener edtPKIOnEditorActionListener = new TextView.OnEditorActionListener() {
+
+        @Override
+        public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+            if(keyEvent.getAction() == KeyEvent.ACTION_UP && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER){
+                tScan.setFocusableInTouchMode(false);
+            }
+            return true;
+        }
+    };
 }
