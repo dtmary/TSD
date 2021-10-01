@@ -1,6 +1,6 @@
 select w.batch, 'ШПЗ' as spz,
 to_char(create_date,'DD.MM.YYYY') as createdate,
-'Информация по конструкторскому номеру' as pkiinfo,
+w.gol_decnum||' - '||(select namepki from skladuser.pki pk where pk.pki = w.gol_decnum) as pkiinfo,
 sklad
 ,w.prz_close
 from skladuser.wo_request_list_view w
