@@ -130,6 +130,7 @@ public class rsx extends AppCompatActivity {
                 try {
                     tScan.setFocusableInTouchMode(false);
                     //Проверка на наличие
+                    curPos = -1;
                     for (int idx = 0; idx < data.size(); idx++) {
                         Map<String, Object> m = (HashMap)data.get(idx);
                         String s = (String)m.get(attrpki);
@@ -138,7 +139,7 @@ public class rsx extends AppCompatActivity {
                             curPos = idx;
                         }
                     }
-                    if (curPos == 0) {
+                    if (curPos == -1) {
                         mSoundPool.play(soundIdbad, 1, 1, 1, 0, 1f);
                     }
                     else {
