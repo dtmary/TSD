@@ -9,4 +9,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="Accent">#008080</color>
     <color name="Silver">#C0C0C0</color>
+    <color name="Grey">#A0A0A0</color>
 </resources>

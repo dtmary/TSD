@@ -37,8 +37,6 @@ public class AnoQuery {
     private char paramSimb = ':';
     private  int _recordcount = 0;
 
-    //TODO: конвертация запроса, работа с параметрами
-
     public int recordcount() {
         return _recordcount;
     }

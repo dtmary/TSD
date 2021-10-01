@@ -12,6 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication111">
+        <activity android:name="com.example.TSD.cnt"
+                  android:windowSoftInputMode="stateAlwaysVisible"></activity>
         <activity android:name="com.example.TSD.skladlist">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,8 +22,7 @@
             </intent-filter>
         </activity>
         <activity android:name="com.example.TSD.rsx" />
-        <activity android:name="com.example.TSD.TrebList">
-        </activity>
+        <activity android:name="com.example.TSD.TrebList"></activity>
         <activity
             android:name="com.example.TSD.MainActivity"
             android:label="@string/app_name"

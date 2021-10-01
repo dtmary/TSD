@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
@@ -42,7 +43,8 @@ public class rsx extends AppCompatActivity {
     private String scanCode = "";
     private EditText tScan;
     private SoundPool mSoundPool;
-    private int soundId;
+    private int soundIdbad;
+    private int curPos;
     ArrayList<Map<String, Object>> data;
 
     @Override
@@ -59,7 +61,7 @@ public class rsx extends AppCompatActivity {
         txtBatch.setText(batch);
 
         mSoundPool = new SoundPool.Builder().build();
-        soundId = mSoundPool.load(this, R.raw.bad01, 1);
+        soundIdbad = mSoundPool.load(this, R.raw.bad01, 1);
 
         tScan.setOnEditorActionListener(edtPKIOnEditorActionListener);
 
@@ -90,7 +92,7 @@ public class rsx extends AppCompatActivity {
                     m.put(attrpki,qrsx.resultSet.getString(4));
                     m.put(attrnamepki,qrsx.resultSet.getString(4).concat(" - ").concat(qrsx.resultSet.getString(5)));
                     m.put(attrtreb,qrsx.resultSet.getString(9));
-                    m.put(attrotp,"0");
+                    m.put(attrotp,"");
                     m.put(attrheadizd,qrsx.resultSet.getString(3));
                     data.add(m);
                 }
@@ -128,19 +130,25 @@ public class rsx extends AppCompatActivity {
                 try {
                     tScan.setFocusableInTouchMode(false);
                     //Проверка на наличие
-                    int findPos = 0;
                     for (int idx = 0; idx < data.size(); idx++) {
                         Map<String, Object> m = (HashMap)data.get(idx);
                         String s = (String)m.get(attrpki);
                         String s1 = tScan.getText().toString();
                         if (s.equals(s1)) {
-                            findPos = idx;
+                            curPos = idx;
                         }
                     }
-                    if (findPos == 0) {
-                        mSoundPool.play(soundId, 1, 1, 1, 0, 1f);
+                    if (curPos == 0) {
+                        mSoundPool.play(soundIdbad, 1, 1, 1, 0, 1f);
                     }
-                    //TODO: Ввод коичества
+                    else {
+                        Intent intent = new Intent(activity, cnt.class);
+                        Map<String, Object> m = (HashMap)data.get(curPos);
+                        intent.putExtra("namepki",(String)m.get(attrpki));
+                        intent.putExtra("treb",(String)m.get(attrtreb));
+                        intent.putExtra("otp",(String)m.get(attrotp));
+                        startActivityForResult(intent,1);
+                    }
                 }
                 catch (Exception throwables) {
                     throwables.printStackTrace();
@@ -150,4 +158,17 @@ public class rsx extends AppCompatActivity {
             return true;
         }
     };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        if (intent == null) {
+            return;
+        }
+        String otp = intent.getStringExtra("otp");
+        Map<String, Object> m = (HashMap)data.get(curPos);
+        m.put(attrotp,otp);
+        data.set(curPos,m);
+        drawlist();
+    }
 }
