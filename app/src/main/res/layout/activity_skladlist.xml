@@ -13,7 +13,7 @@
         android:text="Список складов"
         android:background="@drawable/sheadercell"
         android:textColor="@color/black"
-        android:textSize="20sp"
+        android:textSize="@dimen/font_base"
         android:textAlignment="center"/>
 
     <ListView

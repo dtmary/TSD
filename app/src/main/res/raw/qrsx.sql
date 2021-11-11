@@ -2,7 +2,13 @@ select t.docnum, t.indnum, t.decnumwhere, t.part, t.namepki, t.buyer, t.opnum, t
        (select z.spz
         from skladuser.rz_zakaz z
         where z.id_spz=t.id_spz) as shpz,
-       mfg.Get_Cell_Pki(t.part, sklad, 0) as cell
+       mfg.Get_Cell_Pki(t.part, sklad, 0) as cell,
+       (select sum(s.ostatok) as ost from skladuser.sklad s,
+                      skladuser.pkib pk
+        where s.pkib = pk.pkib
+          and s.sklad = :sklad
+          and pk.pki = part
+          and pk.parent_pkib is null) as ost
 from (select t4.part, t4.opnum, t4.opsubnum, countopen,
              (select p.namepki
               from skladuser.pki p

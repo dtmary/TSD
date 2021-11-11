@@ -1,3 +1,7 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="font_base">22sp</dimen>
+    <dimen name="width_sostrow_header">115dp</dimen>
+    <dimen name="height_base">30dp</dimen>
+    <dimen name="height_sep">32dp</dimen>
 </resources>

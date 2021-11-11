@@ -9,95 +9,143 @@
         android:background="@android:color/darker_gray"/>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="25dp"
+        android:layout_height="@dimen/height_sep"
         android:gravity="fill_horizontal"
         android:orientation="horizontal"
         >
 
         <TextView
-            android:layout_width="102dp"
-            android:layout_height="wrap_content"
-            android:text="Ном.поз"
+            android:layout_width="@dimen/width_sostrow_header"
+            android:layout_height="@dimen/height_base"
+            android:background="@color/Silver"
+            android:text="Ном.поз:"
             android:textColor="@color/black"
-            android:textSize="18sp"
-            android:background="@color/Silver"/>
+            android:textSize="@dimen/font_base" />
 
         <TextView
             android:id="@+id/pki"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/height_base"
             android:text="инфа по ном.поз."
-            android:textSize="18sp"
+            android:textSize="@dimen/font_base"
             android:textColor="@color/black"
             />
 
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="25dp"
+        android:layout_height="@dimen/height_sep"
         android:gravity="fill_horizontal"
         android:orientation="horizontal"
         >
 
         <TextView
-            android:layout_width="102dp"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/width_sostrow_header"
+            android:layout_height="@dimen/height_base"
+            android:background="@color/Silver"
+            android:text="Мест.пол:"
+            android:textColor="@color/black"
+            android:textSize="@dimen/font_base" />
+
+        <TextView
+            android:id="@+id/cell"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_base"
+            android:text="Местоположение"
+            android:textSize="@dimen/font_base"
+            android:textColor="@color/black"
+            />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_sep"
+        android:gravity="fill_horizontal"
+        android:orientation="horizontal"
+        >
+
+        <TextView
+            android:layout_width="@dimen/width_sostrow_header"
+            android:layout_height="@dimen/height_base"
             android:background="@color/Silver"
             android:text="Требуется:"
             android:textColor="@color/black"
-            android:textSize="18sp" />
+            android:textSize="@dimen/font_base" />
         <TextView
             android:id="@+id/treb"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/height_base"
             android:text="сколько требуется"
-            android:textSize="18sp"
+            android:textSize="@dimen/font_base"
             android:textColor="@color/black"
             />
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="25dp"
+        android:layout_height="@dimen/height_sep"
+        android:gravity="fill_horizontal"
+        android:orientation="horizontal"
+        >
+
+        <TextView
+            android:layout_width="@dimen/width_sostrow_header"
+            android:layout_height="@dimen/height_base"
+            android:background="@color/Silver"
+            android:text="Остаток:"
+            android:textColor="@color/black"
+            android:textSize="@dimen/font_base" />
+        <TextView
+            android:id="@+id/ost"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_base"
+            android:text="Остаток"
+            android:textSize="@dimen/font_base"
+            android:textColor="@color/black"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_sep"
         android:gravity="fill_horizontal"
         android:orientation="horizontal"
         >
         <TextView
-            android:layout_width="102dp"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/width_sostrow_header"
+            android:layout_height="@dimen/height_base"
             android:text="Отпущено:"
-            android:textSize="18sp"
+            android:textSize="@dimen/font_base"
             android:textColor="@color/black"
             android:background="@color/Silver"
             />
         <TextView
             android:id="@+id/otp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/height_base"
             android:text="сколько отпущено"
-            android:textSize="18sp"
+            android:textSize="@dimen/font_base"
             android:textColor="@color/black"
             />
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="25dp"
+        android:layout_height="@dimen/height_sep"
         android:gravity="fill_horizontal"
         android:orientation="horizontal"
         >
         <TextView
-            android:layout_width="102dp"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/width_sostrow_header"
+            android:layout_height="@dimen/height_base"
             android:text="Голов.изд:"
-            android:textSize="18sp"
+            android:textSize="@dimen/font_base"
             android:textColor="@color/black"
             android:background="@color/Silver"
             />
         <TextView
             android:id="@+id/headizd"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/height_base"
             android:text="инфа по головному изделию"
-            android:textSize="18sp"
+            android:textSize="@dimen/font_base"
             android:textColor="@color/black"
             />
     </LinearLayout>

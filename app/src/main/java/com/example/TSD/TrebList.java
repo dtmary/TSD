@@ -36,8 +36,8 @@ public class TrebList extends AppCompatActivity {
   String attrcreatedate = "attrcreatedate";
   String attrpkiinfo = "attrpkiinfo";
   String sklad;
-  String[] from = {attrbatch, attrspz, attrcreatedate,attrpkiinfo};
-  int[] to = {R.id.batch,R.id.spz,R.id.createdate,R.id.pkiinfo};
+  String[] from = {attrbatch,  attrcreatedate,attrpkiinfo};
+  int[] to = {R.id.batch,R.id.createdate,R.id.pkiinfo};
 
     private class RefreshThread extends Thread {
         RefreshThread() {

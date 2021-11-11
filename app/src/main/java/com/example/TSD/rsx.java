@@ -5,12 +5,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.KeyEvent;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -32,20 +35,47 @@ public class rsx extends AppCompatActivity {
     private String attrtreb = "attrtreb";
     private String attrotp = "attrotp";
     private String attrheadizd = "headizd";
+    private String attrcell = "attrcell";
+    private String attrost = "attrost";
 
-    private String from[] = {attrnamepki,attrtreb,attrotp,attrheadizd};
-    private int to[] = {R.id.pki,R.id.treb,R.id.otp,R.id.headizd};
+    private String from[] = {attrnamepki,attrcell, attrtreb,attrost,attrotp,attrheadizd};
+    private int to[] = {R.id.pki,R.id.cell ,R.id.treb,R.id.ost,R.id.otp,R.id.headizd};
 
     private Activity activity = this;
     private Handler handler;
     private ListView ltRoot;
-    private SimpleAdapter sAdapter;
     private String scanCode = "";
     private EditText tScan;
     private SoundPool mSoundPool;
     private int soundIdbad;
     private int curPos;
     ArrayList<Map<String, Object>> data;
+
+    private class SAdapter extends SimpleAdapter {
+        public SAdapter(rsx rsx, ArrayList<Map<String, Object>> data, int sostrow, String[] from, int[] to) {
+            super(activity, data, R.layout.sostrow, from, to);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View view = super.getView(position, convertView, parent);
+            HashMap rec = (HashMap)data.get(position);
+            String sTreb = (String) rec.get(attrtreb);
+            String sOtp =  (String) rec.get(attrotp);
+            Float treb = Float.valueOf(sTreb);
+            Float otp;
+            if (sOtp.equals("")) {
+                otp = 0.f;
+            }
+                else otp = Float.valueOf(sOtp);
+            if (treb.equals(otp)) {
+                view.setBackgroundResource(R.color.WhiteGreen);
+            }
+            return view;
+        }
+    }
+
+    private SAdapter sAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +124,8 @@ public class rsx extends AppCompatActivity {
                     m.put(attrtreb,qrsx.resultSet.getString(9));
                     m.put(attrotp,"");
                     m.put(attrheadizd,qrsx.resultSet.getString(3));
+                    m.put(attrcell,qrsx.resultSet.getString(11));
+                    m.put(attrost,qrsx.resultSet.getString(12));
                     data.add(m);
                 }
             }    catch (Exception throwables) {
@@ -105,7 +137,7 @@ public class rsx extends AppCompatActivity {
 
     void drawlist() {
         try {
-            sAdapter = new SimpleAdapter(this, data, R.layout.sostrow, from, to);
+            sAdapter = new SAdapter(this, data, R.layout.sostrow, from, to);
             ltRoot.setAdapter(sAdapter);
         } catch (Exception throwables) {
             throwables.printStackTrace();

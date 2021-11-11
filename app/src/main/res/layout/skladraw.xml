@@ -9,17 +9,17 @@
         android:background="@android:color/darker_gray"/>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="25dp"
+        android:layout_height="wrap_content"
         android:gravity="fill_horizontal"
         android:orientation="horizontal"
         android:background="@color/Silver">
 
         <TextView
             android:id="@+id/sklad"
-            android:layout_width="115dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Номер склада"
-            android:textSize="18sp"
+            android:textSize="@dimen/font_base"
             android:textColor="@color/black" />
     </LinearLayout>
     <TextView
@@ -27,7 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Название склада"
-        android:textSize="18sp"
+        android:textSize="@dimen/font_base"
         android:textColor="@color/black"
         />
 
