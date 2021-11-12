@@ -17,6 +17,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.example.TSD.AnO.AnoQuery;
+import com.example.TSD.AnO.AnoStoredProc;
 import com.example.myapplication111.R;
 import com.example.myapplication111.databinding.ActivityMainBinding;
 
@@ -67,6 +68,12 @@ public class TrebList extends AppCompatActivity {
         txtBatch.setText(sklad.concat(getString(streblisthead)));
 
         ltreblistroot = (ListView)findViewById(R.id.ltRoot);
+
+        AnoStoredProc p = new AnoStoredProc(this);
+        p.createFloatParam("fparam1","float");
+        p.createFloatParam("fparam2","float");
+
+
 
         handler = new Handler(getBaseContext().getMainLooper()) {
             public void handleMessage(Message msg) {
