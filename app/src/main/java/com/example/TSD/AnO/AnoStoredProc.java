@@ -32,6 +32,7 @@ public class AnoStoredProc {
         param.sqlType = sqlType;
         param.isArray = isArray;
         params.add(param);
+        mparams.put(paramname,param);
         return param;
     }
 
@@ -57,15 +58,20 @@ public class AnoStoredProc {
         param.values.add(value);
     }
 
-    public void execproc() {
+    public String execproc() {
         String sql;
         //Создаём SQL
         sql = "DECLARE";
-        for (int i = 0; params.size() < i; i++) {
+        for (int i = 0; (params.size() > i); i++) {
             Param param = params.get(i);
-            sql = sql + "\n"+param.name+" "+param.sqlType+";";
+            sql = sql + " "+param.name+" "+param.sqlType+";";
         }
-        sql = sql + "\n" + "begin";
+        sql = sql + " " + "begin";
+
+        //TODO: заполнение параметров и вызов
+
+        sql = sql + " " +"end;";
+        return sql;
     }
 
 }
