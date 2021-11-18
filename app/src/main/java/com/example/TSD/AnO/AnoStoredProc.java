@@ -67,6 +67,16 @@ public class AnoStoredProc {
             sql = sql + " "+param.name+" "+param.sqlType+";";
         }
         sql = sql + " " + "begin";
+        for (int i = 0; (params.size() > i); i++) {
+            Param param = params.get(i);
+            if (param.isArray) {
+                for (int j = 0; (param.values.size() > j); j++) {
+                    sql = sql + " " + param.name + "(" + String.valueOf(j) + "):="+String.valueOf(param.values.get(j));
+                }
+            } else {
+                sql = sql + " " + param.name + ":=" + String.valueOf(param.values.get(0))+";";
+            }
+        }
 
         //TODO: заполнение параметров и вызов
 
