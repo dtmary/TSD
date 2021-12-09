@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -101,6 +103,12 @@ public class rsx extends AppCompatActivity {
             }
         };
         RefreshThread refreshThread = new RefreshThread();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.rsx_menu, menu);
+        return true;
     }
 
     private class RefreshThread extends Thread {
@@ -203,5 +211,20 @@ public class rsx extends AppCompatActivity {
         m.put(attrotp,otp);
         data.set(curPos,m);
         drawlist();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        String title = item.getTitle().toString();
+        if (item.getItemId()==R.id.act_rsx_save) {
+            saveRsx();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void saveRsx() {
+        String sql;
+        sql = "DECLARE";
+
     }
 }
