@@ -225,6 +225,48 @@ public class rsx extends AppCompatActivity {
     public void saveRsx() {
         String sql;
         sql = "DECLARE";
+       /*
+        prcSaveSklRsx.ParamByName('in_action').AsInteger:=TypAction;
+        prcSaveSklRsx.ParamByName('in_opnum').AsInteger:=Opnum;
+        prcSaveSklRsx.ParamByName('in_docdate').Asstring:=edtDocDate.value;
+        prcSaveSklRsx.ParamByName('in_docnum').Asinteger:=docnum;
+        prcSaveSklRsx.ParamByName('in_company_id').Asinteger:=company_id;
+        prcSaveSklRsx.ParamByName('in_skladout').Asstring:=Copy('00000', 1, 5 - Length(cbSkladOut.Text)) + cbSkladOut.Text;
+        prcSaveSklRsx.ParamByName('in_skladin').Asstring:=Copy('00000', 1, 5 - Length(cbSkladIn.Text)) + cbSkladIn.Text;
+        prcSaveSklRsx.ParamByName('in_oper').Asstring:=cbKodOper.Text;
+        prcSaveSklRsx.ParamByName('in_user_id').Asstring:=User_id;
+        prcSaveSklRsx.ParamByName('is_otlog').Asstring:=IsOtlog;
+        prcSaveSklRsx.ParamByName('in_Par_Opnum').Asstring:=Par_Opnum;
+        prcSaveSklRsx.ParamByName('in_kod_post').asstring:=cbKodPost.Text;
+        prcSaveSklRsx.ParamByName('in_docfrm').asstring:=edtDocFrm.Text;
+        prcSaveSklRsx.ParamByName('in_cbfolder').Asstring:='';
+        prcSaveSklRsx.ParamByName('in_skl_rec_count').asinteger:=mdSklRsxD.RecordCount;
+        */
+
+        for (int idx = 0; idx < data.size(); idx++) {
+            Map<String, Object> m = (HashMap)data.get(idx);
+            String pki = (String)m.get(attrpki);
+
+            /*
+            prcSaveSklRsx.ParamByName('ppki_rec').ItemAsstring[i]:=mdSklRsxD.FieldByName('PKI').AsString;
+
+            prcSaveSklRsx.ParamByName('pcshid_rec').ItemAsinteger[i]:=0
+
+            prcSaveSklRsx.ParamByName('pcshid_rec').ItemAsinteger[i]:=mdSklRsxD.FieldByName('SCHID').Asinteger;
+            end;
+            prcSaveSklRsx.ParamByName('postatok_rec').ItemAsfloat[i]:=mdSklRsxD.FieldByName('Ostatok').AsFloat;
+            prcSaveSklRsx.ParamByName('pitem_count_rec').ItemAsfloat[i]:=mdSklRsxD.FieldByName('ITEM_COUNT').AsFloat;
+            prcSaveSklRsx.ParamByName('pprice_rec').ItemAsfloat[i]:=mdSklRsxD.FieldByName('PRICE').AsFloat;
+            prcSaveSklRsx.ParamByName('psumma_rec').ItemAsfloat[i]:=mdSklRsxD.FieldByName('Summa').AsFloat;
+            prcSaveSklRsx.ParamByName('paccd_rec').ItemAsstring[i]:=mdSklRsxD.FieldByName('ACCD').AsString;
+            prcSaveSklRsx.ParamByName('paccc_rec').ItemAsstring[i]:=mdSklRsxD.FieldByName('ACCC').AsString;
+            prcSaveSklRsx.ParamByName('pmg_nbr_rec').ItemAsstring[i]:=mdSklRsxD.FieldByName('MG_NBR').AsString;
+            prcSaveSklRsx.ParamByName('pmg_lot_rec').ItemAsstring[i]:=mdSklRsxD.FieldByName('MG_LOT').AsString;
+            prcSaveSklRsx.ParamByName('ptyp_pkib_rec').ItemAsinteger[i]:=mdSklRsxD.FieldByName('Typ_Pkib').AsInteger;
+            prcSaveSklRsx.ParamByName('pspz_rec').ItemAsstring[i]:=mdSklRsxD.FieldByName('SPZ').AsString;
+
+             */
+        }
 
     }
 }
