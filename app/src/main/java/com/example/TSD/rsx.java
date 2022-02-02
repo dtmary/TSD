@@ -31,7 +31,9 @@ import java.util.Map;
 public class rsx extends AppCompatActivity {
 
     private String batch;
-    private String sklad;
+    private String skladin;
+    private String skladout;
+    private String folder;
     private String attrpki = "attrpki";
     private String attrnamepki = "attrnamepki";
     private String attrtreb = "attrtreb";
@@ -40,6 +42,8 @@ public class rsx extends AppCompatActivity {
     private String attrcell = "attrcell";
     private String attrost = "attrost";
     private String attrshpz = "attrshpz";
+    private String attrmgnbr = "attrmgnbr";
+    private String attrmglot = "attrmglot";
 
     private String from[] = {attrnamepki,attrcell, attrtreb,attrost,attrotp,attrheadizd};
     private int to[] = {R.id.pki,R.id.cell ,R.id.treb,R.id.ost,R.id.otp,R.id.headizd};
@@ -89,7 +93,9 @@ public class rsx extends AppCompatActivity {
         tScan.setFocusableInTouchMode(false);
         Bundle arguments = getIntent().getExtras();
         batch = arguments.get("batch").toString();
-        sklad = arguments.get("sklad").toString();
+        skladin = arguments.get("skladin").toString();
+        skladout = arguments.get("skladout").toString();
+        folder = arguments.get("folder").toString();
         TextView txtBatch = (TextView)findViewById(R.id.txtBatch);
         txtBatch.setText(batch);
 
@@ -120,7 +126,7 @@ public class rsx extends AppCompatActivity {
         public void run() {
             try {
                 AnoQuery qrsx = new AnoQuery(activity, R.raw.qrsx);
-                qrsx.setParamString("sklad",sklad);
+                qrsx.setParamString("sklad",skladin);
                 qrsx.setParamString("batch",batch);
                 qrsx.setParamString("company_id","1");
                 qrsx.Open();
@@ -128,6 +134,8 @@ public class rsx extends AppCompatActivity {
                 Map<String, Object> m;
                 while (qrsx.resultSet.next()) {
                     m = new HashMap<String, Object>();
+                    m.put(attrmgnbr,qrsx.resultSet.getString(1));
+                    m.put(attrmglot,qrsx.resultSet.getString(2));
                     m.put(attrpki,qrsx.resultSet.getString(4));
                     m.put(attrnamepki,qrsx.resultSet.getString(4).concat(" - ").concat(qrsx.resultSet.getString(5)));
                     m.put(attrtreb,qrsx.resultSet.getString(9));
@@ -225,49 +233,128 @@ public class rsx extends AppCompatActivity {
     }
 
     public void saveRsx() {
-        String sql;
-        sql = "DECLARE";
-        sql = sql + " vin_action number;";
-        sql = sql + " vin_opnum number;";
-        sql = sql + " vin_docdate varchar2;";
-        sql = sql + " vin_docnum number;";
-        sql = sql + " vin_company_id number;";
-        sql = sql + " vin_skladout varchar2(5);";
-        sql = sql + " in_skladin varchar2(5);";
-        sql = sql + " in_oper varchar2(3);";
-        sql = sql + " ";
+        StringBuilder sql = new StringBuilder();
+        sql.append("DECLARE");
 
-        /*
-        prcSaveSklRsx.ParamByName('in_user_id').Asstring:=User_id;
-        prcSaveSklRsx.ParamByName('is_otlog').Asstring:=IsOtlog;
-        prcSaveSklRsx.ParamByName('in_Par_Opnum').Asstring:=Par_Opnum;
-        prcSaveSklRsx.ParamByName('in_kod_post').asstring:=cbKodPost.Text;
-        prcSaveSklRsx.ParamByName('in_docfrm').asstring:=edtDocFrm.Text;
-        prcSaveSklRsx.ParamByName('in_cbfolder').Asstring:='';
-        prcSaveSklRsx.ParamByName('in_skl_rec_count').asinteger:=mdSklRsxD.RecordCount;
-        */
+        sql.append("v_opnum skllog.opnum%type;");
+        sql.append("v_docnum skllog.docnum%type;");
+        sql.append("v_makeresult varchar2(255);");
+        sql.append("v_saveresult boolean;");
+        sql.append("number;");
+        sql.append("v_docdate varchar2(10);");
+        sql.append("v_docform varchar2(255);");
+        sql.append("v_company_id number;");
+        sql.append("v_kodoper number;");
+
+        sql.append("v_skladin varchar2(5);");
+        sql.append("v_skladout varchar2(5);");
+        sql.append("v_iscalcnal_r number;");
+        sql.append("v_in_calcwithreserv number;");
+        sql.append("v_folder varchar2(10);");
+
+        sql.append("v_ppkib_rec pcgsklad.ppkib_rec_type;");
+        sql.append("v_ppki_rec pcgsklad.ppki_rec_type;");
+        sql.append("v_pcshid_rec pcgsklad.pcshid_rec_type;");
+        sql.append("v_postatok_rec pcgsklad.postatok_rec_type;");
+        sql.append("v_pitem_count_rec pcgsklad.pitem_count_rec_type;");
+        sql.append("v_pprice_rec pcgsklad.pprice_rec_type;");
+        sql.append("v_psumma_rec pcgsklad.psumma_rec_type;");
+        sql.append("v_paccd_rec pcgsklad.paccd_rec_type;");
+        sql.append("v_paccc_rec pcgsklad.paccc_rec_type;");
+        sql.append("v_pmg_nbr_rec pcgsklad.pmg_nbr_rec_type;");
+        sql.append("v_pmg_lot_rec pcgsklad.pmg_lot_rec_type;");
+        sql.append("v_ptyp_pkib_rec pcgsklad.ptyp_pkib_rec_type;");
+        sql.append("v_pspz_rec pcgsklad.pspz_rec_type;");
+        sql.append("i integer;");
+        sql.append("begin");
+
+        sql.append("v_docdate := trunc(sysdate,'DAY');");
+        sql.append("v_docform := fonds.readsetting(in_sect => 'skl_DocForms',in_ident => 'RsxSkl',in_company_id => 1,in_loginid => 0);");
+        sql.append("v_company_id := 1;");
+        sql.append("v_kodoper := 133;");
+        sql.append("v_opnum := 0;");
+
+        //Параметры
+
+        sql.append("v_skladin := '00203';");
+        sql.append("v_skladout := '00203';");
+        sql.append("v_iscalcnal_r := 0;");
+        sql.append("v_in_calcwithreserv := 0;");
+        sql.append("v_folder := '';");
+        sql.append("v_docnum := 0;");
+        sql.append("cntrec := 0;");
 
         for (int idx = 0; idx < data.size(); idx++) {
             Map<String, Object> m = (HashMap)data.get(idx);
             String pki = (String)m.get(attrpki);
+            String itc = (String)m.get(attrotp);
+            String mgnbr = (String)m.get(attrmgnbr);
+            String mglot = (String)m.get(attrmglot);
+            String spz = (String)m.get(attrshpz);
 
-            /*
-            prcSaveSklRsx.ParamByName('ppki_rec').ItemAsstring[i]:=mdSklRsxD.FieldByName('PKI').AsString;
-            prcSaveSklRsx.ParamByName('pcshid_rec').ItemAsinteger[i]:=0
-            prcSaveSklRsx.ParamByName('pcshid_rec').ItemAsinteger[i]:=mdSklRsxD.FieldByName('SCHID').Asinteger;
-            end;
-            prcSaveSklRsx.ParamByName('postatok_rec').ItemAsfloat[i]:=mdSklRsxD.FieldByName('Ostatok').AsFloat;
-            prcSaveSklRsx.ParamByName('pitem_count_rec').ItemAsfloat[i]:=mdSklRsxD.FieldByName('ITEM_COUNT').AsFloat;
-            prcSaveSklRsx.ParamByName('pprice_rec').ItemAsfloat[i]:=mdSklRsxD.FieldByName('PRICE').AsFloat;
-            prcSaveSklRsx.ParamByName('psumma_rec').ItemAsfloat[i]:=mdSklRsxD.FieldByName('Summa').AsFloat;
-            prcSaveSklRsx.ParamByName('paccd_rec').ItemAsstring[i]:=mdSklRsxD.FieldByName('ACCD').AsString;
-            prcSaveSklRsx.ParamByName('paccc_rec').ItemAsstring[i]:=mdSklRsxD.FieldByName('ACCC').AsString;
-            prcSaveSklRsx.ParamByName('pmg_nbr_rec').ItemAsstring[i]:=mdSklRsxD.FieldByName('MG_NBR').AsString;
-            prcSaveSklRsx.ParamByName('pmg_lot_rec').ItemAsstring[i]:=mdSklRsxD.FieldByName('MG_LOT').AsString;
-            prcSaveSklRsx.ParamByName('ptyp_pkib_rec').ItemAsinteger[i]:=mdSklRsxD.FieldByName('Typ_Pkib').AsInteger;
-            prcSaveSklRsx.ParamByName('pspz_rec').ItemAsstring[i]:=mdSklRsxD.FieldByName('SPZ').AsString;
-             */
+            if (!itc.equals("0")) {
+                sql.append("insert into pkibsklrasp(pki, item_count, mg_nbr, mg_lot, recid, spz, accc, accd)values('" + pki + "', " + itc + ", '" + mgnbr + "', '" + mglot + "', " + idx + ", '" + spz + "', null, null);");
+                sql.append("cntrec := cntrec + 1;");
+            }
         }
 
+        sql.append("v_makeresult := pcgsklad.makepkibskl(in_docdate => v_docdate,");
+        sql.append("in_opnum => 0,");
+        sql.append("in_skladin => v_skladin,");
+        sql.append("in_calcwithreserv => v_in_calcwithreserv,");
+        sql.append("in_company_id => v_company_id,");
+        sql.append("iscalcnal_r => v_iscalcnal_r,");
+        sql.append("in_kodoper => v_kodoper);");
+
+        sql.append("i := 0;");
+        sql.append("for rec in (select * from skladuser.pkibsklraspres p) loop");
+        sql.append("i := i + 1;");
+        sql.append("v_ppkib_rec(i) := rec.pkib;");
+        sql.append("v_ppki_rec(i) := rec.pki;");
+        sql.append("v_pcshid_rec(i) := rec.schid;");
+        sql.append("v_postatok_rec(i) := 0;");
+        sql.append("v_pitem_count_rec(i) := rec.item_count;");
+        sql.append("v_pprice_rec(i) := rec.price;");
+        sql.append("v_psumma_rec(i) := rec.summa;");
+        sql.append("v_paccd_rec(i) := rec.accd;");
+        sql.append("v_paccc_rec(i) := rec.accc;");
+        sql.append("v_pmg_nbr_rec(i) := rec.mg_nbr;");
+        sql.append("v_pmg_lot_rec(i) := rec.mg_lot;");
+        sql.append("v_ptyp_pkib_rec(i) := 0;");
+        sql.append("v_pspz_rec(i) := rec.spz;");
+        sql.append("end loop;");
+
+        sql.append("v_saveresult := pcgsklad.savesklrsx(in_action => 0,");
+        sql.append("in_opnum => v_opnum,");
+        sql.append("in_docdate => v_docdate,");
+        sql.append("in_docnum => v_docnum,");
+        sql.append("in_company_id => v_company_id,");
+        sql.append("in_skladout => v_skladout,");
+        sql.append("in_skladin => v_skladin,");
+        sql.append("in_oper => v_kodoper,");
+        sql.append("in_user_id => 'TERMINAL',");
+        sql.append("is_otlog => 'N',");
+        sql.append("in_par_opnum => null,");
+        sql.append("in_kod_post => null,");
+        sql.append("in_docfrm => v_docform,");
+        sql.append("in_cbfolder => null,");
+        sql.append("in_edtfolder => v_folder,");
+        sql.append("in_skl_rec_count => cntrec,");
+        sql.append("ppkib_rec => v_ppkib_rec,");
+        sql.append("ppki_rec => v_ppki_rec,");
+        sql.append("pcshid_rec => v_pcshid_rec,");
+        sql.append("postatok_rec => v_postatok_rec,");
+        sql.append("pitem_count_rec => v_pitem_count_rec,");
+        sql.append("pprice_rec => v_pprice_rec,");
+        sql.append("psumma_rec => v_psumma_rec,");
+        sql.append("paccd_rec => v_paccd_rec,");
+        sql.append("paccc_rec => v_paccc_rec,");
+        sql.append("pmg_nbr_rec => v_pmg_nbr_rec,");
+        sql.append("pmg_lot_rec => v_pmg_lot_rec,");
+        sql.append("ptyp_pkib_rec => v_ptyp_pkib_rec,");
+        sql.append("pspz_rec => v_pspz_rec);");
+        sql.append("end;");
+
+        String sSql = sql.toString();
     }
 }

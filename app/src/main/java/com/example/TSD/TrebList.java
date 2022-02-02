@@ -69,18 +69,6 @@ public class TrebList extends AppCompatActivity {
 
         ltreblistroot = (ListView)findViewById(R.id.ltRoot);
 
-        /*AnoStoredProc p = new AnoStoredProc(this);
-        p.createFloatParam("fparam1","float",false);
-        p.createFloatParam("fparam2","floatarray",true);
-        p.createStringParam("sparam1","varchar2(255)",false);
-        p.createFloatParam("sparam2","stringarray",true);
-        p.setParamFloat("fparam1",12.f);
-        p.setParamFloat("fparam2",2.f);
-        p.setParamFloat("fparam2",2.f);
-        p.setParamString("sparam2","blah");
-        p.setParamString("sparam2","blah2");
-        String s = p.execproc();*/
-
         handler = new Handler(getBaseContext().getMainLooper()) {
             public void handleMessage(Message msg) {
                 drawlist();
@@ -92,7 +80,7 @@ public class TrebList extends AppCompatActivity {
         ltreblistroot.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                Intent intent = new Intent(activity, rsx.class);
+                Intent intent = new Intent(activity, docheader.class);
                 Map<String, Object> m = (HashMap)data.get(position);
                 String s = (String)m.get(attrbatch);
                 intent.putExtra("batch",s);

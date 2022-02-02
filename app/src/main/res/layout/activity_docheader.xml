@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="20dp"
+    android:layout_marginRight="20dp"
+    android:orientation="vertical"
+    tools:context="com.example.TSD.docheader">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical"
+            tools:context="com.example.TSD.rsx">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:text="Номер партии"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_base" />
+
+            <TextView
+                android:id="@+id/txtBatch"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_weight="1"
+                android:text="......."
+                android:textAlignment="center"
+                android:textColor="@color/Grey"
+                android:textSize="@dimen/font_base" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            tools:context="com.example.TSD.rsx">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:text="Склад отправитель"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_base" />
+
+            <TextView
+                android:id="@+id/txtSkladin"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_weight="1"
+                android:text="......."
+                android:textAlignment="center"
+                android:textColor="@color/Grey"
+                android:textSize="@dimen/font_base" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_marginTop="30dp"
+            android:orientation="vertical"
+            tools:context="com.example.TSD.rsx">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:text="Склад получатель"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_base" />
+
+            <EditText
+                android:id="@+id/edtSkladout"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_weight="1"
+                android:inputType="number"
+                android:text=""
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_base" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:orientation="vertical"
+            tools:context="com.example.TSD.rsx">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:text="Пачка номер"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_base" />
+
+            <EditText
+                android:id="@+id/edtFolder"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_weight="1"
+                android:inputType="number"
+                android:text=""
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_base" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnSubmit"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            android:onClick="onSubmitClick"
+            android:text="Далее"
+            android:textSize="@dimen/font_base" />
+
+    </LinearLayout>
+
+</ScrollView>
