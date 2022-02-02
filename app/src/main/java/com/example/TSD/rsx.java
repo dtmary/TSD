@@ -39,6 +39,7 @@ public class rsx extends AppCompatActivity {
     private String attrheadizd = "headizd";
     private String attrcell = "attrcell";
     private String attrost = "attrost";
+    private String attrshpz = "attrshpz";
 
     private String from[] = {attrnamepki,attrcell, attrtreb,attrost,attrotp,attrheadizd};
     private int to[] = {R.id.pki,R.id.cell ,R.id.treb,R.id.ost,R.id.otp,R.id.headizd};
@@ -134,6 +135,7 @@ public class rsx extends AppCompatActivity {
                     m.put(attrheadizd,qrsx.resultSet.getString(3));
                     m.put(attrcell,qrsx.resultSet.getString(11));
                     m.put(attrost,qrsx.resultSet.getString(12));
+                    m.put(attrshpz,qrsx.resultSet.getString(10));
                     data.add(m);
                 }
             }    catch (Exception throwables) {
@@ -225,15 +227,17 @@ public class rsx extends AppCompatActivity {
     public void saveRsx() {
         String sql;
         sql = "DECLARE";
-       /*
-        prcSaveSklRsx.ParamByName('in_action').AsInteger:=TypAction;
-        prcSaveSklRsx.ParamByName('in_opnum').AsInteger:=Opnum;
-        prcSaveSklRsx.ParamByName('in_docdate').Asstring:=edtDocDate.value;
-        prcSaveSklRsx.ParamByName('in_docnum').Asinteger:=docnum;
-        prcSaveSklRsx.ParamByName('in_company_id').Asinteger:=company_id;
-        prcSaveSklRsx.ParamByName('in_skladout').Asstring:=Copy('00000', 1, 5 - Length(cbSkladOut.Text)) + cbSkladOut.Text;
-        prcSaveSklRsx.ParamByName('in_skladin').Asstring:=Copy('00000', 1, 5 - Length(cbSkladIn.Text)) + cbSkladIn.Text;
-        prcSaveSklRsx.ParamByName('in_oper').Asstring:=cbKodOper.Text;
+        sql = sql + " vin_action number;";
+        sql = sql + " vin_opnum number;";
+        sql = sql + " vin_docdate varchar2;";
+        sql = sql + " vin_docnum number;";
+        sql = sql + " vin_company_id number;";
+        sql = sql + " vin_skladout varchar2(5);";
+        sql = sql + " in_skladin varchar2(5);";
+        sql = sql + " in_oper varchar2(3);";
+        sql = sql + " ";
+
+        /*
         prcSaveSklRsx.ParamByName('in_user_id').Asstring:=User_id;
         prcSaveSklRsx.ParamByName('is_otlog').Asstring:=IsOtlog;
         prcSaveSklRsx.ParamByName('in_Par_Opnum').Asstring:=Par_Opnum;
@@ -249,9 +253,7 @@ public class rsx extends AppCompatActivity {
 
             /*
             prcSaveSklRsx.ParamByName('ppki_rec').ItemAsstring[i]:=mdSklRsxD.FieldByName('PKI').AsString;
-
             prcSaveSklRsx.ParamByName('pcshid_rec').ItemAsinteger[i]:=0
-
             prcSaveSklRsx.ParamByName('pcshid_rec').ItemAsinteger[i]:=mdSklRsxD.FieldByName('SCHID').Asinteger;
             end;
             prcSaveSklRsx.ParamByName('postatok_rec').ItemAsfloat[i]:=mdSklRsxD.FieldByName('Ostatok').AsFloat;
@@ -264,7 +266,6 @@ public class rsx extends AppCompatActivity {
             prcSaveSklRsx.ParamByName('pmg_lot_rec').ItemAsstring[i]:=mdSklRsxD.FieldByName('MG_LOT').AsString;
             prcSaveSklRsx.ParamByName('ptyp_pkib_rec').ItemAsinteger[i]:=mdSklRsxD.FieldByName('Typ_Pkib').AsInteger;
             prcSaveSklRsx.ParamByName('pspz_rec').ItemAsstring[i]:=mdSklRsxD.FieldByName('SPZ').AsString;
-
              */
         }
 
