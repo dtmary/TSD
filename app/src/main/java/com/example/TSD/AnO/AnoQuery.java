@@ -35,6 +35,7 @@ public class AnoQuery {
     public Map<String,SQLParameter>  params;
     private char paramSimb = ':';
     private char macroSimb = '&';
+    private char equalSimb = '=';
     private  int _recordcount = 0;
 
     public int recordcount() {
@@ -52,11 +53,13 @@ public class AnoQuery {
     }
 
     public void setMacro(String macroName, String macroValue) {
-        Integer macropos = sql.indexOf(macroSimb+macroName);
+        String m = macroSimb+macroName;
+        Integer macropos = sql.indexOf(m);
         StringBuilder sb = new StringBuilder();
-        sb.append(sql.substring(1,macropos));
+        sb.append(sql.substring(0,macropos));
         sb.append(macroValue);
         sb.append(sql.substring(macropos+macroName.length()+1));
+        sql = sb.toString();
     }
 
     private String parseParam(int pos) {
@@ -76,7 +79,7 @@ public class AnoQuery {
         SQLParameter param;
         int curParam = 0;
         for(int i = 0; i < sql.length(); i++){
-            if (sql.charAt(i) == paramSimb) {
+            if (sql.charAt(i) == paramSimb&&sql.charAt(i+1) != equalSimb) {
                 curParam++;
                 String paramName = parseParam(i);
                 paramPositions.put(i,paramName);
@@ -212,15 +215,20 @@ public class AnoQuery {
             catch (Exception throwables) {
                 throwables.printStackTrace();
             }
-            try {
-                rs.last();
-            _recordcount = rs.getRow();
-            rs.first();
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
+            if (rs!=null) {
+              try {
+
+                    rs.last();
+
+              _recordcount = rs.getRow();
+              rs.first();
+
+              } catch (SQLException throwables) {
+                  throwables.printStackTrace();
+              }
+              resultSet = rs;
+              _status = stactive;
             }
-            resultSet = rs;
-            _status = stactive;
             return 0;
         }
 

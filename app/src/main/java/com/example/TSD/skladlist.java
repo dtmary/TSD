@@ -71,6 +71,17 @@ public class skladlist extends AppCompatActivity {
 
     void refreshlist() {
         try {
+            //Тест
+            AnoQuery qSaveRsx = new AnoQuery(activity, R.raw.qtest);
+            StringBuilder s = new StringBuilder();
+            s.append("cntrec := cntrec + 1;");
+            s.append("insert into pkibsklrasp(pki, item_count, mg_nbr, mg_lot, recid, spz, accc, accd) values ('000002', 15, '11111', '11111', 2, '11111', null, null);");
+            s.append("cntrec := cntrec + 1;");
+            qSaveRsx.setMacro("macro1",s.toString());
+            qSaveRsx.Open();
+            //Не тест
+
+
             AnoQuery qSkladlist = new AnoQuery(activity, R.raw.qsklad);
             qSkladlist.Open();
             data = new ArrayList<Map<String, Object>>(qSkladlist.recordcount());
