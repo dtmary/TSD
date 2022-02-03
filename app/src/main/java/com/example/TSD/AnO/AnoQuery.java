@@ -32,9 +32,9 @@ public class AnoQuery {
     private static Connection dbconnection = null;
     public String sql;
     public Activity activity;
-    private String jsql;
     public Map<String,SQLParameter>  params;
     private char paramSimb = ':';
+    private char macroSimb = '&';
     private  int _recordcount = 0;
 
     public int recordcount() {
@@ -49,6 +49,14 @@ public class AnoQuery {
     public void setParam(String ParamName, Object ParamValue) {
         SQLParameter param = params.get(ParamName.toUpperCase());
         param.set(ParamValue);
+    }
+
+    public void setMacro(String macroName, String macroValue) {
+        Integer macropos = sql.indexOf(macroSimb+macroName);
+        StringBuilder sb = new StringBuilder();
+        sb.append(sql.substring(1,macropos));
+        sb.append(macroValue);
+        sb.append(sql.substring(macropos+macroName.length()+1));
     }
 
     private String parseParam(int pos) {
@@ -115,8 +123,9 @@ public class AnoQuery {
         @Override
         protected Integer doInBackground(Void... voids) {
             try {
-                dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.5:1521:ORA","skladuser","sklad");
-                //connected = true;
+                //Реальный dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.5:1521:ORA","skladuser","sklad");
+                //Тестовый dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.105:1521:ORA","skladuser","sklad");
+                dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.105:1521:ORA","skladuser","sklad");
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
@@ -173,6 +182,7 @@ public class AnoQuery {
     }
     }
 
+    //TODO: переписать с использованием Thread
     private class ExecQuery extends AsyncTask<Void,Void,Integer> {
         ResultSet rs = null;
         @Override
