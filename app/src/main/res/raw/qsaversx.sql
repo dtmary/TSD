@@ -31,31 +31,21 @@ declare
   v_pspz_rec pcgsklad.pspz_rec_type;
   i integer;
 begin
-  v_docdate := trunc(sysdate,'DAY');
+  v_docdate := trunc(sysdate);
   v_docform := fonds.readsetting(in_sect => 'skl_DocForms',in_ident => 'RsxSkl',in_company_id => 1,in_loginid => 0);
   v_company_id := 1;
   v_kodoper := 133;
   v_opnum := 0;
   cntrec := 0;
+  v_docnum := 0;
+  v_iscalcnal_r := 0;
+  v_in_calcwithreserv := 0;
+
 --------
 
   &macroparams
 
-  --v_skladin := '00203';
-  --v_skladout := '00203';
-  --v_iscalcnal_r := 0;
-  --v_in_calcwithreserv := 0;
-  --v_folder := '';
-  --v_docnum := 0;
-
-  ---В цикле
-  --insert into pkibsklrasp(pki, item_count, mg_nbr, mg_lot, recid, spz, accc, accd)values('ЦАКТ303356001011', 2, '12782963', '12790056', 2, '2000101', null, null);
-  --cntrec := cntrec + 1;
-  --insert into pkibsklrasp(pki, item_count, mg_nbr, mg_lot, recid, spz, accc, accd) values ('000002', 15, '11111', '11111', 2, '11111', null, null);
-  --cntrec := cntrec + 1;
-
-  ---------------------------------------
-
+ ---------------------------------------
 
   v_makeresult := pcgsklad.makepkibskl(in_docdate => v_docdate,
                                    in_opnum => 0,
@@ -88,10 +78,10 @@ begin
                                   in_docdate => v_docdate,
                                   in_docnum => v_docnum,
                                   in_company_id => v_company_id,
-                                  in_skladout => v_skladout,
-                                  in_skladin => v_skladin,
+                                  in_skladout => v_skladin,
+                                  in_skladin => v_skladout,
                                   in_oper => v_kodoper,
-                                  in_user_id => 'TERMINAL',
+                                  in_user_id => 'TSD',
                                   is_otlog => 'N',
                                   in_par_opnum => null,
                                   in_kod_post => null,

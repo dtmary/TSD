@@ -232,58 +232,15 @@ public class rsx extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
     public void saveRsx() {
+
+        AnoQuery qSaveRsx = new AnoQuery(activity, R.raw.qsaversx);
         StringBuilder sql = new StringBuilder();
-        sql.append("DECLARE");
 
-        sql.append("v_opnum skllog.opnum%type;");
-        sql.append("v_docnum skllog.docnum%type;");
-        sql.append("v_makeresult varchar2(255);");
-        sql.append("v_saveresult boolean;");
-        sql.append("number;");
-        sql.append("v_docdate varchar2(10);");
-        sql.append("v_docform varchar2(255);");
-        sql.append("v_company_id number;");
-        sql.append("v_kodoper number;");
-
-        sql.append("v_skladin varchar2(5);");
-        sql.append("v_skladout varchar2(5);");
-        sql.append("v_iscalcnal_r number;");
-        sql.append("v_in_calcwithreserv number;");
-        sql.append("v_folder varchar2(10);");
-
-        sql.append("v_ppkib_rec pcgsklad.ppkib_rec_type;");
-        sql.append("v_ppki_rec pcgsklad.ppki_rec_type;");
-        sql.append("v_pcshid_rec pcgsklad.pcshid_rec_type;");
-        sql.append("v_postatok_rec pcgsklad.postatok_rec_type;");
-        sql.append("v_pitem_count_rec pcgsklad.pitem_count_rec_type;");
-        sql.append("v_pprice_rec pcgsklad.pprice_rec_type;");
-        sql.append("v_psumma_rec pcgsklad.psumma_rec_type;");
-        sql.append("v_paccd_rec pcgsklad.paccd_rec_type;");
-        sql.append("v_paccc_rec pcgsklad.paccc_rec_type;");
-        sql.append("v_pmg_nbr_rec pcgsklad.pmg_nbr_rec_type;");
-        sql.append("v_pmg_lot_rec pcgsklad.pmg_lot_rec_type;");
-        sql.append("v_ptyp_pkib_rec pcgsklad.ptyp_pkib_rec_type;");
-        sql.append("v_pspz_rec pcgsklad.pspz_rec_type;");
-        sql.append("i integer;");
-        sql.append("begin");
-
-        sql.append("v_docdate := trunc(sysdate,'DAY');");
-        sql.append("v_docform := fonds.readsetting(in_sect => 'skl_DocForms',in_ident => 'RsxSkl',in_company_id => 1,in_loginid => 0);");
-        sql.append("v_company_id := 1;");
-        sql.append("v_kodoper := 133;");
-        sql.append("v_opnum := 0;");
-
-        //Параметры
-
-        sql.append("v_skladin := '00203';");
-        sql.append("v_skladout := '00203';");
-        sql.append("v_iscalcnal_r := 0;");
-        sql.append("v_in_calcwithreserv := 0;");
-        sql.append("v_folder := '';");
-        sql.append("v_docnum := 0;");
-        sql.append("cntrec := 0;");
-
+        sql.append("v_skladin := '"+skladin+"';");
+        sql.append("v_skladout := '"+skladout+"';");
+        sql.append("v_folder := '"+folder+"';");
         for (int idx = 0; idx < data.size(); idx++) {
             Map<String, Object> m = (HashMap)data.get(idx);
             String pki = (String)m.get(attrpki);
@@ -292,69 +249,13 @@ public class rsx extends AppCompatActivity {
             String mglot = (String)m.get(attrmglot);
             String spz = (String)m.get(attrshpz);
 
-            if (!itc.equals("0")) {
+            if (!itc.equals("0")&&!itc.equals("")) {
                 sql.append("insert into pkibsklrasp(pki, item_count, mg_nbr, mg_lot, recid, spz, accc, accd)values('" + pki + "', " + itc + ", '" + mgnbr + "', '" + mglot + "', " + idx + ", '" + spz + "', null, null);");
                 sql.append("cntrec := cntrec + 1;");
             }
         }
 
-        sql.append("v_makeresult := pcgsklad.makepkibskl(in_docdate => v_docdate,");
-        sql.append("in_opnum => 0,");
-        sql.append("in_skladin => v_skladin,");
-        sql.append("in_calcwithreserv => v_in_calcwithreserv,");
-        sql.append("in_company_id => v_company_id,");
-        sql.append("iscalcnal_r => v_iscalcnal_r,");
-        sql.append("in_kodoper => v_kodoper);");
-
-        sql.append("i := 0;");
-        sql.append("for rec in (select * from skladuser.pkibsklraspres p) loop");
-        sql.append("i := i + 1;");
-        sql.append("v_ppkib_rec(i) := rec.pkib;");
-        sql.append("v_ppki_rec(i) := rec.pki;");
-        sql.append("v_pcshid_rec(i) := rec.schid;");
-        sql.append("v_postatok_rec(i) := 0;");
-        sql.append("v_pitem_count_rec(i) := rec.item_count;");
-        sql.append("v_pprice_rec(i) := rec.price;");
-        sql.append("v_psumma_rec(i) := rec.summa;");
-        sql.append("v_paccd_rec(i) := rec.accd;");
-        sql.append("v_paccc_rec(i) := rec.accc;");
-        sql.append("v_pmg_nbr_rec(i) := rec.mg_nbr;");
-        sql.append("v_pmg_lot_rec(i) := rec.mg_lot;");
-        sql.append("v_ptyp_pkib_rec(i) := 0;");
-        sql.append("v_pspz_rec(i) := rec.spz;");
-        sql.append("end loop;");
-
-        sql.append("v_saveresult := pcgsklad.savesklrsx(in_action => 0,");
-        sql.append("in_opnum => v_opnum,");
-        sql.append("in_docdate => v_docdate,");
-        sql.append("in_docnum => v_docnum,");
-        sql.append("in_company_id => v_company_id,");
-        sql.append("in_skladout => v_skladout,");
-        sql.append("in_skladin => v_skladin,");
-        sql.append("in_oper => v_kodoper,");
-        sql.append("in_user_id => 'TERMINAL',");
-        sql.append("is_otlog => 'N',");
-        sql.append("in_par_opnum => null,");
-        sql.append("in_kod_post => null,");
-        sql.append("in_docfrm => v_docform,");
-        sql.append("in_cbfolder => null,");
-        sql.append("in_edtfolder => v_folder,");
-        sql.append("in_skl_rec_count => cntrec,");
-        sql.append("ppkib_rec => v_ppkib_rec,");
-        sql.append("ppki_rec => v_ppki_rec,");
-        sql.append("pcshid_rec => v_pcshid_rec,");
-        sql.append("postatok_rec => v_postatok_rec,");
-        sql.append("pitem_count_rec => v_pitem_count_rec,");
-        sql.append("pprice_rec => v_pprice_rec,");
-        sql.append("psumma_rec => v_psumma_rec,");
-        sql.append("paccd_rec => v_paccd_rec,");
-        sql.append("paccc_rec => v_paccc_rec,");
-        sql.append("pmg_nbr_rec => v_pmg_nbr_rec,");
-        sql.append("pmg_lot_rec => v_pmg_lot_rec,");
-        sql.append("ptyp_pkib_rec => v_ptyp_pkib_rec,");
-        sql.append("pspz_rec => v_pspz_rec);");
-        sql.append("end;");
-
-        String sSql = sql.toString();
+        qSaveRsx.setMacro("macroparams",sql.toString());
+        qSaveRsx.Open();
     }
 }

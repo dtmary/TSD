@@ -3,5 +3,6 @@
     <item
         android:id="@+id/act_rsx_save"
         android:orderInCategory="1"
+        android:textColor="@color/black"
         android:title="Сохранить" />
 </menu>

@@ -227,8 +227,9 @@ public class AnoQuery {
                   throwables.printStackTrace();
               }
               resultSet = rs;
-              _status = stactive;
             }
+              _status = stactive;
+
             return 0;
         }
 
