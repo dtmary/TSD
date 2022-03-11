@@ -15,6 +15,7 @@ import android.widget.SimpleAdapter;
 import com.example.TSD.AnO.AnoQuery;
 import com.example.myapplication111.R;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,6 +46,7 @@ public class skladlist extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        installNewApk();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_skladlist);
         lskladlist = (ListView)findViewById(R.id.lsRoot);
@@ -97,4 +99,17 @@ public class skladlist extends AppCompatActivity {
             throwables.printStackTrace();
         }
     }
+
+    public static void installNewApk()
+    {
+        try
+        {
+            Runtime.getRuntime().exec(new String[] {"su", "-c", "pm install -r h:/newpm/TSDOVK/app-debug.apk"});
+        }
+        catch (IOException throwables)
+        {
+            throwables.printStackTrace();
+        }
+    }
+
 }
