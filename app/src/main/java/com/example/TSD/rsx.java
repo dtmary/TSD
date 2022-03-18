@@ -1,6 +1,8 @@
 package com.example.TSD;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import android.app.Activity;
 import android.content.Context;
@@ -122,8 +124,23 @@ public class rsx extends AppCompatActivity {
         qSaveRsx = new AnoQuery(activity, R.raw.qsaversx, prochandler);
     }
 
-    private void finishSave() {
+    private void finishSave(int resultcode) {
+        if (resultcode == 20999) {
+            Context context = activity.getApplicationContext();
+            NotificationCompat.Builder builder =
+                    new NotificationCompat.Builder(context, "channelID")
+                            .setSmallIcon(R.drawable.ic_saved)
+                            .setContentTitle(qSaveRsx.GetResultMessage())
+                            .setContentText("")
+                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+            try {
+                notificationManager.notify(101, builder.build());
+            } catch (Exception throwables) {
+                throwables.printStackTrace();
+            }
+        }
     }
 
     @Override

@@ -230,52 +230,29 @@ public class AnoQuery {
                 stmt = null;
 
             } catch (SQLException e) {
-                if (e.getErrorCode() == statSuccessfully) {
-                    Context context = activity.getApplicationContext();
-                    String mes = e.getMessage();
-                    int pos = mes.indexOf("\n");
-                    mes = mes.substring(1,pos);
-                    mes = mes.substring(10);
-                    NotificationCompat.Builder builder =
-                            new NotificationCompat.Builder(context, "channelID")
-                                    .setSmallIcon(R.drawable.ic_saved)
-                                    .setContentTitle(mes)
-                                    .setContentText("")
-                                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
-                    NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-                    try {
-                        notificationManager.notify(101, builder.build());
-                    } catch (Exception throwables) {
-                        throwables.printStackTrace();
-                    }
-
-                }
-                else {
-                    e.printStackTrace();
-                    Toast toast = Toast.makeText(activity.getApplicationContext(),
-                            e.getMessage(), Toast.LENGTH_SHORT);
-                    toast.show();
+                resultcode = e.getErrorCode();
+                if (resultcode == statSuccessfully) {
+                    resultmessage = e.getMessage();
+                    int pos = resultmessage.indexOf("\n");
+                    resultmessage = resultmessage.substring(1,pos);
+                    resultmessage = resultmessage.substring(10);
                 }
             }
             catch (Exception throwables) {
                 throwables.printStackTrace();
             }
             if (rs!=null) {
+                resultcode = statSuccessfully;
+                resultmessage = "";
               try {
-
                     rs.last();
-
-              _recordcount = rs.getRow();
-              rs.first();
-
+                    _recordcount = rs.getRow();
+                    rs.first();
               } catch (SQLException throwables) {
                   throwables.printStackTrace();
               }
               resultSet = rs;
             }
-            resultcode = statSuccessfully;
-            resultmessage = "";
             if (!Objects.isNull(handler)) {
                 handler.sendEmptyMessage(resultcode);
             }
