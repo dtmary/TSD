@@ -1,8 +1,17 @@
 package com.example.TSD.AnO;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.res.Resources;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
+import android.widget.Toast;
+
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+
+import com.example.myapplication111.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -159,30 +168,30 @@ public class AnoQuery {
 
     public AnoQuery(Activity client, Integer SQLID) {
         try {
-        activity = client;
-        params = new HashMap<String,SQLParameter> ();
-        sql = getStringFromRawFile(SQLID);
-        parseParams();
+            activity = client;
+            params = new HashMap<String,SQLParameter> ();
+            sql = getStringFromRawFile(SQLID);
+            parseParams();
 
-        if (connected==false) {
-            try {
-                Class.forName("oracle.jdbc.driver.OracleDriver");
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-            InitDB initDB = new InitDB();
-            initDB.execute();
-            while (connected==false) {
+            if (connected==false) {
                 try {
-                    sleep(100);
-                } catch (InterruptedException e) {
+                    Class.forName("oracle.jdbc.driver.OracleDriver");
+                } catch (ClassNotFoundException e) {
                     e.printStackTrace();
                 }
-            };
-        }
-    } catch (Exception e) {
+                InitDB initDB = new InitDB();
+                initDB.execute();
+                while (connected==false) {
+                    try {
+                        sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                };
+            }
+        } catch (Exception e) {
         e.printStackTrace();
-    }
+        }
     }
 
     //TODO: переписать с использованием Thread
@@ -209,8 +218,34 @@ public class AnoQuery {
                 rs = stmt.getResultSet();
                 stmt = null;
 
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
+            } catch (SQLException e) {
+                if (e.getErrorCode() == 20999) {
+                    Context context = activity.getApplicationContext();
+                    String mes = e.getMessage();
+                    int pos = mes.indexOf("\n");
+                    mes = mes.substring(1,pos);
+                    mes = mes.substring(10);
+                    NotificationCompat.Builder builder =
+                            new NotificationCompat.Builder(context, "channelID")
+                                    .setSmallIcon(R.drawable.ic_saved)
+                                    .setContentTitle(mes)
+                                    .setContentText("")
+                                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+                    NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+                    try {
+                        notificationManager.notify(101, builder.build());
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                    }
+
+                }
+                else {
+                    e.printStackTrace();
+                    Toast toast = Toast.makeText(activity.getApplicationContext(),
+                            e.getMessage(), Toast.LENGTH_SHORT);
+                    toast.show();
+                }
             }
             catch (Exception throwables) {
                 throwables.printStackTrace();
@@ -256,4 +291,13 @@ public class AnoQuery {
         resultSet = null;
         _status = stclosed;
     }
+
+    Thread thread = new Thread() {
+        @Override
+        public void run(){
+
+        }
+
+    };
+
 }

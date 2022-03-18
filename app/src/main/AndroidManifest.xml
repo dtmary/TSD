@@ -12,7 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication111">
-        <activity android:name="com.example.TSD.docheader"></activity>
+        <activity android:name="com.example.TSD.message"></activity>
+        <activity android:name="com.example.TSD.docheader" />
         <activity
             android:name="com.example.TSD.cnt"
             android:windowSoftInputMode="stateAlwaysVisible" />

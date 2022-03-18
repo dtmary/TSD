@@ -56,6 +56,7 @@ public class rsx extends AppCompatActivity {
     private SoundPool mSoundPool;
     private int soundIdbad;
     private int curPos;
+    private  Thread t;
     ArrayList<Map<String, Object>> data;
 
     private class SAdapter extends SimpleAdapter {

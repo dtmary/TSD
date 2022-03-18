@@ -102,4 +102,6 @@ begin
                                   pmg_lot_rec => v_pmg_lot_rec,
                                   ptyp_pkib_rec => v_ptyp_pkib_rec,
                                   pspz_rec => v_pspz_rec);
+
+  Raise_application_error(-20999, 'Документ сохранен под номером '||v_docnum);
 end;
