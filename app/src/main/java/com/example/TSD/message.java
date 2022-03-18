@@ -22,7 +22,7 @@ public class message extends AppCompatActivity {
         activity = this;
         mesView = (TextView)findViewById(R.id.mesView);
         Bundle arguments = getIntent().getExtras();
-        mesView.setText(arguments.get("batch").toString());
+        mesView.setText(arguments.get("message").toString());
     }
 
 

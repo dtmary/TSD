@@ -85,11 +85,16 @@ public class TrebList extends AppCompatActivity {
                 String s = (String)m.get(attrbatch);
                 intent.putExtra("batch",s);
                 intent.putExtra("sklad",sklad);
-                startActivity(intent);
+                startActivityForResult(intent,1);
             }
         });
 
 
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        finish();
     }
 
     void refreshlist() {

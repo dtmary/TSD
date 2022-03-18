@@ -117,9 +117,7 @@ public class rsx extends AppCompatActivity {
         RefreshThread refreshThread = new RefreshThread();
 
         prochandler = new Handler(getBaseContext().getMainLooper()) {
-            public void handleMessage(Message msg) {
-
-            }
+            public void handleMessage(Message msg) {finishSave(msg.what);}
         };
         qSaveRsx = new AnoQuery(activity, R.raw.qsaversx, prochandler);
     }
@@ -140,6 +138,10 @@ public class rsx extends AppCompatActivity {
             } catch (Exception throwables) {
                 throwables.printStackTrace();
             }
+
+            Intent intent = new Intent(activity, message.class);
+            intent.putExtra("message",qSaveRsx.GetResultMessage());
+            startActivityForResult(intent,2);
         }
     }
 
@@ -244,14 +246,17 @@ public class rsx extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
-        if (intent == null) {
-            return;
+        if (requestCode==1) {
+            String otp = intent.getStringExtra("otp");
+            Map<String, Object> m = (HashMap) data.get(curPos);
+            m.put(attrotp, otp);
+            data.set(curPos, m);
+            drawlist();
         }
-        String otp = intent.getStringExtra("otp");
-        Map<String, Object> m = (HashMap)data.get(curPos);
-        m.put(attrotp,otp);
-        data.set(curPos,m);
-        drawlist();
+        if (requestCode==2) {
+            setResult(RESULT_OK, intent);
+            activity.finish();
+        }
     }
 
     @Override

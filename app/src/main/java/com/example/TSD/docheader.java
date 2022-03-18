@@ -52,7 +52,12 @@ public class docheader extends AppCompatActivity {
         intent.putExtra("skladin",sklad);
         intent.putExtra("skladout",edtSkladout.getText().toString());
         intent.putExtra("folder",edtFolder.getText().toString());
-        startActivity(intent);
+        startActivityForResult(intent,1);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        finish();
     }
 
     TextView.OnEditorActionListener cntEditorActionListener = new TextView.OnEditorActionListener() {
