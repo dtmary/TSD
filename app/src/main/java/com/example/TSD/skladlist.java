@@ -1,21 +1,34 @@
 package com.example.TSD;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 import com.example.TSD.AnO.AnoQuery;
 import com.example.myapplication111.R;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,7 +59,7 @@ public class skladlist extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        installNewApk();
+        Update(getString(R.string.updateurl));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_skladlist);
         lskladlist = (ListView)findViewById(R.id.lsRoot);
@@ -100,16 +113,60 @@ public class skladlist extends AppCompatActivity {
         }
     }
 
-    public static void installNewApk()
-    {
-        try
-        {
-            Runtime.getRuntime().exec(new String[] {"su", "-c", "pm install -r h:/newpm/TSDOVK/app-debug.apk"});
+    public void Update(String apkurl) {
+        try {
+            //TODO: в поток
+            URL url = new URL(apkurl);
+            URLConnection c = (URLConnection) url.openConnection();
+            //c.setRequestMethod("GET");
+            c.setDoOutput(true);
+            c.connect();
+
+            String PATH = Environment.getExternalStorageDirectory() + "/download/";
+            File file = new File(PATH);
+            file.mkdirs();
+            File outputFile = new File(file, "app.apk");
+            FileOutputStream fos = new FileOutputStream(outputFile);
+
+            InputStream is = c.getInputStream();
+
+            byte[] buffer = new byte[1024];
+            int len1 = 0;
+            while ((len1 = is.read(buffer)) != -1) {
+                fos.write(buffer, 0, len1);
+            }
+            fos.close();
+            is.close();//till here, it works fine - .apk is download to my sdcard in download file
+
+            Intent promptInstall = new Intent(Intent.ACTION_VIEW)
+                    .setData(Uri.parse(PATH + "app.apk"))
+                    .setType("application/android.com.app");
+            startActivity(promptInstall);//installation is not working
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+            NotificationCompat.Builder builder =
+                    new NotificationCompat.Builder(getApplicationContext(), "channelID")
+                            .setSmallIcon(R.drawable.ic_saved)
+                            .setContentTitle("Update error!")
+                            .setContentText("")
+                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            NotificationCompat.Builder builder =
+                    new NotificationCompat.Builder(getApplicationContext(), "channelID")
+                            .setSmallIcon(R.drawable.ic_saved)
+                            .setContentTitle("Update error!")
+                            .setContentText("")
+                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
         }
-        catch (IOException throwables)
-        {
-            throwables.printStackTrace();
-        }
+
     }
 
 }
