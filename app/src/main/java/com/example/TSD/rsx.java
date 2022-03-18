@@ -50,6 +50,7 @@ public class rsx extends AppCompatActivity {
 
     private Activity activity = this;
     private Handler handler;
+    private Handler prochandler;
     private ListView ltRoot;
     private String scanCode = "";
     private EditText tScan;
@@ -57,6 +58,7 @@ public class rsx extends AppCompatActivity {
     private int soundIdbad;
     private int curPos;
     private  Thread t;
+    private AnoQuery qSaveRsx;
     ArrayList<Map<String, Object>> data;
 
     private class SAdapter extends SimpleAdapter {
@@ -111,6 +113,17 @@ public class rsx extends AppCompatActivity {
             }
         };
         RefreshThread refreshThread = new RefreshThread();
+
+        prochandler = new Handler(getBaseContext().getMainLooper()) {
+            public void handleMessage(Message msg) {
+
+            }
+        };
+        qSaveRsx = new AnoQuery(activity, R.raw.qsaversx, prochandler);
+    }
+
+    private void finishSave() {
+
     }
 
     @Override
@@ -236,7 +249,6 @@ public class rsx extends AppCompatActivity {
 
     public void saveRsx() {
 
-        AnoQuery qSaveRsx = new AnoQuery(activity, R.raw.qsaversx);
         StringBuilder sql = new StringBuilder();
 
         sql.append("v_skladin := '"+skladin+"';");

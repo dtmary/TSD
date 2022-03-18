@@ -23,6 +23,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static java.lang.Thread.sleep;
 
@@ -33,6 +34,7 @@ public class AnoQuery {
     public static final int stclosed = 0;
     public static final int stexecuted = 1;
     public static final int stactive = 2;
+    public static final int statSuccessfully = 20999;
 
     private static boolean connected = false;
 
@@ -46,6 +48,12 @@ public class AnoQuery {
     private char macroSimb = '&';
     private char equalSimb = '=';
     private  int _recordcount = 0;
+    private int resultcode;
+    private String resultmessage;
+    private Handler handler;
+
+    public int GetResultCode() {return resultcode;}
+    public String GetResultMessage() {return resultmessage;}
 
     public int recordcount() {
         return _recordcount;
@@ -166,6 +174,11 @@ public class AnoQuery {
         }
     }
 
+    public AnoQuery(Activity client, Integer SQLID, Handler h) {
+        this(client, SQLID);
+        this.handler = h;
+    }
+
     public AnoQuery(Activity client, Integer SQLID) {
         try {
             activity = client;
@@ -194,11 +207,9 @@ public class AnoQuery {
         }
     }
 
-    //TODO: переписать с использованием Thread
-    private class ExecQuery extends AsyncTask<Void,Void,Integer> {
+    private class ExecQuery extends Thread {
         ResultSet rs = null;
-        @Override
-        protected Integer doInBackground(Void... voids) {
+        public void run() {
             _status = stexecuted;
             try {
                 PreparedStatement stmt = null;
@@ -219,7 +230,7 @@ public class AnoQuery {
                 stmt = null;
 
             } catch (SQLException e) {
-                if (e.getErrorCode() == 20999) {
+                if (e.getErrorCode() == statSuccessfully) {
                     Context context = activity.getApplicationContext();
                     String mes = e.getMessage();
                     int pos = mes.indexOf("\n");
@@ -263,21 +274,20 @@ public class AnoQuery {
               }
               resultSet = rs;
             }
-              _status = stactive;
-
-            return 0;
-        }
-
-        @Override
-        protected void onPostExecute(Integer i) {
+            resultcode = statSuccessfully;
+            resultmessage = "";
+            if (!Objects.isNull(handler)) {
+                handler.sendEmptyMessage(resultcode);
+            }
             _status = stactive;
         }
+
     }
 
     public void Open() {
         Close();
         ExecQuery execQuery = new ExecQuery();
-        execQuery.execute();
+        execQuery.start();
         while (_status != stactive) {
             try {
                 sleep(100);
@@ -291,13 +301,5 @@ public class AnoQuery {
         resultSet = null;
         _status = stclosed;
     }
-
-    Thread thread = new Thread() {
-        @Override
-        public void run(){
-
-        }
-
-    };
 
 }
