@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+//import jcifs.smb.SmbFile;
+
 public class skladlist extends AppCompatActivity {
 
     private String attrsklad = "attrbatch";
@@ -59,7 +61,19 @@ public class skladlist extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Update(getString(R.string.updateurl));
+
+        //Обновленпие программы
+        class UpdateThread extends Thread {
+            UpdateThread() {
+                super();
+                start();
+            }
+            public void run() {
+                Update(getString(R.string.updateurl));
+            }
+        }
+        UpdateThread updatethread = new UpdateThread();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_skladlist);
         lskladlist = (ListView)findViewById(R.id.lsRoot);
@@ -113,9 +127,13 @@ public class skladlist extends AppCompatActivity {
         }
     }
 
+
     public void Update(String apkurl) {
+
+        SmbFile
+
+        /*
         try {
-            //TODO: в поток
             URL url = new URL(apkurl);
             URLConnection c = (URLConnection) url.openConnection();
             //c.setRequestMethod("GET");
@@ -166,6 +184,7 @@ public class skladlist extends AppCompatActivity {
 
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
         }
+         */
 
     }
 
