@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-//import jcifs.smb.SmbFile;
+import jcifs.smb.*;
 
 public class skladlist extends AppCompatActivity {
 
@@ -130,7 +130,34 @@ public class skladlist extends AppCompatActivity {
 
     public void Update(String apkurl) {
 
-        SmbFile
+        try {
+
+
+            String user = "mitya";
+            String pass ="vjyrehfrr";
+            String inpath=apkurl;
+            NtlmPasswordAuthentication auth = new NtlmPasswordAuthentication("ELMEH",user, pass);
+            SmbFile smbFile = new SmbFile(inpath,auth);
+            SmbFileInputStream is = new SmbFileInputStream(smbFile);
+
+            String outpath = Environment.getExternalStorageDirectory() + "/download/";
+            File file = new File(outpath);
+            file.mkdirs();
+            File outputFile = new File(file, "app.apk");
+            FileOutputStream fos = new FileOutputStream(outputFile);
+
+            byte[] buffer = new byte[1024];
+            int len1 = 0;
+            while ((len1 = is.read(buffer)) != -1) {
+                fos.write(buffer, 0, len1);
+            }
+            fos.close();
+            is.close();
+
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
 
         /*
         try {
