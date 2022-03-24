@@ -44,6 +44,7 @@ public class skladlist extends AppCompatActivity {
 
     private static final int MES_DRAW_LIST = 1;
     private static final int MES_NEED_UPDATE = 2;
+    private static final int MES_INSTALL_UPDATE = 3;
 
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
@@ -110,26 +111,7 @@ public class skladlist extends AppCompatActivity {
         setContentView(R.layout.activity_skladlist);
         lskladlist = (ListView)findViewById(R.id.lsRoot);
 
-        try {
-            String outpath = Environment.getExternalStorageDirectory().getPath() + "/download/";
-            File file = new File(outpath);
-            file.mkdirs();
-            outputFile = new File(file, "app.apk");
-            Uri uri = FileProvider.getUriForFile(activity.getBaseContext(), BuildConfig.APPLICATION_ID + ".provider", outputFile);
-            Intent installIntent = new Intent(Intent.ACTION_VIEW);
-            installIntent.setDataAndType(uri,"application/vnd.android.package-archive");
-            //installIntent.setDataAndType(Uri.fromFile(outputFile),"application/vnd.android.package-archive");
-            //installIntent.setData(uri);
-            //installIntent.setType("application/vnd.android.package-archive");
-
-            //installIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            installIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            startActivity(installIntent);
-
-        } catch  (Exception e) {
-            e.printStackTrace();
-        }
-        // UpdateThread updatethread = new UpdateThread();
+        UpdateThread updatethread = new UpdateThread();
 
         handler = new Handler(getBaseContext().getMainLooper()) {
             public void handleMessage(Message msg) {
@@ -137,28 +119,13 @@ public class skladlist extends AppCompatActivity {
                     case (MES_DRAW_LIST):
                         drawlist();
                         break;
-                    case (MES_NEED_UPDATE):
+                    case (MES_INSTALL_UPDATE):
                         try {
-                           /* Intent promptInstall = new Intent(Intent.ACTION_VIEW)
-                                    .setData(Uri.parse(outputFile + "app.apk"))
-                                    .setType("application/android.com.app");
-                            startActivity(promptInstall);//installation is not working
-                            */
-                            //Uri uri = Uri.fromFile(outputFile);
-
-                          /*  Uri uri = FileProvider.getUriForFile(activity.getBaseContext(), BuildConfig.APPLICATION_ID + ".provider",outputFile);
-                            Intent install = new Intent(Intent.ACTION_INSTALL_PACKAGE);
-                            install.setDataAndType(uri, "application/vnd.android.package-archive");
-                            //install.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            install.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(install);*/
-
-                            Uri uri = FileProvider.getUriForFile(activity.getBaseContext(), BuildConfig.APPLICATION_ID + ".provider",outputFile);
+                            Uri uri = FileProvider.getUriForFile(activity.getBaseContext(), BuildConfig.APPLICATION_ID + ".provider", outputFile);
                             Intent installIntent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
-                            installIntent.setDataAndType(uri,
-                                    "application/vnd.android.package-archive");
+                            installIntent.setDataAndType(uri,"application/vnd.android.package-archive");
+                            installIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                             startActivity(installIntent);
-
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -167,6 +134,7 @@ public class skladlist extends AppCompatActivity {
 
             }
         };
+
 
         skladlist.RefreshThread refreshThread = new skladlist.RefreshThread();
 
@@ -215,6 +183,7 @@ public class skladlist extends AppCompatActivity {
     }
 
 
+
     public void Update(String apkurl) {
 
         try {
@@ -222,89 +191,45 @@ public class skladlist extends AppCompatActivity {
             String pass ="vjyrehfrr";
             String inpath=apkurl;
             NtlmPasswordAuthentication auth = new NtlmPasswordAuthentication("ELMEH",user, pass);
-            SmbFile smbFile = new SmbFile(inpath,auth);
-            SmbFileInputStream is = new SmbFileInputStream(smbFile);
-
-            String outpath = Environment.getExternalStorageDirectory().getPath() + "/download/";
-            File file = new File(outpath);
-            file.mkdirs();
-            outputFile = new File(file, "app.apk");
-            FileOutputStream fos = new FileOutputStream(outputFile);
-
-            byte[] buffer = new byte[1024];
-            int len1 = 0;
-            while (len1  != -1) {
-                len1 = is.read(buffer);
-                if (len1 != -1) {
-                    fos.write(buffer, 0, len1);
+            SmbFile smbDir = new SmbFile(inpath,auth);
+            SmbFile updateFile;
+            updateFile = smbDir.listFiles()[0];
+            for (SmbFile curFile : smbDir.listFiles()) {
+                if (updateFile.createTime()<curFile.createTime()) {
+                    updateFile = curFile;
                 }
             }
-            fos.close();
-            is.close();
 
-            Message message = new Message();
-            message.what = MES_NEED_UPDATE;
-            handler.sendMessage(message);
+            long installed = activity.getPackageManager().getPackageInfo( activity.getPackageName(), 0 ).lastUpdateTime;
 
+            if (installed<updateFile.createTime())  {
+                String outpath = Environment.getExternalStorageDirectory().getPath() + "/download/";
+                File file = new File(outpath);
+                file.mkdirs();
+                outputFile = new File(file, "app.apk");
+
+                SmbFileInputStream is = new SmbFileInputStream(updateFile);
+                FileOutputStream fos = new FileOutputStream(outputFile);
+
+                byte[] buffer = new byte[1024];
+                int len1 = 0;
+                while (len1  != -1) {
+                    len1 = is.read(buffer);
+                    if (len1 != -1) {
+                        fos.write(buffer, 0, len1);
+                    }
+                }
+                fos.close();
+                is.close();
+
+                Message message = new Message();
+                message.what = MES_INSTALL_UPDATE;
+                handler.sendMessage(message);
+            }
         } catch (Exception e)
         {
             e.printStackTrace();
         }
-
-        /*
-        try {
-            URL url = new URL(apkurl);
-            URLConnection c = (URLConnection) url.openConnection();
-            //c.setRequestMethod("GET");
-            c.setDoOutput(true);
-            c.connect();
-
-            String PATH = Environment.getExternalStorageDirectory() + "/download/";
-            File file = new File(PATH);
-            file.mkdirs();
-            File outputFile = new File(file, "app.apk");
-            FileOutputStream fos = new FileOutputStream(outputFile);
-
-            InputStream is = c.getInputStream();
-
-            byte[] buffer = new byte[1024];
-            int len1 = 0;
-            while ((len1 = is.read(buffer)) != -1) {
-                fos.write(buffer, 0, len1);
-            }
-            fos.close();
-            is.close();//till here, it works fine - .apk is download to my sdcard in download file
-
-            Intent promptInstall = new Intent(Intent.ACTION_VIEW)
-                    .setData(Uri.parse(PATH + "app.apk"))
-                    .setType("application/android.com.app");
-            startActivity(promptInstall);//installation is not working
-
-        } catch (IOException e) {
-
-            e.printStackTrace();
-            NotificationCompat.Builder builder =
-                    new NotificationCompat.Builder(getApplicationContext(), "channelID")
-                            .setSmallIcon(R.drawable.ic_saved)
-                            .setContentTitle("Update error!")
-                            .setContentText("")
-                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
-            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
-        } catch (Exception e) {
-
-            e.printStackTrace();
-            NotificationCompat.Builder builder =
-                    new NotificationCompat.Builder(getApplicationContext(), "channelID")
-                            .setSmallIcon(R.drawable.ic_saved)
-                            .setContentTitle("Update error!")
-                            .setContentText("")
-                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
-            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
-        }
-         */
-
     }
 
 }
