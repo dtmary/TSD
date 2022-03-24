@@ -1,11 +1,15 @@
 package com.example.TSD;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.FileProvider;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -18,6 +22,7 @@ import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import com.example.TSD.AnO.AnoQuery;
+import com.example.myapplication111.BuildConfig;
 import com.example.myapplication111.R;
 
 import java.io.File;
@@ -37,6 +42,15 @@ import jcifs.smb.*;
 
 public class skladlist extends AppCompatActivity {
 
+    private static final int MES_DRAW_LIST = 1;
+    private static final int MES_NEED_UPDATE = 2;
+
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+
     private String attrsklad = "attrbatch";
     private String attrskladname = "skladname";
     String[] from = {attrsklad,attrskladname};
@@ -48,6 +62,8 @@ public class skladlist extends AppCompatActivity {
     private Handler handler;
     ArrayList<Map<String, Object>> data;
 
+    File outputFile; //Файл apk для обновления программы
+
     private class RefreshThread extends Thread {
         RefreshThread() {
             super();
@@ -55,13 +71,30 @@ public class skladlist extends AppCompatActivity {
         }
         public void run() {
             refreshlist();
-            handler.sendMessage(new Message());
+            Message message = new Message();
+            message.what = MES_DRAW_LIST;
+            handler.sendMessage(message);
+        }
+    }
+
+    public static void verifyStoragePermissions(Activity activity) {
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    activity,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
         }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        verifyStoragePermissions(this);
         //Обновленпие программы
         class UpdateThread extends Thread {
             UpdateThread() {
@@ -72,17 +105,69 @@ public class skladlist extends AppCompatActivity {
                 Update(getString(R.string.updateurl));
             }
         }
-        UpdateThread updatethread = new UpdateThread();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_skladlist);
         lskladlist = (ListView)findViewById(R.id.lsRoot);
 
+        try {
+            String outpath = Environment.getExternalStorageDirectory().getPath() + "/download/";
+            File file = new File(outpath);
+            file.mkdirs();
+            outputFile = new File(file, "app.apk");
+            Uri uri = FileProvider.getUriForFile(activity.getBaseContext(), BuildConfig.APPLICATION_ID + ".provider", outputFile);
+            Intent installIntent = new Intent(Intent.ACTION_VIEW);
+            installIntent.setDataAndType(uri,"application/vnd.android.package-archive");
+            //installIntent.setDataAndType(Uri.fromFile(outputFile),"application/vnd.android.package-archive");
+            //installIntent.setData(uri);
+            //installIntent.setType("application/vnd.android.package-archive");
+
+            //installIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            installIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(installIntent);
+
+        } catch  (Exception e) {
+            e.printStackTrace();
+        }
+        // UpdateThread updatethread = new UpdateThread();
+
         handler = new Handler(getBaseContext().getMainLooper()) {
             public void handleMessage(Message msg) {
-                drawlist();
+                switch (msg.what) {
+                    case (MES_DRAW_LIST):
+                        drawlist();
+                        break;
+                    case (MES_NEED_UPDATE):
+                        try {
+                           /* Intent promptInstall = new Intent(Intent.ACTION_VIEW)
+                                    .setData(Uri.parse(outputFile + "app.apk"))
+                                    .setType("application/android.com.app");
+                            startActivity(promptInstall);//installation is not working
+                            */
+                            //Uri uri = Uri.fromFile(outputFile);
+
+                          /*  Uri uri = FileProvider.getUriForFile(activity.getBaseContext(), BuildConfig.APPLICATION_ID + ".provider",outputFile);
+                            Intent install = new Intent(Intent.ACTION_INSTALL_PACKAGE);
+                            install.setDataAndType(uri, "application/vnd.android.package-archive");
+                            //install.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            install.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(install);*/
+
+                            Uri uri = FileProvider.getUriForFile(activity.getBaseContext(), BuildConfig.APPLICATION_ID + ".provider",outputFile);
+                            Intent installIntent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
+                            installIntent.setDataAndType(uri,
+                                    "application/vnd.android.package-archive");
+                            startActivity(installIntent);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                }
+
             }
         };
+
         skladlist.RefreshThread refreshThread = new skladlist.RefreshThread();
 
         lskladlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -111,7 +196,9 @@ public class skladlist extends AppCompatActivity {
                 m.put(attrskladname,qSkladlist.resultSet.getString(2));
                 data.add(m);
             }
-            handler.sendMessage(new Message());
+            Message message = new Message();
+            message.what = MES_DRAW_LIST;
+            handler.sendMessage(message);
         }    catch (Exception throwables) {
             throwables.printStackTrace();
         }
@@ -131,8 +218,6 @@ public class skladlist extends AppCompatActivity {
     public void Update(String apkurl) {
 
         try {
-
-
             String user = "mitya";
             String pass ="vjyrehfrr";
             String inpath=apkurl;
@@ -140,19 +225,26 @@ public class skladlist extends AppCompatActivity {
             SmbFile smbFile = new SmbFile(inpath,auth);
             SmbFileInputStream is = new SmbFileInputStream(smbFile);
 
-            String outpath = Environment.getExternalStorageDirectory() + "/download/";
+            String outpath = Environment.getExternalStorageDirectory().getPath() + "/download/";
             File file = new File(outpath);
             file.mkdirs();
-            File outputFile = new File(file, "app.apk");
+            outputFile = new File(file, "app.apk");
             FileOutputStream fos = new FileOutputStream(outputFile);
 
             byte[] buffer = new byte[1024];
             int len1 = 0;
-            while ((len1 = is.read(buffer)) != -1) {
-                fos.write(buffer, 0, len1);
+            while (len1  != -1) {
+                len1 = is.read(buffer);
+                if (len1 != -1) {
+                    fos.write(buffer, 0, len1);
+                }
             }
             fos.close();
             is.close();
+
+            Message message = new Message();
+            message.what = MES_NEED_UPDATE;
+            handler.sendMessage(message);
 
         } catch (Exception e)
         {
