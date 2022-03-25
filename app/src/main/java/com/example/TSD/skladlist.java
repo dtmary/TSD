@@ -45,6 +45,7 @@ public class skladlist extends AppCompatActivity {
     private static final int MES_DRAW_LIST = 1;
     private static final int MES_NEED_UPDATE = 2;
     private static final int MES_INSTALL_UPDATE = 3;
+    private static final int REQ_UPDATE = 1;
 
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
@@ -96,7 +97,7 @@ public class skladlist extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         verifyStoragePermissions(this);
-        //Обновленпие программы
+        //Обновление программы
         class UpdateThread extends Thread {
             UpdateThread() {
                 super();
@@ -110,8 +111,6 @@ public class skladlist extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_skladlist);
         lskladlist = (ListView)findViewById(R.id.lsRoot);
-
-        UpdateThread updatethread = new UpdateThread();
 
         handler = new Handler(getBaseContext().getMainLooper()) {
             public void handleMessage(Message msg) {
@@ -135,20 +134,10 @@ public class skladlist extends AppCompatActivity {
             }
         };
 
+        Intent intent = new Intent(activity, UpdateActivity.class);
+        startActivityForResult(intent,REQ_UPDATE);
 
-        skladlist.RefreshThread refreshThread = new skladlist.RefreshThread();
-
-        lskladlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                Intent intent = new Intent(activity, TrebList.class);
-                Map<String, Object> m = (HashMap)data.get(position);
-                String s = (String)m.get(attrsklad);
-                intent.putExtra("sklad",s);
-                startActivity(intent);
-            }
-        });
-
+        //UpdateThread updatethread = new UpdateThread();
     }
 
     void refreshlist() {
@@ -230,6 +219,29 @@ public class skladlist extends AppCompatActivity {
         {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        if (requestCode==REQ_UPDATE) {
+            if (requestCode==RESULT_OK) {
+                activity.finish();
+            } else {
+                skladlist.RefreshThread refreshThread = new skladlist.RefreshThread();
+                lskladlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    public void onItemClick(AdapterView<?> parent, View view,
+                                            int position, long id) {
+                        Intent intent = new Intent(activity, TrebList.class);
+                        Map<String, Object> m = (HashMap)data.get(position);
+                        String s = (String)m.get(attrsklad);
+                        intent.putExtra("sklad",s);
+                        startActivity(intent);
+                    }
+                });
+            }
+        }
+
     }
 
 }
