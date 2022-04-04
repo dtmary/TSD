@@ -56,8 +56,10 @@ public class docheader extends AppCompatActivity {
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        super.onActivityResult(requestCode, resultCode, intent);
-        finish();
+        if (resultCode == RESULT_OK) {
+            super.onActivityResult(requestCode, resultCode, intent);
+            finish();
+        }
     }
 
     TextView.OnEditorActionListener cntEditorActionListener = new TextView.OnEditorActionListener() {

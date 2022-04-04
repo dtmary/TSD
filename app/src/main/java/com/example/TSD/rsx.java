@@ -32,6 +32,8 @@ import java.util.Map;
 
 public class rsx extends AppCompatActivity {
 
+    private static final int REQ_MESSAGE = 2;
+    private static final int REQ_CNT = 1;
     private String batch;
     private String skladin;
     private String skladout;
@@ -114,6 +116,7 @@ public class rsx extends AppCompatActivity {
                 drawlist();
             }
         };
+
         RefreshThread refreshThread = new RefreshThread();
 
         prochandler = new Handler(getBaseContext().getMainLooper()) {
@@ -141,7 +144,7 @@ public class rsx extends AppCompatActivity {
 
             Intent intent = new Intent(activity, message.class);
             intent.putExtra("message",qSaveRsx.GetResultMessage());
-            startActivityForResult(intent,2);
+            startActivityForResult(intent,REQ_MESSAGE);
         }
     }
 
@@ -231,7 +234,7 @@ public class rsx extends AppCompatActivity {
                         intent.putExtra("namepki",(String)m.get(attrpki));
                         intent.putExtra("treb",(String)m.get(attrtreb));
                         intent.putExtra("otp",(String)m.get(attrotp));
-                        startActivityForResult(intent,1);
+                        startActivityForResult(intent,REQ_CNT);
                     }
                 }
                 catch (Exception throwables) {
@@ -246,16 +249,20 @@ public class rsx extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
-        if (requestCode==1) {
-            String otp = intent.getStringExtra("otp");
-            Map<String, Object> m = (HashMap) data.get(curPos);
-            m.put(attrotp, otp);
-            data.set(curPos, m);
-            drawlist();
-        }
-        if (requestCode==2) {
-            setResult(RESULT_OK, intent);
-            activity.finish();
+        try {
+            if (requestCode == REQ_CNT) {
+                String otp = intent.getStringExtra("otp");
+                Map<String, Object> m = (HashMap) data.get(curPos);
+                m.put(attrotp, otp);
+                data.set(curPos, m);
+                drawlist();
+            }
+            if (requestCode == REQ_MESSAGE) {
+                setResult(RESULT_OK, intent);
+                activity.finish();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
