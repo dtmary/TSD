@@ -231,8 +231,8 @@ public class AnoQuery {
 
             } catch (SQLException e) {
                 resultcode = e.getErrorCode();
+                resultmessage = e.getMessage();
                 if (resultcode == statSuccessfully) {
-                    resultmessage = e.getMessage();
                     int pos = resultmessage.indexOf("\n");
                     resultmessage = resultmessage.substring(1,pos);
                     resultmessage = resultmessage.substring(10);

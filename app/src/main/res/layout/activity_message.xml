@@ -11,10 +11,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:textColor="@color/black"
         android:text="TextView"
+        android:textColor="@color/black"
         android:textSize="30dp"
-        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -23,11 +23,12 @@
         android:id="@+id/button"
         android:layout_width="180dp"
         android:layout_height="69dp"
+        android:onClick="onSubmitClick"
         android:text="OK"
         android:textSize="30dp"
-        android:onClick="onSubmitClick"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/mesView" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

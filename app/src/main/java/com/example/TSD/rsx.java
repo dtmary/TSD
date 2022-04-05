@@ -32,8 +32,9 @@ import java.util.Map;
 
 public class rsx extends AppCompatActivity {
 
-    private static final int REQ_MESSAGE = 2;
     private static final int REQ_CNT = 1;
+    private static final int REQ_MESSAGE = 2;
+    private static final int ERR_MESSAGE = 3;
     private String batch;
     private String skladin;
     private String skladout;
@@ -122,7 +123,6 @@ public class rsx extends AppCompatActivity {
         prochandler = new Handler(getBaseContext().getMainLooper()) {
             public void handleMessage(Message msg) {finishSave(msg.what);}
         };
-        qSaveRsx = new AnoQuery(activity, R.raw.qsaversx, prochandler);
     }
 
     private void finishSave(int resultcode) {
@@ -145,6 +145,11 @@ public class rsx extends AppCompatActivity {
             Intent intent = new Intent(activity, message.class);
             intent.putExtra("message",qSaveRsx.GetResultMessage());
             startActivityForResult(intent,REQ_MESSAGE);
+        }
+        else {
+            Intent intent = new Intent(activity, message.class);
+            intent.putExtra("message",qSaveRsx.GetResultMessage());
+            startActivityForResult(intent,ERR_MESSAGE);
         }
     }
 
@@ -209,7 +214,6 @@ public class rsx extends AppCompatActivity {
     }
 
     TextView.OnEditorActionListener edtPKIOnEditorActionListener = new TextView.OnEditorActionListener() {
-
         @Override
         public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
             if(keyEvent.getAction() == KeyEvent.ACTION_UP && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER){
@@ -240,7 +244,6 @@ public class rsx extends AppCompatActivity {
                 catch (Exception throwables) {
                     throwables.printStackTrace();
                 }
-
             }
             return true;
         }
@@ -278,26 +281,66 @@ public class rsx extends AppCompatActivity {
 
     public void saveRsx() {
 
-        StringBuilder sql = new StringBuilder();
+        StringBuilder errString = new StringBuilder();
+        if (!testData(errString)) {
+            Intent intent = new Intent(activity, message.class);
+            intent.putExtra("message", errString.toString());
+            startActivityForResult(intent, ERR_MESSAGE);
+        }
+        else {
+            qSaveRsx = new AnoQuery(activity, R.raw.qsaversx, prochandler);
+            StringBuilder sql = new StringBuilder();
 
-        sql.append("v_skladin := '"+skladin+"';");
-        sql.append("v_skladout := '"+skladout+"';");
-        sql.append("v_folder := '"+folder+"';");
-        for (int idx = 0; idx < data.size(); idx++) {
-            Map<String, Object> m = (HashMap)data.get(idx);
-            String pki = (String)m.get(attrpki);
-            String itc = (String)m.get(attrotp);
-            String mgnbr = (String)m.get(attrmgnbr);
-            String mglot = (String)m.get(attrmglot);
-            String spz = (String)m.get(attrshpz);
+            sql.append("v_skladin := '" + skladin + "';");
+            sql.append("v_skladout := '" + skladout + "';");
+            sql.append("v_folder := '" + folder + "';");
+            for (int idx = 0; idx < data.size(); idx++) {
+                Map<String, Object> m = (HashMap) data.get(idx);
+                String pki = (String) m.get(attrpki);
+                String itc = (String) m.get(attrotp);
+                String mgnbr = (String) m.get(attrmgnbr);
+                String mglot = (String) m.get(attrmglot);
+                String spz = (String) m.get(attrshpz);
 
-            if (!itc.equals("0")&&!itc.equals("")) {
-                sql.append("insert into pkibsklrasp(pki, item_count, mg_nbr, mg_lot, recid, spz, accc, accd)values('" + pki + "', " + itc + ", '" + mgnbr + "', '" + mglot + "', " + idx + ", '" + spz + "', null, null);");
-                sql.append("cntrec := cntrec + 1;");
+                if (!itc.equals("0") && !itc.equals("")) {
+                    sql.append("insert into pkibsklrasp(pki, item_count, mg_nbr, mg_lot, recid, spz, accc, accd)values('" + pki + "', " + itc + ", '" + mgnbr + "', '" + mglot + "', " + idx + ", '" + spz + "', null, null);");
+                    sql.append("cntrec := cntrec + 1;");
+                }
+            }
+
+            qSaveRsx.setMacro("macroparams", sql.toString());
+            qSaveRsx.Open();
+        }
+    }
+
+    public boolean testData(StringBuilder s) {
+        boolean result = true;
+
+        try {
+            for (int idx = 0; idx < data.size(); idx++) {
+                Map<String, Object> m = (HashMap) data.get(idx);
+                float fitc = 0;
+                float fost = 0;
+                String pki   = (String) m.get(attrpki);
+                String stitc = (String) m.get(attrotp);
+                String stost = (String) m.get(attrost);
+                if (!stitc.equals("")) {
+                    fitc = Float.parseFloat(stitc);
+                }
+                if (!stost.equals("")) {
+                    fost = Float.parseFloat(stost);
+                }
+                if (fitc>fost) {
+                    result = false;
+                    s.append("ПКИ "+pki+": не хватает остатков\n");
+                }
             }
         }
-
-        qSaveRsx.setMacro("macroparams",sql.toString());
-        qSaveRsx.Open();
+        catch (Exception e) {
+            e.printStackTrace();
+            result = false;
+            s.append("Неизвестная ошибка\n");
+        }
+        return(result);
     }
 }
