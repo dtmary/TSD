@@ -78,14 +78,21 @@ public class rsx extends AppCompatActivity {
             String sTreb = (String) rec.get(attrtreb);
             String sOtp =  (String) rec.get(attrotp);
             Float treb = Float.valueOf(sTreb);
-            Float otp;
-            if (sOtp.equals("")) {
-                otp = 0.f;
+            Float otp = 0.f;
+            if (!sOtp.equals("")) {
+                otp = Float.valueOf(sOtp);
             }
-                else otp = Float.valueOf(sOtp);
             if (treb.equals(otp)) {
                 view.setBackgroundResource(R.color.WhiteGreen);
             }
+            float fOst = 0;
+            if (!((String)rec.get(attrost)).equals("")) {
+                fOst = Float.parseFloat((String)rec.get(attrost));
+            }
+            if (otp > fOst) {
+                view.setBackgroundResource(R.color.WhiteRed);
+            }
+
             return view;
         }
     }
