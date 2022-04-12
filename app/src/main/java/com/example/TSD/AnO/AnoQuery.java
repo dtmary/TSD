@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import static android.provider.Settings.System.getString;
 import static java.lang.Thread.sleep;
 
 public class AnoQuery {
@@ -145,7 +146,9 @@ public class AnoQuery {
             try {
                 //Реальный dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.5:1521:ORA","skladuser","sklad");
                 //Тестовый dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.105:1521:ORA","skladuser","sklad");
-                dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.105:1521:ORA","skladuser","sklad");
+                dbconnection = DriverManager.getConnection(activity.getString(R.string.oraconnectiontest),
+                                                            activity.getString(R.string.oralogin),
+                                                            activity.getString(R.string.orapassword));
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }

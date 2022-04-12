@@ -12,5 +12,9 @@
     <string name="streblisthead">:список требований</string>
 
     <string name="updateurl">smb://192.168.0.25/pub/apps/newpm/TSDOVK/</string>
+    <string name="oraconnectiontest">jdbc:oracle:thin:@192.168.0.105:1521:ORA</string>
+    <string name="oraconnectionreal">jdbc:oracle:thin:@192.168.0.5:1521:ORA</string>
+    <string name="oralogin">skladuser</string>
+    <string name="orapassword">sklad</string>
 
 </resources>
