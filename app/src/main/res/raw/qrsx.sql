@@ -3,7 +3,7 @@ select t.docnum, t.indnum, t.decnumwhere, t.part, t.namepki, t.buyer, t.opnum, t
         from skladuser.rz_zakaz z
         where z.id_spz=t.id_spz) as shpz,
        mfg.Get_Cell_Pki(t.part, sklad, 0) as cell,
-       (select sum(s.ostatok) as ost from skladuser.sklad s,
+       (select nvl(sum(s.ostatok),0) as ost from skladuser.sklad s,
                       skladuser.pkib pk
         where s.pkib = pk.pkib
           and s.sklad = :sklad
