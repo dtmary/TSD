@@ -50,7 +50,9 @@
     <ListView
         android:id="@+id/ltRoot"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:listSelector="@drawable/selector"
+        android:choiceMode="singleChoice">
     </ListView>
 
 

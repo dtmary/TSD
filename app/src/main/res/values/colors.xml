@@ -12,4 +12,5 @@
     <color name="Grey">#A0A0A0</color>
     <color name="WhiteGreen">#D4F3D1</color>
     <color name="WhiteRed">#F4D3D1</color>
+    <color name="Selected">#9999DD</color>
 </resources>

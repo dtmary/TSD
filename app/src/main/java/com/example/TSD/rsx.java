@@ -3,6 +3,7 @@ package com.example.TSD;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.res.ResourcesCompat;
 
 import android.app.Activity;
 import android.content.Context;
@@ -18,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -64,6 +66,8 @@ public class rsx extends AppCompatActivity {
     private int curPos;
     private  Thread t;
     private AnoQuery qSaveRsx;
+    private String selectedPki;
+    private int selectedPosition;
     ArrayList<Map<String, Object>> data;
 
     private class SAdapter extends SimpleAdapter {
@@ -74,25 +78,30 @@ public class rsx extends AppCompatActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View view = super.getView(position, convertView, parent);
-            HashMap rec = (HashMap)data.get(position);
-            String sTreb = (String) rec.get(attrtreb);
-            String sOtp =  (String) rec.get(attrotp);
-            Float treb = Float.valueOf(sTreb);
-            Float otp = 0.f;
-            if (!sOtp.equals("")) {
-                otp = Float.valueOf(sOtp);
+            if (position == selectedPosition) {
+                view.setBackgroundResource(R.color.Selected);
             }
-            if (treb.equals(otp)) {
-                view.setBackgroundResource(R.color.WhiteGreen);
+            else {
+                view.setBackgroundResource(R.color.white);
+                HashMap rec = (HashMap) data.get(position);
+                String sTreb = (String) rec.get(attrtreb);
+                String sOtp = (String) rec.get(attrotp);
+                Float treb = Float.valueOf(sTreb);
+                Float otp = 0.f;
+                if (!sOtp.equals("")) {
+                    otp = Float.valueOf(sOtp);
+                }
+                if (treb.equals(otp)) {
+                    view.setBackgroundResource(R.color.WhiteGreen);
+                }
+                float fOst = 0;
+                if (!((String) rec.get(attrost)).equals("")) {
+                    fOst = Float.parseFloat((String) rec.get(attrost));
+                }
+                if (otp > fOst) {
+                    view.setBackgroundResource(R.color.WhiteRed);
+                }
             }
-            float fOst = 0;
-            if (!((String)rec.get(attrost)).equals("")) {
-                fOst = Float.parseFloat((String)rec.get(attrost));
-            }
-            if (otp > fOst) {
-                view.setBackgroundResource(R.color.WhiteRed);
-            }
-
             return view;
         }
     }
@@ -197,6 +206,7 @@ public class rsx extends AppCompatActivity {
             }    catch (Exception throwables) {
                 throwables.printStackTrace();
             }
+
             handler.sendMessage(new Message());
         }
     }
@@ -205,10 +215,42 @@ public class rsx extends AppCompatActivity {
         try {
             sAdapter = new SAdapter(this, data, R.layout.sostrow, from, to);
             ltRoot.setAdapter(sAdapter);
+            selectedPosition = -1;
+            ltRoot.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                public void onItemClick(AdapterView<?> parent, View view,
+                                        int position, long id) {
+                     try {
+                    Map<String, Object> m = (HashMap) data.get(position);
+                    selectedPki = (String) m.get(attrpki);
+                    View sView = view;
+                    if (selectedPosition == position) {
+                        sView.setBackgroundResource(R.color.white);
+                        selectedPosition = -1;
+                    } else {
+                        sView.setBackgroundResource(R.color.Selected);
+                        if (selectedPosition != -1) {
+                            View v = ltRoot.getChildAt(selectedPosition - ltRoot.getFirstVisiblePosition());
+                            if (v != null) {
+                                v.setBackgroundResource(R.color.white);
+                            }
+                        }
+                        selectedPosition = position;
+                    }
+                } catch (Exception e)
+
+                {
+                    e.printStackTrace();
+                }
+
+                }
+            });
+
         } catch (Exception throwables) {
             throwables.printStackTrace();
         }
     }
+
+
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -281,6 +323,14 @@ public class rsx extends AppCompatActivity {
         String title = item.getTitle().toString();
         if (item.getItemId()==R.id.act_rsx_save) {
             saveRsx();
+        }
+        //Показываем позиции замены
+        if (item.getItemId()==R.id.act_zam) {
+            Intent intent = new Intent(activity, Activity_zam.class);
+            //Map<String, Object> m = (HashMap)data.get(curPos);
+            //intent.putExtra("pki",(String)m.get(attrpki));
+            //intent.putExtra("sklad",(String)m.get(attrtreb));
+            startActivityForResult(intent,REQ_CNT);
         }
         return super.onOptionsItemSelected(item);
     }
