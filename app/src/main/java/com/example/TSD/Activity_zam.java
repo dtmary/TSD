@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
@@ -23,7 +24,8 @@ public class Activity_zam extends AppCompatActivity {
 
     private static final String attrpki = "attrpki";
     private static final String attrcell = "attrcell";
-    private static final String attrcntzam = "attrcntzam";
+    private static final String attrcnt = "attrcntzam";
+    private static final String attrname = "attrname";
     private Activity activity = this;
     private ArrayList<Map<String, Object>> data;
     private AnoQuery qZam;
@@ -33,31 +35,15 @@ public class Activity_zam extends AppCompatActivity {
     private ListView ltRoot;
     private Handler handler;
 
-    private String from[] = {attrpki, attrcell, attrcntzam};
-    private int to[] = {R.id.pki,R.id.cell ,R.id.cntzam};
+    private String from[] = {attrpki, attrcell, attrcnt};
+    private int to[] = {R.id.pki,R.id.cell ,R.id.cnt};
 
     private class SAdapter extends SimpleAdapter {
 
         public SAdapter(Activity_zam activity_zam, ArrayList<Map<String, Object>> data, int zamrow, String[] from, int[] to) {
             super(activity, data, R.layout.zamrow, from, to);
         }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View view = super.getView(position, convertView, parent);
-            HashMap rec = (HashMap)data.get(position);
-            String sPki = (String) rec.get(attrpki);
-
-            String cntzam = (String) rec.get(attrcntzam);
-
-        //    if (otp > fOst) {
-        //        view.setBackgroundResource(R.color.WhiteRed);
-        //    }
-
-            return view;
-        }
     }
-
 
     private Activity_zam.SAdapter sAdapter;
 
@@ -65,6 +51,19 @@ public class Activity_zam extends AppCompatActivity {
         try {
             sAdapter = new Activity_zam.SAdapter(this, data, R.layout.zamrow, from, to);
             ltRoot.setAdapter(sAdapter);
+            ltRoot.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                public void onItemClick(AdapterView<?> parent, View view,
+                                        int position, long id) {
+                    Map<String, Object> m = (HashMap)data.get(position);
+                    Intent intent = new Intent();
+                    intent.putExtra("pkizam", (String)m.get(attrpki));
+                    intent.putExtra("cellzam", (String)m.get(attrcell));
+                    intent.putExtra("namezam", (String)m.get(attrname));
+                    intent.putExtra("cntzam", (String)m.get(attrcnt));
+                    setResult(RESULT_OK, intent);
+                    activity.finish();
+                }
+            });
         } catch (Exception throwables) {
             throwables.printStackTrace();
         }
@@ -86,8 +85,9 @@ public class Activity_zam extends AppCompatActivity {
                 while (qZam.resultSet.next()) {
                     m = new HashMap<String, Object>();
                     m.put(attrpki,qZam.resultSet.getString(1));
-                    m.put(attrcntzam,qZam.resultSet.getString(2));
+                    m.put(attrcnt,qZam.resultSet.getString(2));
                     m.put(attrcell,qZam.resultSet.getString(3));
+                    m.put(attrname,qZam.resultSet.getString(4));
                     data.add(m);
                 }
             }    catch (Exception throwables) {
@@ -121,10 +121,7 @@ public class Activity_zam extends AppCompatActivity {
     public void onSubmitClick(View view)
     {
         try {
-            Intent intent = new Intent();
-            //intent.putExtra("otp", tCnt.getText().toString());
-            setResult(RESULT_OK, intent);
-            activity.finish();
+
         }
         catch (Throwable e) {
             e.printStackTrace();

@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/grp1">
     <item
         android:id="@+id/act_rsx_save"
         android:orderInCategory="1"
         android:textColor="@color/black"
         android:title="Сохранить" />
+    </group>
+    <group android:id="@+id/grp2">
     <item
         android:id="@+id/act_zam"
         android:orderInCategory="2"
         android:textColor="@color/black"
         android:title="Заменить позицию" />
+    <item
+        android:id="@+id/act_notzam"
+        android:orderInCategory="2"
+        android:textColor="@color/black"
+        android:title="Вернуть замену" />
+    </group>
 </menu>

@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.core.view.MenuCompat;
 
 import android.app.Activity;
 import android.content.Context;
@@ -37,6 +38,7 @@ public class rsx extends AppCompatActivity {
     private static final int REQ_CNT = 1;
     private static final int REQ_MESSAGE = 2;
     private static final int ERR_MESSAGE = 3;
+    private static final int REQ_ZAM = 4;
     private String batch;
     private String skladin;
     private String skladout;
@@ -51,6 +53,10 @@ public class rsx extends AppCompatActivity {
     private String attrshpz = "attrshpz";
     private String attrmgnbr = "attrmgnbr";
     private String attrmglot = "attrmglot";
+    private String attroldpki = "attroldpki";
+    private String attroldtreb = "attroldtreb";
+    private String attroldcell = "attroldcell";
+    private String attroldname = "attroldname";
 
     private String from[] = {attrnamepki,attrcell, attrtreb,attrost,attrotp,attrheadizd};
     private int to[] = {R.id.pki,R.id.cell ,R.id.treb,R.id.ost,R.id.otp,R.id.headizd};
@@ -172,6 +178,7 @@ public class rsx extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.rsx_menu, menu);
+        //menu.setGroupDividerEnabled(true);
         return true;
     }
 
@@ -301,6 +308,9 @@ public class rsx extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
+        if (resultCode==RESULT_CANCELED) {
+            return;
+        }
         try {
             if (requestCode == REQ_CNT) {
                 String otp = intent.getStringExtra("otp");
@@ -313,6 +323,29 @@ public class rsx extends AppCompatActivity {
                 setResult(RESULT_OK, intent);
                 activity.finish();
             }
+            if (requestCode == REQ_ZAM) {
+                //TODO: заменить
+                Map<String, Object> m = (HashMap) data.get(selectedPosition);
+                String pkizam = intent.getStringExtra("pkizam");
+                String cellzam = intent.getStringExtra("cellzam");
+                String namezam = intent.getStringExtra("namezam");
+                float cntzam = Float.valueOf(intent.getStringExtra("cntzam"));
+                float cnttreb = Float.parseFloat((String)m.get(attrtreb));
+
+                //сохранение данных по позиции состава
+                m.put(attroldpki, m.get(attrpki));
+                m.put(attroldtreb, m.get(attrtreb));
+                m.put(attroldcell, m.get(attrcell));
+                m.put(attroldname,m.get(attrnamepki));
+
+                //добавление замены
+                m.put(attrpki, pkizam);
+                m.put(attrtreb, Float.toString(cnttreb*cntzam));
+                m.put(attrcell, cellzam);
+                m.put(attrnamepki,pkizam.concat(" - ").concat(namezam));
+                data.set(selectedPosition, m);
+                drawlist();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -321,17 +354,30 @@ public class rsx extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         String title = item.getTitle().toString();
-        if (item.getItemId()==R.id.act_rsx_save) {
+        if (item.getItemId() == R.id.act_rsx_save) {
             saveRsx();
         }
         //Показываем позиции замены
-        if (item.getItemId()==R.id.act_zam) {
+        if (item.getItemId() == R.id.act_zam) {
             Intent intent = new Intent(activity, Activity_zam.class);
-            //Map<String, Object> m = (HashMap)data.get(curPos);
-            //intent.putExtra("pki",(String)m.get(attrpki));
-            //intent.putExtra("sklad",(String)m.get(attrtreb));
-            startActivityForResult(intent,REQ_CNT);
+            Map<String, Object> m = (HashMap) data.get(selectedPosition);
+            intent.putExtra("pki", (String) m.get(attrpki));
+            intent.putExtra("sklad", skladin);
+            startActivityForResult(intent, REQ_ZAM);
         }
+        //Возврат замены
+        if (item.getItemId()==R.id.act_notzam) {
+            Map<String, Object> m = (HashMap) data.get(selectedPosition);
+            if (m.get(attroldpki)!=null) {
+                m.put(attrpki, m.get(attroldpki));
+                m.put(attrtreb, m.get(attroldtreb));
+                m.put(attrcell, m.get(attroldcell));
+                m.put(attrnamepki, m.get(attroldname));
+                m.put(attroldpki, null);
+                data.set(selectedPosition, m);
+                drawlist();
+            }
+         }
         return super.onOptionsItemSelected(item);
     }
 
