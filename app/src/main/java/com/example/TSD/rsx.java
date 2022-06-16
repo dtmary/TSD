@@ -73,7 +73,7 @@ public class rsx extends AppCompatActivity {
     private  Thread t;
     private AnoQuery qSaveRsx;
     private String selectedPki;
-    private int selectedPosition;
+    private int selectedPosition = -1;
     ArrayList<Map<String, Object>> data;
 
     private class SAdapter extends SimpleAdapter {
@@ -222,7 +222,7 @@ public class rsx extends AppCompatActivity {
         try {
             sAdapter = new SAdapter(this, data, R.layout.sostrow, from, to);
             ltRoot.setAdapter(sAdapter);
-            selectedPosition = -1;
+            ltRoot.setSelection(selectedPosition);
             ltRoot.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
@@ -289,8 +289,9 @@ public class rsx extends AppCompatActivity {
                         mSoundPool.play(soundIdbad, 1, 1, 1, 0, 1f);
                     }
                     else {
+                        selectedPosition = curPos;
                         Intent intent = new Intent(activity, cnt.class);
-                        Map<String, Object> m = (HashMap)data.get(curPos);
+                        Map<String, Object> m = (HashMap)data.get(selectedPosition);
                         intent.putExtra("namepki",(String)m.get(attrpki));
                         intent.putExtra("treb",(String)m.get(attrtreb));
                         intent.putExtra("otp",(String)m.get(attrotp));
@@ -314,10 +315,11 @@ public class rsx extends AppCompatActivity {
         try {
             if (requestCode == REQ_CNT) {
                 String otp = intent.getStringExtra("otp");
-                Map<String, Object> m = (HashMap) data.get(curPos);
+                Map<String, Object> m = (HashMap) data.get(selectedPosition);
                 m.put(attrotp, otp);
-                data.set(curPos, m);
+                data.set(selectedPosition, m);
                 drawlist();
+                //ltRoot.smoothScrollToPosition(selectedPosition);//setSelection(selectedPosition);
             }
             if (requestCode == REQ_MESSAGE) {
                 setResult(RESULT_OK, intent);
@@ -378,6 +380,15 @@ public class rsx extends AppCompatActivity {
                 drawlist();
             }
          }
+
+        if (item.getItemId()==R.id.act_cnt) {
+            Intent intent = new Intent(activity, cnt.class);
+            Map<String, Object> m = (HashMap)data.get(selectedPosition);
+            intent.putExtra("namepki",(String)m.get(attrpki));
+            intent.putExtra("treb",(String)m.get(attrtreb));
+            intent.putExtra("otp",(String)m.get(attrotp));
+            startActivityForResult(intent,REQ_CNT);
+        }
         return super.onOptionsItemSelected(item);
     }
 

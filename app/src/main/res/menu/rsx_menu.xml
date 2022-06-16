@@ -15,8 +15,13 @@
         android:title="Заменить позицию" />
     <item
         android:id="@+id/act_notzam"
-        android:orderInCategory="2"
+        android:orderInCategory="3"
         android:textColor="@color/black"
         android:title="Вернуть замену" />
+        <item
+            android:id="@+id/act_cnt"
+            android:orderInCategory="3"
+            android:textColor="@color/black"
+            android:title="Изменить кол-во" />
     </group>
 </menu>

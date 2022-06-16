@@ -41,7 +41,7 @@ public class AnoQuery {
 
     private int _status = 0;
     public ResultSet resultSet;
-    private static Connection dbconnection = null;
+    private static Connection dbconnection;
     public String sql;
     public Activity activity;
     public Map<String,SQLParameter>  params;
@@ -140,27 +140,27 @@ public class AnoQuery {
         return  baos.toString()+"  ";
     }
 
-    private class InitDB extends AsyncTask<Void,Void,Integer> {
-        @Override
-        protected Integer doInBackground(Void... voids) {
-            try {
-                //Реальный dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.5:1521:ORA","skladuser","sklad");
-                //Тестовый dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.105:1521:ORA","skladuser","sklad");
-                dbconnection = DriverManager.getConnection(activity.getString(R.string.oraconnectionreal),
-                                                            activity.getString(R.string.oralogin),
-                                                            activity.getString(R.string.orapassword));
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
+    private class InitDB extends Thread  {
+        public void run() {
+            while (!connected) {
+                try {
+                    //Реальный dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.5:1521:ORA","skladuser","sklad");
+                    //Тестовый dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.105:1521:ORA","skladuser","sklad");
+                    dbconnection = DriverManager.getConnection(activity.getString(R.string.oraconnectionreal),
+                            activity.getString(R.string.oralogin),
+                            activity.getString(R.string.orapassword));
+                    connected = true;
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                    try {
+                        sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                } catch (Exception throwables) {
+                    throwables.printStackTrace();
+                }
             }
-            catch (Exception throwables) {
-                throwables.printStackTrace();
-            }
-            connected = true;
-            return 0;
-        }
-        @Override
-        protected void onPostExecute(Integer i) {
-            connected = true;
         }
     }
 
@@ -188,23 +188,6 @@ public class AnoQuery {
             params = new HashMap<String,SQLParameter> ();
             sql = getStringFromRawFile(SQLID);
             parseParams();
-
-            if (connected==false) {
-                try {
-                    Class.forName("oracle.jdbc.driver.OracleDriver");
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
-                InitDB initDB = new InitDB();
-                initDB.execute();
-                while (connected==false) {
-                    try {
-                        sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                };
-            }
         } catch (Exception e) {
         e.printStackTrace();
         }
@@ -215,6 +198,27 @@ public class AnoQuery {
         public void run() {
             _status = stexecuted;
             try {
+                connected = (dbconnection!=null);
+                if (connected) {
+                    connected = (dbconnection.isValid(0));
+                }
+                if (!connected) {
+                    try {
+                        Class.forName("oracle.jdbc.driver.OracleDriver");
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    InitDB initDB = new InitDB();
+                    initDB.start();
+                    while (connected==false) {
+                        try {
+                            sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    };
+                }
+
                 PreparedStatement stmt = null;
                 stmt = dbconnection.prepareStatement(sql);
                 for (Map.Entry<String, SQLParameter> pair : params.entrySet()) {
