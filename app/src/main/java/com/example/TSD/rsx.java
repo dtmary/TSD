@@ -6,6 +6,7 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.view.MenuCompat;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -39,6 +40,7 @@ public class rsx extends AppCompatActivity {
     private static final int REQ_MESSAGE = 2;
     private static final int ERR_MESSAGE = 3;
     private static final int REQ_ZAM = 4;
+    private static final int REQ_CLOSEWIND = 5;
     private String batch;
     private String skladin;
     private String skladout;
@@ -201,7 +203,7 @@ public class rsx extends AppCompatActivity {
                     m.put(attrmgnbr,qrsx.resultSet.getString(1));
                     m.put(attrmglot,qrsx.resultSet.getString(2));
                     m.put(attrpki,qrsx.resultSet.getString(4));
-                    m.put(attrnamepki,qrsx.resultSet.getString(4).concat(" - ").concat(qrsx.resultSet.getString(5)));
+                    m.put(attrnamepki,qrsx.resultSet.getString(4).concat(" - ").concat(qrsx.resultSet.getString(5).substring(0,8)));
                     m.put(attrtreb,qrsx.resultSet.getString(9));
                     m.put(attrotp,"");
                     m.put(attrheadizd,qrsx.resultSet.getString(3));
@@ -248,7 +250,6 @@ public class rsx extends AppCompatActivity {
                 {
                     e.printStackTrace();
                 }
-
                 }
             });
 
@@ -326,7 +327,6 @@ public class rsx extends AppCompatActivity {
                 activity.finish();
             }
             if (requestCode == REQ_ZAM) {
-                //TODO: заменить
                 Map<String, Object> m = (HashMap) data.get(selectedPosition);
                 String pkizam = intent.getStringExtra("pkizam");
                 String cellzam = intent.getStringExtra("cellzam");
@@ -347,6 +347,11 @@ public class rsx extends AppCompatActivity {
                 m.put(attrnamepki,pkizam.concat(" - ").concat(namezam));
                 data.set(selectedPosition, m);
                 drawlist();
+            }
+            if (requestCode == REQ_CLOSEWIND) {
+                if (resultCode == RESULT_OK) {
+                    activity.finish();
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -456,5 +461,13 @@ public class rsx extends AppCompatActivity {
             s.append("Неизвестная ошибка\n");
         }
         return(result);
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        Intent intent = new Intent(activity, messageyesno.class);
+        intent.putExtra("message", "Прервать операцию?");
+        startActivityForResult(intent,REQ_CLOSEWIND);
     }
 }
