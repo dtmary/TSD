@@ -6,6 +6,10 @@ import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
+import android.view.View;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
@@ -21,6 +25,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -51,7 +56,22 @@ public class AnoQuery {
     private  int _recordcount = 0;
     private int resultcode;
     private String resultmessage;
-    private Handler handler;
+    public Handler handler;
+    public int rowlayout;
+    public String[] from;
+    public int[] to;
+    public ListView view;
+
+    private String[] fields;
+    private ArrayList<Map<String, Object>> data;
+
+    public String[] getFields() {
+        return fields;
+    }
+
+    public ArrayList<Map<String, Object>> getData() {
+        return data;
+    }
 
     public int GetResultCode() {return resultcode;}
     public String GetResultMessage() {return resultmessage;}
@@ -193,9 +213,31 @@ public class AnoQuery {
         }
     }
 
+    //Конструктор для отображения списка
+    public AnoQuery(Activity client, Integer SQLID, int inRowlayout,String[] infrom, int[] into, ListView inView) {
+        try {
+            activity = client;
+            params = new HashMap<String,SQLParameter> ();
+            sql = getStringFromRawFile(SQLID);
+            rowlayout = inRowlayout;
+            from = infrom;
+            to = into;
+            view = inView;
+            parseParams();
+            handler = new Handler(activity.getMainLooper()) {
+                public void handleMessage(Message msg) {
+                    SimpleAdapter sAdapter = new SimpleAdapter(activity, data, rowlayout, from, to);
+                    view.setAdapter(sAdapter);
+                }
+            };
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private class ExecQuery extends Thread {
-        ResultSet rs = null;
         public void run() {
+            resultSet = null;
             _status = stexecuted;
             try {
                 connected = (dbconnection!=null);
@@ -220,7 +262,7 @@ public class AnoQuery {
                 }
 
                 PreparedStatement stmt = null;
-                stmt = dbconnection.prepareStatement(sql);
+                stmt = dbconnection.prepareStatement(sql,ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
                 for (Map.Entry<String, SQLParameter> pair : params.entrySet()) {
                     SQLParameter p = pair.getValue();
                     int j = 0;
@@ -233,7 +275,7 @@ public class AnoQuery {
                 }
 
                 stmt.execute();
-                rs = stmt.getResultSet();
+                resultSet = stmt.getResultSet();
                 stmt = null;
 
             } catch (SQLException e) {
@@ -248,17 +290,30 @@ public class AnoQuery {
             catch (Exception throwables) {
                 throwables.printStackTrace();
             }
-            if (rs!=null) {
+            if (resultSet!=null) {
                 resultcode = statSuccessfully;
                 resultmessage = "";
               try {
-                    rs.last();
-                    _recordcount = rs.getRow();
-                    rs.first();
-              } catch (SQLException throwables) {
-                  throwables.printStackTrace();
-              }
-              resultSet = rs;
+                    resultSet.last();
+                    _recordcount = resultSet.getRow();
+                    resultSet.first();
+                    fields = new String[resultSet.getMetaData().getColumnCount()];
+                    for (int i = 1; i <= resultSet.getMetaData().getColumnCount(); i++) {
+                        fields[i-1] = resultSet.getMetaData().getColumnName(i);
+                    }
+                    data = new ArrayList<Map<String, Object>>(_recordcount);
+                    Map<String, Object> m;
+                    while (true) {
+                        if (!resultSet.next()) break;
+                        m = new HashMap<String, Object>();
+                        for (int i = 0; i < fields.length; i++) {
+                            m.put(fields[i],resultSet.getString(fields[i]));
+                        }
+                        data.add(m);
+                    }
+                } catch (Throwable throwables) {
+                    throwables.printStackTrace();
+                }
             }
             if (!Objects.isNull(handler)) {
                 handler.sendEmptyMessage(resultcode);

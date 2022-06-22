@@ -2,8 +2,6 @@ package com.example.TSD;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.FileProvider;
 
 import android.Manifest;
@@ -19,7 +17,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.Toast;
 
 import com.example.TSD.AnO.AnoQuery;
 import com.example.myapplication111.BuildConfig;
@@ -27,13 +24,6 @@ import com.example.myapplication111.R;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -53,20 +43,20 @@ public class skladlist extends AppCompatActivity {
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
 
-    private String attrsklad = "attrbatch";
-    private String attrskladname = "skladname";
-    String[] from = {attrsklad,attrskladname};
+    String[] from = {"SKLAD","NAIM"};
     int[] to = {R.id.sklad, R.id.skladname};
 
-    private ListView lskladlist;
-    private Activity activity = this;
+    public ListView lskladlist;
+    public Activity activity = this;
 
     private Handler handler;
-    ArrayList<Map<String, Object>> data;
+
+    public AnoQuery qSkladlist;
+    public SimpleAdapter sAdapter;
 
     File outputFile; //Файл apk для обновления программы
 
-    private class RefreshThread extends Thread {
+  /*  private class RefreshThread extends Thread {
         RefreshThread() {
             super();
             start();
@@ -78,6 +68,8 @@ public class skladlist extends AppCompatActivity {
             handler.sendMessage(message);
         }
     }
+    */
+
 
     public static void verifyStoragePermissions(Activity activity) {
         // Check if we have write permission
@@ -112,12 +104,12 @@ public class skladlist extends AppCompatActivity {
         setContentView(R.layout.activity_skladlist);
         lskladlist = (ListView)findViewById(R.id.lsRoot);
 
+        //Intent testintent = new Intent(activity, test.class);
+        //startActivity(testintent);
+
         handler = new Handler(getBaseContext().getMainLooper()) {
             public void handleMessage(Message msg) {
                 switch (msg.what) {
-                    case (MES_DRAW_LIST):
-                        drawlist();
-                        break;
                     case (MES_INSTALL_UPDATE):
                         try {
                             Uri uri = FileProvider.getUriForFile(activity.getBaseContext(), BuildConfig.APPLICATION_ID + ".provider", outputFile);
@@ -128,49 +120,16 @@ public class skladlist extends AppCompatActivity {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        break;
-                }
 
+                    break;
+                }
             }
         };
-
         Intent intent = new Intent(activity, UpdateActivity.class);
         startActivityForResult(intent,REQ_UPDATE);
-
-        //UpdateThread updatethread = new UpdateThread();
+       // qSkladlist = new AnoQuery(activity, R.raw.qsklad,R.layout.skladraw,from,to,lskladlist);
+       // qSkladlist.Open();
     }
-
-    void refreshlist() {
-        try {
-
-            AnoQuery qSkladlist = new AnoQuery(activity, R.raw.qsklad);
-            qSkladlist.Open();
-            data = new ArrayList<Map<String, Object>>(qSkladlist.recordcount());
-            Map<String, Object> m;
-            while (qSkladlist.resultSet.next()) {
-                m = new HashMap<String, Object>();
-                m.put(attrsklad,qSkladlist.resultSet.getString(1));
-                m.put(attrskladname,qSkladlist.resultSet.getString(2));
-                data.add(m);
-            }
-            Message message = new Message();
-            message.what = MES_DRAW_LIST;
-            handler.sendMessage(message);
-        }    catch (Exception throwables) {
-            throwables.printStackTrace();
-        }
-
-    }
-
-    void drawlist() {
-        try {
-            SimpleAdapter sAdapter = new SimpleAdapter(this, data, R.layout.skladraw, from, to);
-            lskladlist.setAdapter(sAdapter);
-        } catch (Exception throwables) {
-            throwables.printStackTrace();
-        }
-    }
-
 
 
     public void Update(String apkurl) {
@@ -228,14 +187,15 @@ public class skladlist extends AppCompatActivity {
             if (requestCode==RESULT_OK) {
                 activity.finish();
             } else {
-                skladlist.RefreshThread refreshThread = new skladlist.RefreshThread();
+                qSkladlist = new AnoQuery(activity, R.raw.qsklad,R.layout.skladraw,from,to,lskladlist);
+                qSkladlist.Open();
                 lskladlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     public void onItemClick(AdapterView<?> parent, View view,
                                             int position, long id) {
                         Intent intent = new Intent(activity, TrebList.class);
-                        Map<String, Object> m = (HashMap)data.get(position);
-                        String s = (String)m.get(attrsklad);
-                        intent.putExtra("sklad",s);
+                        Map<String, Object> m = qSkladlist.getData().get(position);
+                        String s = (String)m.get("SKLAD");
+                        intent.putExtra("SKLAD",s);
                         startActivity(intent);
                     }
                 });

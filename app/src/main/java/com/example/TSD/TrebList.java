@@ -32,29 +32,13 @@ import static com.example.myapplication111.R.string.streblisthead;
 public class TrebList extends AppCompatActivity {
 
   static String LOG_TAG = "mainlog";
-  String attrbatch = "attrbatch";
-  String attrspz = "attrspz";
-  String attrcreatedate = "attrcreatedate";
-  String attrpkiinfo = "attrpkiinfo";
   String sklad;
-  String[] from = {attrbatch,  attrcreatedate,attrpkiinfo};
+  String[] from = {"BATCH",  "CREATEDATE","PKIINFO"};
   int[] to = {R.id.batch,R.id.createdate,R.id.pkiinfo};
 
-    private class RefreshThread extends Thread {
-        RefreshThread() {
-            super();
-            start();
-        }
-        public void run() {
-            refreshlist();
-            handler.sendMessage(new Message());
-        }
-    }
 
     private Activity activity = this;
     private AnoQuery qTreblist;
-    private Handler handler;
-    ArrayList<Map<String, Object>> data;
 
     ListView ltreblistroot;
     @Override
@@ -63,33 +47,25 @@ public class TrebList extends AppCompatActivity {
         setContentView(R.layout.activity_treb_list);
 
         Bundle arguments = getIntent().getExtras();
-        sklad= arguments.get("sklad").toString();
+        sklad= arguments.get("SKLAD").toString();
         TextView txtBatch = (TextView)findViewById(R.id.treblisthead);
         txtBatch.setText(sklad.concat(getString(streblisthead)));
-
         ltreblistroot = (ListView)findViewById(R.id.ltRoot);
-
-        handler = new Handler(getBaseContext().getMainLooper()) {
-            public void handleMessage(Message msg) {
-                drawlist();
-            }
-        };
-
-        RefreshThread refreshThread = new RefreshThread();
-
         ltreblistroot.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
                 Intent intent = new Intent(activity, docheader.class);
-                Map<String, Object> m = (HashMap)data.get(position);
-                String s = (String)m.get(attrbatch);
-                intent.putExtra("batch",s);
-                intent.putExtra("sklad",sklad);
+                Map<String, Object> m = (HashMap)qTreblist.getData().get(position);
+                String s = (String)m.get("BATCH");
+                intent.putExtra("BATCH",s);
+                intent.putExtra("SKLAD",sklad);
                 startActivityForResult(intent,1);
             }
         });
 
-
+        qTreblist = new AnoQuery(activity, R.raw.qtreblist,R.layout.trebraw,from,to,ltreblistroot);
+        qTreblist.setParamString("SKLAD",sklad);
+        qTreblist.Open();
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -97,34 +73,5 @@ public class TrebList extends AppCompatActivity {
         finish();
     }
 
-    void refreshlist() {
-        try {
-            qTreblist = new AnoQuery(activity, R.raw.qtreblist);
-            qTreblist.setParamString("sklad",sklad);
-            qTreblist.Open();
-            data = new ArrayList<Map<String, Object>>(qTreblist.recordcount());
-            Map<String, Object> m;
-            while (qTreblist.resultSet.next()) {
-                m = new HashMap<String, Object>();
-                m.put(attrbatch,qTreblist.resultSet.getString(1));
-                m.put(attrspz,qTreblist.resultSet.getString(2));
-                m.put(attrcreatedate,qTreblist.resultSet.getString(3));
-                m.put(attrpkiinfo,qTreblist.resultSet.getString(4));
-                data.add(m);
-            }
-            handler.sendMessage(new Message());
-        }    catch (Exception throwables) {
-            throwables.printStackTrace();
-        }
 
-    }
-
-    void drawlist() {
-        try {
-            SimpleAdapter sAdapter = new SimpleAdapter(this, data, R.layout.trebraw, from, to);
-            ltreblistroot.setAdapter(sAdapter);
-        } catch (Exception throwables) {
-            throwables.printStackTrace();
-        }
-    }
 }

@@ -200,16 +200,16 @@ public class rsx extends AppCompatActivity {
                 Map<String, Object> m;
                 while (qrsx.resultSet.next()) {
                     m = new HashMap<String, Object>();
-                    m.put(attrmgnbr,qrsx.resultSet.getString(1));
-                    m.put(attrmglot,qrsx.resultSet.getString(2));
-                    m.put(attrpki,qrsx.resultSet.getString(4));
-                    m.put(attrnamepki,qrsx.resultSet.getString(4).concat(" - ").concat(qrsx.resultSet.getString(5).substring(0,8)));
-                    m.put(attrtreb,qrsx.resultSet.getString(9));
+                    m.put(attrmgnbr,qrsx.resultSet.getString("DOCNUM"));
+                    m.put(attrmglot,qrsx.resultSet.getString("INDNUM"));
+                    m.put(attrpki,qrsx.resultSet.getString("PART"));
+                    m.put(attrnamepki,qrsx.resultSet.getString("PART").concat(" - ").concat(qrsx.resultSet.getString("NAMEPKI").substring(0,8)));
+                    m.put(attrtreb,qrsx.resultSet.getString("COUNTOPEN"));
                     m.put(attrotp,"");
-                    m.put(attrheadizd,qrsx.resultSet.getString(3));
-                    m.put(attrcell,qrsx.resultSet.getString(11));
-                    m.put(attrost,qrsx.resultSet.getString(12));
-                    m.put(attrshpz,qrsx.resultSet.getString(10));
+                    m.put(attrheadizd,qrsx.resultSet.getString("DECNUMWHERE"));
+                    m.put(attrcell,qrsx.resultSet.getString("CELL"));
+                    m.put(attrost,qrsx.resultSet.getString("SPZ"));
+                    m.put(attrshpz,qrsx.resultSet.getString("OPSUBNUM"));
                     data.add(m);
                 }
             }    catch (Exception throwables) {
@@ -257,8 +257,6 @@ public class rsx extends AppCompatActivity {
             throwables.printStackTrace();
         }
     }
-
-
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {

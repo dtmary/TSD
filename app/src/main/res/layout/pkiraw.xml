@@ -47,7 +47,8 @@
                             android:gravity="fill_horizontal"
                             android:text="cnt"
                             android:textColor="@color/black"
-                            android:textSize="20sp" />
+                            android:textSize="20sp"
+                            />
 
                     </FrameLayout>
 
