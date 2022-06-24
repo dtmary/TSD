@@ -21,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -45,22 +46,8 @@ public class rsx extends AppCompatActivity {
     private String skladin;
     private String skladout;
     private String folder;
-    private String attrpki = "attrpki";
-    private String attrnamepki = "attrnamepki";
-    private String attrtreb = "attrtreb";
-    private String attrotp = "attrotp";
-    private String attrheadizd = "headizd";
-    private String attrcell = "attrcell";
-    private String attrost = "attrost";
-    private String attrshpz = "attrshpz";
-    private String attrmgnbr = "attrmgnbr";
-    private String attrmglot = "attrmglot";
-    private String attroldpki = "attroldpki";
-    private String attroldtreb = "attroldtreb";
-    private String attroldcell = "attroldcell";
-    private String attroldname = "attroldname";
 
-    private String from[] = {attrnamepki,attrcell, attrtreb,attrost,attrotp,attrheadizd};
+    private String from[] = {"NAMEPKI","CELL", "TREB","OST","OTP","HEADIZD"};
     private int to[] = {R.id.pki,R.id.cell ,R.id.treb,R.id.ost,R.id.otp,R.id.headizd};
 
     private Activity activity = this;
@@ -74,9 +61,9 @@ public class rsx extends AppCompatActivity {
     private int curPos;
     private  Thread t;
     private AnoQuery qSaveRsx;
-    private String selectedPki;
-    private int selectedPosition = -1;
-    ArrayList<Map<String, Object>> data;
+    //private int selectedPosition = -1;
+    //ArrayList<Map<String, Object>> data;
+    private AnoQuery qrsx;
 
     private class SAdapter extends SimpleAdapter {
         public SAdapter(rsx rsx, ArrayList<Map<String, Object>> data, int sostrow, String[] from, int[] to) {
@@ -86,14 +73,14 @@ public class rsx extends AppCompatActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View view = super.getView(position, convertView, parent);
-            if (position == selectedPosition) {
+            if (position == qrsx.adapter.selected()) {
                 view.setBackgroundResource(R.color.Selected);
             }
             else {
                 view.setBackgroundResource(R.color.white);
-                HashMap rec = (HashMap) data.get(position);
-                String sTreb = (String) rec.get(attrtreb);
-                String sOtp = (String) rec.get(attrotp);
+                HashMap rec = (HashMap) qrsx.getData().get(position);
+                String sTreb = (String) rec.get("TREB");
+                String sOtp = (String) rec.get("OTP");
                 Float treb = Float.valueOf(sTreb);
                 Float otp = 0.f;
                 if (!sOtp.equals("")) {
@@ -103,8 +90,8 @@ public class rsx extends AppCompatActivity {
                     view.setBackgroundResource(R.color.WhiteGreen);
                 }
                 float fOst = 0;
-                if (!((String) rec.get(attrost)).equals("")) {
-                    fOst = Float.parseFloat((String) rec.get(attrost));
+                if (!((String) rec.get("OST")).equals("")) {
+                    fOst = Float.parseFloat((String) rec.get("OST"));
                 }
                 if (otp > fOst) {
                     view.setBackgroundResource(R.color.WhiteRed);
@@ -113,8 +100,6 @@ public class rsx extends AppCompatActivity {
             return view;
         }
     }
-
-    private SAdapter sAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,102 +120,49 @@ public class rsx extends AppCompatActivity {
         soundIdbad = mSoundPool.load(this, R.raw.bad01, 1);
 
         tScan.setOnEditorActionListener(edtPKIOnEditorActionListener);
-
-        handler = new Handler(getBaseContext().getMainLooper()) {
-            public void handleMessage(Message msg) {
-                drawlist();
-            }
-        };
-
-        RefreshThread refreshThread = new RefreshThread();
-
         prochandler = new Handler(getBaseContext().getMainLooper()) {
             public void handleMessage(Message msg) {finishSave(msg.what);}
         };
-    }
 
-    private void finishSave(int resultcode) {
-        if (resultcode == 20999) {
-            Context context = activity.getApplicationContext();
-            NotificationCompat.Builder builder =
-                    new NotificationCompat.Builder(context, "channelID")
-                            .setSmallIcon(R.drawable.ic_saved)
-                            .setContentTitle(qSaveRsx.GetResultMessage())
-                            .setContentText("")
-                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        qrsx = new AnoQuery(activity, R.raw.qrsx);
+        qrsx = new AnoQuery(activity, R.raw.qrsx,R.layout.sostrow,from,to,ltRoot);
+        qrsx.setParamString("sklad",skladin);
+        qrsx.setParamString("batch",batch);
+        qrsx.setParamString("company_id","1");
+        qrsx.Open();
 
-            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-            try {
-                notificationManager.notify(101, builder.build());
-            } catch (Exception throwables) {
-                throwables.printStackTrace();
+        ltRoot.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView absListView, int i) {
+
             }
 
-            Intent intent = new Intent(activity, message.class);
-            intent.putExtra("message",qSaveRsx.GetResultMessage());
-            startActivityForResult(intent,REQ_MESSAGE);
-        }
-        else {
-            Intent intent = new Intent(activity, message.class);
-            intent.putExtra("message",qSaveRsx.GetResultMessage());
-            startActivityForResult(intent,ERR_MESSAGE);
-        }
-    }
+            @Override
+            public void onScroll(AbsListView absListView, int i, int i1, int i2) {
+                try {
+                    qrsx.adapter.offset = ltRoot.getFirstVisiblePosition();
+                } catch (Throwable e) {};
+            }
+        });
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.rsx_menu, menu);
-        //menu.setGroupDividerEnabled(true);
-        return true;
-    }
-
-    private class RefreshThread extends Thread {
-        RefreshThread() {
-            super();
-            start();
-        }
-        public void run() {
-            try {
-                AnoQuery qrsx = new AnoQuery(activity, R.raw.qrsx);
-                qrsx.setParamString("sklad",skladin);
-                qrsx.setParamString("batch",batch);
-                qrsx.setParamString("company_id","1");
-                qrsx.Open();
-                data = new ArrayList<Map<String, Object>>(qrsx.recordcount());
-                Map<String, Object> m;
-                while (qrsx.resultSet.next()) {
-                    m = new HashMap<String, Object>();
-                    m.put(attrmgnbr,qrsx.resultSet.getString("DOCNUM"));
-                    m.put(attrmglot,qrsx.resultSet.getString("INDNUM"));
-                    m.put(attrpki,qrsx.resultSet.getString("PART"));
-                    m.put(attrnamepki,qrsx.resultSet.getString("PART").concat(" - ").concat(qrsx.resultSet.getString("NAMEPKI").substring(0,8)));
-                    m.put(attrtreb,qrsx.resultSet.getString("COUNTOPEN"));
-                    m.put(attrotp,"");
-                    m.put(attrheadizd,qrsx.resultSet.getString("DECNUMWHERE"));
-                    m.put(attrcell,qrsx.resultSet.getString("CELL"));
-                    m.put(attrost,qrsx.resultSet.getString("SPZ"));
-                    m.put(attrshpz,qrsx.resultSet.getString("OPSUBNUM"));
-                    data.add(m);
+        ltRoot.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                if (qrsx.adapter.selected() == position) {
+                    view.setBackgroundResource(R.color.white);
+                    qrsx.adapter.deselect();
+                } else {
+                    try {
+                        ltRoot.getChildAt(qrsx.adapter.selected()).setBackgroundResource(R.color.white);
+                    } catch (Throwable e) {}
+                    view.setBackgroundResource(R.color.Selected);
+                    qrsx.adapter.deselect();
+                    qrsx.adapter.select(position);
                 }
-            }    catch (Exception throwables) {
-                throwables.printStackTrace();
-            }
 
-            handler.sendMessage(new Message());
-        }
-    }
-
-    void drawlist() {
-        try {
-            sAdapter = new SAdapter(this, data, R.layout.sostrow, from, to);
-            ltRoot.setAdapter(sAdapter);
-            ltRoot.setSelection(selectedPosition);
-            ltRoot.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                public void onItemClick(AdapterView<?> parent, View view,
-                                        int position, long id) {
-                     try {
-                    Map<String, Object> m = (HashMap) data.get(position);
-                    selectedPki = (String) m.get(attrpki);
+                /*
+                try {
+                    Map<String, Object> m = (HashMap) qrsx.getData().get(position);
                     View sView = view;
                     if (selectedPosition == position) {
                         sView.setBackgroundResource(R.color.white);
@@ -250,12 +182,47 @@ public class rsx extends AppCompatActivity {
                 {
                     e.printStackTrace();
                 }
-                }
-            });
+                */
+            }
+        });
+    }
 
-        } catch (Exception throwables) {
-            throwables.printStackTrace();
+    private void finishSave(int resultcode) {
+        try {
+            if (resultcode == 20999) {
+                Context context = activity.getApplicationContext();
+                NotificationCompat.Builder builder =
+                        new NotificationCompat.Builder(context, "channelID")
+                                .setSmallIcon(R.drawable.ic_saved)
+                                .setContentTitle(qSaveRsx.GetResultMessage())
+                                .setContentText("")
+                                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+                try {
+                    notificationManager.notify(101, builder.build());
+                } catch (Exception throwables) {
+                    throwables.printStackTrace();
+                }
+
+                Intent intent = new Intent(activity, message.class);
+                intent.putExtra("message", qSaveRsx.GetResultMessage());
+                startActivityForResult(intent, REQ_MESSAGE);
+            } else {
+                Intent intent = new Intent(activity, message.class);
+                intent.putExtra("message", qSaveRsx.GetResultMessage());
+                startActivityForResult(intent, ERR_MESSAGE);
+            }
+        }catch (Throwable e) {
+            e.printStackTrace();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.rsx_menu, menu);
+        //menu.setGroupDividerEnabled(true);
+        return true;
     }
 
     @Override
@@ -276,9 +243,9 @@ public class rsx extends AppCompatActivity {
                     tScan.setFocusableInTouchMode(false);
                     //Проверка на наличие
                     curPos = -1;
-                    for (int idx = 0; idx < data.size(); idx++) {
-                        Map<String, Object> m = (HashMap)data.get(idx);
-                        String s = (String)m.get(attrpki);
+                    for (int idx = 0; idx < qrsx.getData().size(); idx++) {
+                        Map<String, Object> m = (HashMap)qrsx.getData().get(idx);
+                        String s = (String)m.get("PKI");
                         String s1 = tScan.getText().toString();
                         if (s.equals(s1)) {
                             curPos = idx;
@@ -288,12 +255,12 @@ public class rsx extends AppCompatActivity {
                         mSoundPool.play(soundIdbad, 1, 1, 1, 0, 1f);
                     }
                     else {
-                        selectedPosition = curPos;
+                        qrsx.adapter.select(curPos);
                         Intent intent = new Intent(activity, cnt.class);
-                        Map<String, Object> m = (HashMap)data.get(selectedPosition);
-                        intent.putExtra("namepki",(String)m.get(attrpki));
-                        intent.putExtra("treb",(String)m.get(attrtreb));
-                        intent.putExtra("otp",(String)m.get(attrotp));
+                        Map<String, Object> m = (HashMap)qrsx.getData().get(qrsx.adapter.selected());
+                        intent.putExtra("namepki",(String)m.get("PKI"));
+                        intent.putExtra("treb",(String)m.get("TREB"));
+                        intent.putExtra("otp",(String)m.get("OTP"));
                         startActivityForResult(intent,REQ_CNT);
                     }
                 }
@@ -314,37 +281,38 @@ public class rsx extends AppCompatActivity {
         try {
             if (requestCode == REQ_CNT) {
                 String otp = intent.getStringExtra("otp");
-                Map<String, Object> m = (HashMap) data.get(selectedPosition);
-                m.put(attrotp, otp);
-                data.set(selectedPosition, m);
-                drawlist();
-                //ltRoot.smoothScrollToPosition(selectedPosition);//setSelection(selectedPosition);
+                Map<String, Object> m = (HashMap) qrsx.getData().get(qrsx.adapter.selected());
+                m.put("OTP", otp);
+                qrsx.getData().set(qrsx.adapter.selected(), m);
+                qrsx.drawgrid();
+                ltRoot.setSelection(qrsx.adapter.selected());
             }
             if (requestCode == REQ_MESSAGE) {
                 setResult(RESULT_OK, intent);
                 activity.finish();
             }
             if (requestCode == REQ_ZAM) {
-                Map<String, Object> m = (HashMap) data.get(selectedPosition);
+                Map<String, Object> m = (HashMap) qrsx.getData().get(qrsx.adapter.selected());
                 String pkizam = intent.getStringExtra("pkizam");
                 String cellzam = intent.getStringExtra("cellzam");
                 String namezam = intent.getStringExtra("namezam");
                 float cntzam = Float.valueOf(intent.getStringExtra("cntzam"));
-                float cnttreb = Float.parseFloat((String)m.get(attrtreb));
+                float cnttreb = Float.parseFloat((String)m.get("TREB"));
 
                 //сохранение данных по позиции состава
-                m.put(attroldpki, m.get(attrpki));
-                m.put(attroldtreb, m.get(attrtreb));
-                m.put(attroldcell, m.get(attrcell));
-                m.put(attroldname,m.get(attrnamepki));
+                m.put("OLDPKI", m.get("PKI"));
+                m.put("OLDTREB", m.get("TREB"));
+                m.put("OLDCELL", m.get("CELL"));
+                m.put("OLDNAME",m.get("NAMEPKI"));
 
                 //добавление замены
-                m.put(attrpki, pkizam);
-                m.put(attrtreb, Float.toString(cnttreb*cntzam));
-                m.put(attrcell, cellzam);
-                m.put(attrnamepki,pkizam.concat(" - ").concat(namezam));
-                data.set(selectedPosition, m);
-                drawlist();
+                m.put("PKI", pkizam);
+                m.put("TREB", Float.toString(cnttreb*cntzam));
+                m.put("CELL", cellzam);
+                m.put("NAMEPKI",namezam);
+                qrsx.getData().set(qrsx.adapter.selected(), m);
+                qrsx.drawgrid();
+                ltRoot.setSelection(qrsx.adapter.selected());
             }
             if (requestCode == REQ_CLOSEWIND) {
                 if (resultCode == RESULT_OK) {
@@ -365,31 +333,31 @@ public class rsx extends AppCompatActivity {
         //Показываем позиции замены
         if (item.getItemId() == R.id.act_zam) {
             Intent intent = new Intent(activity, Activity_zam.class);
-            Map<String, Object> m = (HashMap) data.get(selectedPosition);
-            intent.putExtra("pki", (String) m.get(attrpki));
-            intent.putExtra("sklad", skladin);
+            Map<String, Object> m = (HashMap) qrsx.getData().get(qrsx.adapter.selected());
+            intent.putExtra("PKI", (String) m.get("PKI"));
+            intent.putExtra("SKLAD", skladin);
             startActivityForResult(intent, REQ_ZAM);
         }
         //Возврат замены
         if (item.getItemId()==R.id.act_notzam) {
-            Map<String, Object> m = (HashMap) data.get(selectedPosition);
-            if (m.get(attroldpki)!=null) {
-                m.put(attrpki, m.get(attroldpki));
-                m.put(attrtreb, m.get(attroldtreb));
-                m.put(attrcell, m.get(attroldcell));
-                m.put(attrnamepki, m.get(attroldname));
-                m.put(attroldpki, null);
-                data.set(selectedPosition, m);
-                drawlist();
+            Map<String, Object> m = (HashMap) qrsx.getData().get(qrsx.adapter.selected());
+            if (m.get("OLDPKI")!=null) {
+                m.put("PKI", m.get("OLDPKI"));
+                m.put("TREB", m.get("OLDTREB"));
+                m.put("CELL", m.get("OLDCELL"));
+                m.put("NAMEPKI", m.get("OLDNAME"));
+                m.put("OLDPKI", null);
+                qrsx.getData().set(qrsx.adapter.selected(), m);
+                qrsx.drawgrid();
             }
          }
 
         if (item.getItemId()==R.id.act_cnt) {
             Intent intent = new Intent(activity, cnt.class);
-            Map<String, Object> m = (HashMap)data.get(selectedPosition);
-            intent.putExtra("namepki",(String)m.get(attrpki));
-            intent.putExtra("treb",(String)m.get(attrtreb));
-            intent.putExtra("otp",(String)m.get(attrotp));
+            Map<String, Object> m = (HashMap)qrsx.getData().get(qrsx.adapter.selected());
+            intent.putExtra("namepki",(String)m.get("PKI"));
+            intent.putExtra("treb",(String)m.get("TREB"));
+            intent.putExtra("otp",(String)m.get("OTP"));
             startActivityForResult(intent,REQ_CNT);
         }
         return super.onOptionsItemSelected(item);
@@ -411,13 +379,13 @@ public class rsx extends AppCompatActivity {
             sql.append("v_skladin := '" + skladin + "';");
             sql.append("v_skladout := '" + skladout + "';");
             sql.append("v_folder := '" + folder + "';");
-            for (int idx = 0; idx < data.size(); idx++) {
-                Map<String, Object> m = (HashMap) data.get(idx);
-                String pki = (String) m.get(attrpki);
-                String itc = (String) m.get(attrotp);
-                String mgnbr = (String) m.get(attrmgnbr);
-                String mglot = (String) m.get(attrmglot);
-                String spz = (String) m.get(attrshpz);
+            for (int idx = 0; idx < qrsx.getData().size(); idx++) {
+                Map<String, Object> m = (HashMap) qrsx.getData().get(idx);
+                String pki = (String) m.get("PKI");
+                String itc = (String) m.get("OTP");
+                String mgnbr = (String) m.get("DOCNUM");
+                String mglot = (String) m.get("INDNUM");
+                String spz = (String) m.get("SHPZ");
 
                 if (!itc.equals("0") && !itc.equals("")) {
                     sql.append("insert into pkibsklrasp(pki, item_count, mg_nbr, mg_lot, recid, spz, accc, accd)values('" + pki + "', " + itc + ", '" + mgnbr + "', '" + mglot + "', " + idx + ", '" + spz + "', null, null);");
@@ -434,13 +402,13 @@ public class rsx extends AppCompatActivity {
         boolean result = true;
 
         try {
-            for (int idx = 0; idx < data.size(); idx++) {
-                Map<String, Object> m = (HashMap) data.get(idx);
+            for (int idx = 0; idx < qrsx.getData().size(); idx++) {
+                Map<String, Object> m = (HashMap) qrsx.getData().get(idx);
                 float fitc = 0;
                 float fost = 0;
-                String pki   = (String) m.get(attrpki);
-                String stitc = (String) m.get(attrotp);
-                String stost = (String) m.get(attrost);
+                String pki   = (String) m.get("PKI");
+                String stitc = (String) m.get("OTP");
+                String stost = (String) m.get("OST");
                 if (!stitc.equals("")) {
                     fitc = Float.parseFloat(stitc);
                 }

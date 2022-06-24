@@ -26,20 +26,23 @@ public class cnt extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cnt);
+        try {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_cnt);
 
-        tvPki = findViewById(R.id.tvPki);
-        tTreb = findViewById(R.id.tvTreb);
-        tCnt = findViewById(R.id.tCnt);
+            tvPki = findViewById(R.id.tvPki);
+            tTreb = findViewById(R.id.tvTreb);
+            tCnt = findViewById(R.id.tCnt);
 
-        Bundle arguments = getIntent().getExtras();
-        tvPki.setText(arguments.get("namepki").toString());
-        tTreb.setText(arguments.get("treb").toString());
-        tCnt.setText(arguments.get("otp").toString());
-        tCnt.setSelection(tCnt.getText().length());
-
-        tCnt.setOnEditorActionListener(cntEditorActionListener);
+            Bundle arguments = getIntent().getExtras();
+            tvPki.setText(arguments.get("namepki").toString());
+            tTreb.setText(arguments.get("treb").toString());
+            tCnt.setText(arguments.get("otp").toString());
+            tCnt.selectAll();
+            tCnt.setOnEditorActionListener(cntEditorActionListener);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 
     TextView.OnEditorActionListener cntEditorActionListener = new TextView.OnEditorActionListener() {

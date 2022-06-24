@@ -1,6 +1,6 @@
-select v.PKI_CHG as pkizam, v.QTY_CHG as cntzam,
+select v.PKI_CHG as PKI, v.QTY_CHG as CNT,
        mfg.Get_Cell_Pki(pk.pki, :sklad, 0) as cell,
-       nvl(pk.typ_mod,pk.namepki) nnamezam
+       substr(pk.pki || '-' ||nvl(pk.typ_mod,pk.namepki),1,20) NAMEPKI
   from skladuser.vedom_zam v,
        skladuser.pki pk
 where v.PKI_CHG = pk.pki

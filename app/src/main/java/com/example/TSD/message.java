@@ -3,6 +3,7 @@ package com.example.TSD;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -28,6 +29,8 @@ public class message extends AppCompatActivity {
 
     public void onSubmitClick(View view)
     {
+        Intent intent = new Intent();
+        setResult(RESULT_OK, intent);
         activity.finish();
     }
 }

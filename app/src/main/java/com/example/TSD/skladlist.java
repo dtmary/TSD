@@ -56,20 +56,6 @@ public class skladlist extends AppCompatActivity {
 
     File outputFile; //Файл apk для обновления программы
 
-  /*  private class RefreshThread extends Thread {
-        RefreshThread() {
-            super();
-            start();
-        }
-        public void run() {
-            refreshlist();
-            Message message = new Message();
-            message.what = MES_DRAW_LIST;
-            handler.sendMessage(message);
-        }
-    }
-    */
-
 
     public static void verifyStoragePermissions(Activity activity) {
         // Check if we have write permission
@@ -104,9 +90,6 @@ public class skladlist extends AppCompatActivity {
         setContentView(R.layout.activity_skladlist);
         lskladlist = (ListView)findViewById(R.id.lsRoot);
 
-        //Intent testintent = new Intent(activity, test.class);
-        //startActivity(testintent);
-
         handler = new Handler(getBaseContext().getMainLooper()) {
             public void handleMessage(Message msg) {
                 switch (msg.what) {
@@ -127,8 +110,6 @@ public class skladlist extends AppCompatActivity {
         };
         Intent intent = new Intent(activity, UpdateActivity.class);
         startActivityForResult(intent,REQ_UPDATE);
-       // qSkladlist = new AnoQuery(activity, R.raw.qsklad,R.layout.skladraw,from,to,lskladlist);
-       // qSkladlist.Open();
     }
 
 
@@ -189,6 +170,7 @@ public class skladlist extends AppCompatActivity {
             } else {
                 qSkladlist = new AnoQuery(activity, R.raw.qsklad,R.layout.skladraw,from,to,lskladlist);
                 qSkladlist.Open();
+
                 lskladlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     public void onItemClick(AdapterView<?> parent, View view,
                                             int position, long id) {

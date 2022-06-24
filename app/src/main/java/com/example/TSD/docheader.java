@@ -38,8 +38,8 @@ public class docheader extends AppCompatActivity {
         btnSubmit = findViewById(R.id.btnSubmit);
 
         Bundle arguments = getIntent().getExtras();
-        batch = arguments.get("batch").toString();
-        sklad = arguments.get("sklad").toString();
+        batch = arguments.get("BATCH").toString();
+        sklad = arguments.get("SKLAD").toString();
 
         txtBatch.setText(batch);
         txtSkladin.setText(sklad);

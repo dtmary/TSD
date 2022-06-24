@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import com.example.TSD.rsx;
 import com.example.myapplication111.R;
 
 import java.io.ByteArrayOutputStream;
@@ -27,6 +29,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 
@@ -34,8 +37,6 @@ import static android.provider.Settings.System.getString;
 import static java.lang.Thread.sleep;
 
 public class AnoQuery {
-
-    //TODO: таймаут попытки соединения с ораклом
 
     public static final int stclosed = 0;
     public static final int stexecuted = 1;
@@ -61,6 +62,7 @@ public class AnoQuery {
     public String[] from;
     public int[] to;
     public ListView view;
+    public AnoAdapter adapter;
 
     private String[] fields;
     private ArrayList<Map<String, Object>> data;
@@ -164,11 +166,13 @@ public class AnoQuery {
         public void run() {
             while (!connected) {
                 try {
-                    //Реальный dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.5:1521:ORA","skladuser","sklad");
-                    //Тестовый dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.105:1521:ORA","skladuser","sklad");
-                    dbconnection = DriverManager.getConnection(activity.getString(R.string.oraconnectionreal),
-                            activity.getString(R.string.oralogin),
-                            activity.getString(R.string.orapassword));
+                    //Реальный
+                    //dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.5:1521:ORA","skladuser","sklad");
+                    //Тестовый
+                    dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.105:1521:ORA","skladuser","sklad");
+               //     dbconnection = DriverManager.getConnection(activity.getString(R.string.oraconnectionreal),
+              //              activity.getString(R.string.oralogin),
+              //              activity.getString(R.string.orapassword));
                     connected = true;
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
@@ -226,13 +230,18 @@ public class AnoQuery {
             parseParams();
             handler = new Handler(activity.getMainLooper()) {
                 public void handleMessage(Message msg) {
-                    SimpleAdapter sAdapter = new SimpleAdapter(activity, data, rowlayout, from, to);
-                    view.setAdapter(sAdapter);
+                    drawgrid();
                 }
             };
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+    public void drawgrid() {
+        adapter = new AnoAdapter(activity, data, rowlayout, from, to);
+        view.setAdapter(adapter);
     }
 
     private class ExecQuery extends Thread {
