@@ -63,6 +63,7 @@ public class Activity_zam extends AppCompatActivity {
                 intent.putExtra("cellzam", (String)m.get("CELL"));
                 intent.putExtra("namezam", (String)m.get("NAMEPKI"));
                 intent.putExtra("cntzam", (String)m.get("CNT"));
+                intent.putExtra("ostzam",(String)m.get("OST"));
                 setResult(RESULT_OK, intent);
                 activity.finish();
             }

@@ -167,9 +167,9 @@ public class AnoQuery {
             while (!connected) {
                 try {
                     //Реальный
-                    //dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.5:1521:ORA","skladuser","sklad");
+                    dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.5:1521:ORA","skladuser","sklad");
                     //Тестовый
-                    dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.105:1521:ORA","skladuser","sklad");
+                    //dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.105:1521:ORA","skladuser","sklad");
                //     dbconnection = DriverManager.getConnection(activity.getString(R.string.oraconnectionreal),
               //              activity.getString(R.string.oralogin),
               //              activity.getString(R.string.orapassword));
@@ -312,14 +312,15 @@ public class AnoQuery {
                     }
                     data = new ArrayList<Map<String, Object>>(_recordcount);
                     Map<String, Object> m;
-                    while (true) {
-                        if (!resultSet.next()) break;
+                    resultSet.first();
+                    do {
                         m = new HashMap<String, Object>();
                         for (int i = 0; i < fields.length; i++) {
                             m.put(fields[i],resultSet.getString(fields[i]));
                         }
                         data.add(m);
-                    }
+                        //if (!resultSet.next()) break;
+                    } while (resultSet.next());
                 } catch (Throwable throwables) {
                     throwables.printStackTrace();
                 }

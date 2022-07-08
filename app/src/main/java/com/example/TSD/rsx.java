@@ -31,6 +31,7 @@ import android.widget.TextView;
 import com.example.TSD.AnO.AnoQuery;
 import com.example.myapplication111.R;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -296,6 +297,7 @@ public class rsx extends AppCompatActivity {
                 String pkizam = intent.getStringExtra("pkizam");
                 String cellzam = intent.getStringExtra("cellzam");
                 String namezam = intent.getStringExtra("namezam");
+                String ostzam = intent.getStringExtra("ostzam");
                 float cntzam = Float.valueOf(intent.getStringExtra("cntzam"));
                 float cnttreb = Float.parseFloat((String)m.get("TREB"));
 
@@ -304,12 +306,15 @@ public class rsx extends AppCompatActivity {
                 m.put("OLDTREB", m.get("TREB"));
                 m.put("OLDCELL", m.get("CELL"));
                 m.put("OLDNAME",m.get("NAMEPKI"));
+                m.put("OLDOST", m.get("OST"));
 
                 //добавление замены
                 m.put("PKI", pkizam);
-                m.put("TREB", Float.toString(cnttreb*cntzam));
+                DecimalFormat decimalFormat = new DecimalFormat("#.####");
+                m.put("TREB", decimalFormat.format(cnttreb*cntzam));
                 m.put("CELL", cellzam);
                 m.put("NAMEPKI",namezam);
+                m.put("OST",ostzam);
                 qrsx.getData().set(qrsx.adapter.selected(), m);
                 qrsx.drawgrid();
                 ltRoot.setSelection(qrsx.adapter.selected());
@@ -346,6 +351,7 @@ public class rsx extends AppCompatActivity {
                 m.put("TREB", m.get("OLDTREB"));
                 m.put("CELL", m.get("OLDCELL"));
                 m.put("NAMEPKI", m.get("OLDNAME"));
+                m.put("OST",m.get("OLDOST"));
                 m.put("OLDPKI", null);
                 qrsx.getData().set(qrsx.adapter.selected(), m);
                 qrsx.drawgrid();

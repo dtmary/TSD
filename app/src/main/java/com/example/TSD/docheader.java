@@ -43,6 +43,8 @@ public class docheader extends AppCompatActivity {
 
         txtBatch.setText(batch);
         txtSkladin.setText(sklad);
+        edtSkladout.setText("00099");
+        edtSkladout.selectAll();
     }
 
     public void onSubmitClick(View view)
