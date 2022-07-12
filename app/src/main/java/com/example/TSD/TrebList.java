@@ -19,7 +19,7 @@ import android.widget.TextView;
 import com.example.TSD.AnO.AnoQuery;
 import com.example.TSD.AnO.AnoStoredProc;
 import com.example.myapplication111.R;
-import com.example.myapplication111.databinding.ActivityMainBinding;
+
 
 import java.sql.SQLException;
 import java.util.ArrayList;

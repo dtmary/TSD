@@ -1,9 +1,5 @@
 package com.example.TSD;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.FileProvider;
-
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
@@ -15,6 +11,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
+
 import com.example.myapplication111.BuildConfig;
 import com.example.myapplication111.R;
 
@@ -24,8 +24,6 @@ import java.io.FileOutputStream;
 import jcifs.smb.NtlmPasswordAuthentication;
 import jcifs.smb.SmbFile;
 import jcifs.smb.SmbFileInputStream;
-
-import static com.example.TSD.skladlist.verifyStoragePermissions;
 
 public class UpdateActivity extends AppCompatActivity {
 
