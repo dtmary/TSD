@@ -208,9 +208,9 @@ public class AnoQuery {
             while (!connected) {
                 try {
                     //Реальный
-                    dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.5:1521:ORA","skladuser","sklad");
+                    //dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.5:1521:ORA","skladuser","sklad");
                     //Тестовый
-                    //dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.105:1521:ORA","skladuser","sklad");
+                    dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.105:1521:ORA","skladuser","sklad");
                //     dbconnection = DriverManager.getConnection(activity.getString(R.string.oraconnectionreal),
               //              activity.getString(R.string.oralogin),
               //              activity.getString(R.string.orapassword));

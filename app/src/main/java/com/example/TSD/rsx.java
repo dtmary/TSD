@@ -43,6 +43,7 @@ public class rsx extends AppCompatActivity {
     private static final int ERR_MESSAGE = 3;
     private static final int REQ_ZAM = 4;
     private static final int REQ_CLOSEWIND = 5;
+    private static final int REQ_CREATEDEFICIT = 6;
     private String batch;
     private String skladin;
     private String skladout;
@@ -63,6 +64,7 @@ public class rsx extends AppCompatActivity {
     private  Thread t;
     private AnoQuery qSaveRsx;
     private AnoQuery qrsx;
+    private boolean deficit = false;
 
     void UpdateHighlite(int position) {
         try {
@@ -267,6 +269,11 @@ public class rsx extends AppCompatActivity {
                     activity.finish();
                 }
             }
+            if (requestCode == REQ_CREATEDEFICIT) {
+                if (resultCode == RESULT_OK) {
+                    createDocument();
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -315,55 +322,73 @@ public class rsx extends AppCompatActivity {
 
 
     public void saveRsx() {
-
         StringBuilder errString = new StringBuilder();
         if (!testData(errString)) {
-            Intent intent = new Intent(activity, message.class);
-            intent.putExtra("message", errString.toString());
-            startActivityForResult(intent, ERR_MESSAGE);
+            if (deficit) {
+                Intent intent = new Intent(activity, messageyesno.class);
+                intent.putExtra("message", errString.toString().concat("Создать дефицитное требование?"));
+                startActivityForResult(intent,REQ_CREATEDEFICIT);
+            } else {
+                Intent intent = new Intent(activity, message.class);
+                intent.putExtra("message", errString.toString());
+                startActivityForResult(intent, ERR_MESSAGE);
+            }
         }
         else {
-            qSaveRsx = new AnoQuery(activity, R.raw.qsaversx, prochandler);
-            StringBuilder sql = new StringBuilder();
-
-            sql.append("v_skladin := '" + skladin + "';");
-            sql.append("v_skladout := '" + skladout + "';");
-            sql.append("v_folder := '" + folder + "';");
-            for (int idx = 0; idx < qrsx.getData().size(); idx++) {
-                Map<String, Object> m = (HashMap) qrsx.getData().get(idx);
-                String pki = (String) m.get("PKI");
-                String itc = (String) m.get("OTP");
-                String mgnbr = (String) m.get("DOCNUM");
-                String mglot = (String) m.get("INDNUM");
-                String spz = (String) m.get("SHPZ");
-
-                if (!itc.equals("0") && !itc.equals("")) {
-                    sql.append("insert into pkibsklrasp(pki, item_count, mg_nbr, mg_lot, recid, spz, accc, accd)values('" + pki + "', " + itc + ", '" + mgnbr + "', '" + mglot + "', " + idx + ", '" + spz + "', null, null);");
-                    sql.append("cntrec := cntrec + 1;");
-                }
-            }
-
-            qSaveRsx.setMacro("macroparams", sql.toString());
-            qSaveRsx.Open();
+            createDocument();
         }
+    }
+
+    void createDocument() {
+        qSaveRsx = new AnoQuery(activity, R.raw.qsaversx, prochandler);
+        StringBuilder sql = new StringBuilder();
+
+        sql.append("v_skladin := '" + skladin + "';");
+        sql.append("v_skladout := '" + skladout + "';");
+        sql.append("v_folder := '" + folder + "';");
+        for (int idx = 0; idx < qrsx.getData().size(); idx++) {
+            Map<String, Object> m = (HashMap) qrsx.getData().get(idx);
+            String pki = (String) m.get("PKI");
+            String itc = (String) m.get("OTP");
+            String mgnbr = (String) m.get("DOCNUM");
+            String mglot = (String) m.get("INDNUM");
+            String spz = (String) m.get("SHPZ");
+
+            if (!itc.equals("0") && !itc.equals("")) {
+                sql.append("insert into pkibsklrasp(pki, item_count, mg_nbr, mg_lot, recid, spz, accc, accd)values('" + pki + "', " + itc + ", '" + mgnbr + "', '" + mglot + "', " + idx + ", '" + spz + "', null, null);");
+                sql.append("cntrec := cntrec + 1;");
+            }
+        }
+        qSaveRsx.setMacro("macroparams", sql.toString());
+        qSaveRsx.Open();
     }
 
     public boolean testData(StringBuilder s) {
         boolean result = true;
-
         try {
+            deficit = false;
             for (int idx = 0; idx < qrsx.getData().size(); idx++) {
                 Map<String, Object> m = (HashMap) qrsx.getData().get(idx);
                 float fitc = 0;
                 float fost = 0;
+                float ftreb = 0;
                 String pki   = (String) m.get("PKI");
                 String stitc = (String) m.get("OTP");
                 String stost = (String) m.get("OST");
+                String streb = (String) m.get("TREB");
                 if (!stitc.equals("")) {
                     fitc = Float.parseFloat(stitc);
                 }
                 if (!stost.equals("")) {
                     fost = Float.parseFloat(stost);
+                }
+                if (!streb.equals("")) {
+                    ftreb = Float.parseFloat(stost);
+                }
+                if (fitc < ftreb) {
+                    deficit = true;
+                    result = false;
+                    s.append("ПКИ "+pki+": есть неотпущенное количество\n");
                 }
                 if (fitc>fost) {
                     result = false;

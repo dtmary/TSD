@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.TextView;
 
@@ -22,6 +23,7 @@ public class messageyesno extends AppCompatActivity {
         activity = this;
         mesView = (TextView) findViewById(R.id.mesView);
         Bundle arguments = getIntent().getExtras();
+        mesView.setMovementMethod(new ScrollingMovementMethod());
         mesView.setText(arguments.get("message").toString());
     }
 
