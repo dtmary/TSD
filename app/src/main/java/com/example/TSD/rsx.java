@@ -62,43 +62,23 @@ public class rsx extends AppCompatActivity {
     private int curPos;
     private  Thread t;
     private AnoQuery qSaveRsx;
-    //private int selectedPosition = -1;
-    //ArrayList<Map<String, Object>> data;
     private AnoQuery qrsx;
 
-    private class SAdapter extends SimpleAdapter {
-        public SAdapter(rsx rsx, ArrayList<Map<String, Object>> data, int sostrow, String[] from, int[] to) {
-            super(activity, data, R.layout.sostrow, from, to);
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View view = super.getView(position, convertView, parent);
-            if (position == qrsx.adapter.selected()) {
-                view.setBackgroundResource(R.color.Selected);
+    void UpdateHighlite(int position) {
+        try {
+            HashMap rec = (HashMap) qrsx.getData().get(position);
+            int iTreb = Integer.valueOf((String) rec.get("TREB"));
+            int iOtp =  Integer.valueOf((String) rec.get("OTP"));
+            int iOst =  Integer.valueOf((String) rec.get("OST"));
+            if (iOst == 0 || iOst < iOtp) {
+                qrsx.setColor(position, R.color.WhiteRed); //Не хватает остатков
+            } else if (iTreb == iOtp) {
+                qrsx.setColor(position, R.color.WhiteGreen); //Полностью отпущено
+            } else {
+                qrsx.setColor(position, R.color.white);
             }
-            else {
-                view.setBackgroundResource(R.color.white);
-                HashMap rec = (HashMap) qrsx.getData().get(position);
-                String sTreb = (String) rec.get("TREB");
-                String sOtp = (String) rec.get("OTP");
-                Float treb = Float.valueOf(sTreb);
-                Float otp = 0.f;
-                if (!sOtp.equals("")) {
-                    otp = Float.valueOf(sOtp);
-                }
-                if (treb.equals(otp)) {
-                    view.setBackgroundResource(R.color.WhiteGreen);
-                }
-                float fOst = 0;
-                if (!((String) rec.get("OST")).equals("")) {
-                    fOst = Float.parseFloat((String) rec.get("OST"));
-                }
-                if (otp > fOst) {
-                    view.setBackgroundResource(R.color.WhiteRed);
-                }
-            }
-            return view;
+        } catch (Throwable e) {
+            e.printStackTrace();
         }
     }
 
@@ -149,41 +129,8 @@ public class rsx extends AppCompatActivity {
         ltRoot.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                if (qrsx.adapter.selected() == position) {
-                    view.setBackgroundResource(R.color.white);
-                    qrsx.adapter.deselect();
-                } else {
-                    try {
-                        ltRoot.getChildAt(qrsx.adapter.selected()).setBackgroundResource(R.color.white);
-                    } catch (Throwable e) {}
-                    view.setBackgroundResource(R.color.Selected);
-                    qrsx.adapter.deselect();
-                    qrsx.adapter.select(position);
-                }
-
-                /*
-                try {
-                    Map<String, Object> m = (HashMap) qrsx.getData().get(position);
-                    View sView = view;
-                    if (selectedPosition == position) {
-                        sView.setBackgroundResource(R.color.white);
-                        selectedPosition = -1;
-                    } else {
-                        sView.setBackgroundResource(R.color.Selected);
-                        if (selectedPosition != -1) {
-                            View v = ltRoot.getChildAt(selectedPosition - ltRoot.getFirstVisiblePosition());
-                            if (v != null) {
-                                v.setBackgroundResource(R.color.white);
-                            }
-                        }
-                        selectedPosition = position;
-                    }
-                } catch (Exception e)
-
-                {
-                    e.printStackTrace();
-                }
-                */
+                qrsx.deselect();
+                qrsx.select(position);
             }
         });
     }
@@ -222,7 +169,6 @@ public class rsx extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.rsx_menu, menu);
-        //menu.setGroupDividerEnabled(true);
         return true;
     }
 
@@ -256,9 +202,9 @@ public class rsx extends AppCompatActivity {
                         mSoundPool.play(soundIdbad, 1, 1, 1, 0, 1f);
                     }
                     else {
-                        qrsx.adapter.select(curPos);
+                        qrsx.select(curPos);
                         Intent intent = new Intent(activity, cnt.class);
-                        Map<String, Object> m = (HashMap)qrsx.getData().get(qrsx.adapter.selected());
+                        Map<String, Object> m = (HashMap)qrsx.getData().get(qrsx.selected());
                         intent.putExtra("namepki",(String)m.get("PKI"));
                         intent.putExtra("treb",(String)m.get("TREB"));
                         intent.putExtra("otp",(String)m.get("OTP"));
@@ -281,19 +227,16 @@ public class rsx extends AppCompatActivity {
         }
         try {
             if (requestCode == REQ_CNT) {
-                String otp = intent.getStringExtra("otp");
-                Map<String, Object> m = (HashMap) qrsx.getData().get(qrsx.adapter.selected());
-                m.put("OTP", otp);
-                qrsx.getData().set(qrsx.adapter.selected(), m);
+                qrsx.setSelectedFieldValue("OTP",intent.getStringExtra("otp"));
+                UpdateHighlite(qrsx.selected());
                 qrsx.drawgrid();
-                ltRoot.setSelection(qrsx.adapter.selected());
             }
             if (requestCode == REQ_MESSAGE) {
                 setResult(RESULT_OK, intent);
                 activity.finish();
             }
             if (requestCode == REQ_ZAM) {
-                Map<String, Object> m = (HashMap) qrsx.getData().get(qrsx.adapter.selected());
+                Map<String, Object> m = (HashMap) qrsx.getData().get(qrsx.selected());
                 String pkizam = intent.getStringExtra("pkizam");
                 String cellzam = intent.getStringExtra("cellzam");
                 String namezam = intent.getStringExtra("namezam");
@@ -315,9 +258,9 @@ public class rsx extends AppCompatActivity {
                 m.put("CELL", cellzam);
                 m.put("NAMEPKI",namezam);
                 m.put("OST",ostzam);
-                qrsx.getData().set(qrsx.adapter.selected(), m);
+                qrsx.getData().set(qrsx.selected(), m);
+                UpdateHighlite(qrsx.selected());
                 qrsx.drawgrid();
-                ltRoot.setSelection(qrsx.adapter.selected());
             }
             if (requestCode == REQ_CLOSEWIND) {
                 if (resultCode == RESULT_OK) {
@@ -338,14 +281,14 @@ public class rsx extends AppCompatActivity {
         //Показываем позиции замены
         if (item.getItemId() == R.id.act_zam) {
             Intent intent = new Intent(activity, Activity_zam.class);
-            Map<String, Object> m = (HashMap) qrsx.getData().get(qrsx.adapter.selected());
+            Map<String, Object> m = (HashMap) qrsx.getData().get(qrsx.selected());
             intent.putExtra("PKI", (String) m.get("PKI"));
             intent.putExtra("SKLAD", skladin);
             startActivityForResult(intent, REQ_ZAM);
         }
         //Возврат замены
         if (item.getItemId()==R.id.act_notzam) {
-            Map<String, Object> m = (HashMap) qrsx.getData().get(qrsx.adapter.selected());
+            Map<String, Object> m = (HashMap) qrsx.getData().get(qrsx.selected());
             if (m.get("OLDPKI")!=null) {
                 m.put("PKI", m.get("OLDPKI"));
                 m.put("TREB", m.get("OLDTREB"));
@@ -353,14 +296,15 @@ public class rsx extends AppCompatActivity {
                 m.put("NAMEPKI", m.get("OLDNAME"));
                 m.put("OST",m.get("OLDOST"));
                 m.put("OLDPKI", null);
-                qrsx.getData().set(qrsx.adapter.selected(), m);
+                qrsx.getData().set(qrsx.selected(), m);
+                UpdateHighlite(qrsx.selected());
                 qrsx.drawgrid();
             }
          }
 
         if (item.getItemId()==R.id.act_cnt) {
             Intent intent = new Intent(activity, cnt.class);
-            Map<String, Object> m = (HashMap)qrsx.getData().get(qrsx.adapter.selected());
+            Map<String, Object> m = (HashMap)qrsx.getData().get(qrsx.selected());
             intent.putExtra("namepki",(String)m.get("PKI"));
             intent.putExtra("treb",(String)m.get("TREB"));
             intent.putExtra("otp",(String)m.get("OTP"));

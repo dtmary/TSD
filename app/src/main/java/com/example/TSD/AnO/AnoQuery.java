@@ -63,6 +63,7 @@ public class AnoQuery {
     public int[] to;
     public ListView view;
     public AnoAdapter adapter;
+    private int selected = -1;
 
     private String[] fields;
     private ArrayList<Map<String, Object>> data;
@@ -80,6 +81,46 @@ public class AnoQuery {
 
     public int recordcount() {
         return _recordcount;
+    }
+
+    public void setSelectedFieldValue (String fieldName, Object value) {
+        Map<String, Object> m = (HashMap) getData().get(selected);
+        m.put(fieldName, value);
+    }
+
+    public void deselect() {
+        for (int i = 0; i < data.size(); i++) {
+            try {
+                view.getChildAt(i-view.getFirstVisiblePosition()).setBackgroundResource((Integer) data.get(i).get("DESELECTEDCOLOR"));
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+            data.get(i).put("COLOR",data.get(i).get("DESELECTEDCOLOR"));
+        }
+        selected = -1;
+    }
+
+    public void select(int position) {
+        try {
+            data.get(position).put("COLOR", R.color.Selected);
+            view.getChildAt(position - view.getFirstVisiblePosition()).setBackgroundResource(R.color.Selected);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        selected = position;
+    }
+
+    public int selected() {
+        return selected;
+    }
+
+    public void setColor(int position, int color) {
+        try {
+            data.get(position).put("DESELECTEDCOLOR", color);
+            view.getChildAt(position - view.getFirstVisiblePosition()).setBackgroundResource(color);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 
     public void setParamString(String ParamName, String ParamValue) {
@@ -239,9 +280,11 @@ public class AnoQuery {
     }
 
 
+
     public void drawgrid() {
         adapter = new AnoAdapter(activity, data, rowlayout, from, to);
         view.setAdapter(adapter);
+        if (selected > -1) {view.setSelection(selected);}
     }
 
     private class ExecQuery extends Thread {
@@ -318,8 +361,9 @@ public class AnoQuery {
                         for (int i = 0; i < fields.length; i++) {
                             m.put(fields[i],resultSet.getString(fields[i]));
                         }
+                        m.put("COLOR",R.color.white);
+                        m.put("DESELECTEDCOLOR",R.color.white);
                         data.add(m);
-                        //if (!resultSet.next()) break;
                     } while (resultSet.next());
                 } catch (Throwable throwables) {
                     throwables.printStackTrace();
