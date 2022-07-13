@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -28,7 +29,6 @@ public class main extends AppCompatActivity {
     private static final int MES_INSTALL_UPDATE = 3;
     private static int ERR_MESSAGE = 4;
 
-
     private Activity activity = this;
     private EditText edtTabn;
     private Handler qhandler;
@@ -45,11 +45,13 @@ public class main extends AppCompatActivity {
         edtTabn = findViewById(R.id.edtTabn);
         edtTabn.setFocusableInTouchMode(false);
         edtTabn.setOnEditorActionListener(edtTabnOnEditorActionListener);
+        mApp.mSoundPool = new SoundPool.Builder().build();
+        mApp.soundIdbad = mApp.mSoundPool.load(this, R.raw.bad01, 1);
 
         qhandler = new Handler(getBaseContext().getMainLooper()) {
             public void handleMessage(Message msg) {
                 if (qUser.getData().size()==0) {
-                    //TODO: уродский звук
+                    mApp.mSoundPool.play(mApp.soundIdbad, 1, 1, 1, 0, 1f);
                     Intent intent = new Intent(activity, message.class);
                     intent.putExtra("message", "Пользователь не найден!");
                     startActivityForResult(intent, ERR_MESSAGE);
@@ -79,10 +81,16 @@ public class main extends AppCompatActivity {
             if(keyEvent.getAction() == KeyEvent.ACTION_UP && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER){
                 try {
                     edtTabn.setFocusableInTouchMode(false);
-
-                    qUser = new AnoQuery(activity, R.raw.quser, qhandler);
-                    qUser.setParamString("TABN",edtTabn.getText().toString());
-                    qUser.Open();
+                    String qr = edtTabn.getText().toString();
+                    String pref = qr.substring(0,4);
+                    if (pref.equals("TABN")) {
+                        String tabn = qr.substring(4);
+                        qUser = new AnoQuery(activity, R.raw.quser, qhandler);
+                        qUser.setParamString("TABN",tabn);
+                        qUser.Open();
+                    } else {
+                        mApp.mSoundPool.play(mApp.soundIdbad, 1, 1, 1, 0, 1f);
+                    }
                 }
                 catch (Exception throwables) {
                     throwables.printStackTrace();

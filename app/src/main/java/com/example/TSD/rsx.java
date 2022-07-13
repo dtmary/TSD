@@ -29,10 +29,10 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.example.TSD.AnO.AnoQuery;
+import com.example.mApp;
 import com.example.myapplication111.R;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,8 +58,6 @@ public class rsx extends AppCompatActivity {
     private ListView ltRoot;
     private String scanCode = "";
     private EditText tScan;
-    private SoundPool mSoundPool;
-    private int soundIdbad;
     private int curPos;
     private  Thread t;
     private AnoQuery qSaveRsx;
@@ -99,8 +97,8 @@ public class rsx extends AppCompatActivity {
         TextView txtBatch = (TextView)findViewById(R.id.txtBatch);
         txtBatch.setText(batch);
 
-        mSoundPool = new SoundPool.Builder().build();
-        soundIdbad = mSoundPool.load(this, R.raw.bad01, 1);
+
+
 
         tScan.setOnEditorActionListener(edtPKIOnEditorActionListener);
         prochandler = new Handler(getBaseContext().getMainLooper()) {
@@ -201,7 +199,7 @@ public class rsx extends AppCompatActivity {
                         }
                     }
                     if (curPos == -1) {
-                        mSoundPool.play(soundIdbad, 1, 1, 1, 0, 1f);
+                        mApp.mSoundPool.play(mApp.soundIdbad, 1, 1, 1, 0, 1f);
                     }
                     else {
                         qrsx.select(curPos);
