@@ -107,29 +107,15 @@ public class rsx extends AppCompatActivity {
         qrsx.setParamString("sklad",skladin);
         qrsx.setParamString("batch",batch);
         qrsx.setParamString("company_id","1");
-        qrsx.beforeDrawGrid = new Handler(getBaseContext().getMainLooper()) {
+        qrsx.sethBeforeDrawGrid(new Handler(getBaseContext().getMainLooper()) {
             public void handleMessage(Message msg) {
                 for (int i = 0; i < qrsx.getData().size(); i++) {
                     UpdateHighlite(i);
                 }
             }
-        };
-
+        });
         qrsx.Open();
 
-        ltRoot.setOnScrollListener(new AbsListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView absListView, int i) {
-
-            }
-
-            @Override
-            public void onScroll(AbsListView absListView, int i, int i1, int i2) {
-                try {
-                    qrsx.adapter.offset = ltRoot.getFirstVisiblePosition();
-                } catch (Throwable e) {};
-            }
-        });
 
         ltRoot.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
@@ -416,4 +402,8 @@ public class rsx extends AppCompatActivity {
         intent.putExtra("message", "Прервать операцию?");
         startActivityForResult(intent,REQ_CLOSEWIND);
     }
+
+
+
+
 }

@@ -58,7 +58,10 @@ public class AnoQuery {
     private int resultcode;
     private String resultmessage;
     private Handler handler;
-    public Handler beforeDrawGrid;
+    private Handler hBeforeDrawGrid;
+    public void sethBeforeDrawGrid(Handler h) {
+        hBeforeDrawGrid = h;
+    }
     public int rowlayout;
     public String[] from;
     public int[] to;
@@ -275,7 +278,7 @@ public class AnoQuery {
             parseParams();
             handler = new Handler(activity.getMainLooper()) {
                 public void handleMessage(Message msg) {
-                    if (beforeDrawGrid!=null) {beforeDrawGrid.sendEmptyMessage(0);};
+                    if (hBeforeDrawGrid!=null) {hBeforeDrawGrid.sendEmptyMessage(0);};
                     drawgrid();
                 }
             };

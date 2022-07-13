@@ -17,7 +17,6 @@ import java.util.Map;
 public class AnoAdapter extends SimpleAdapter {
 
     private ArrayList<Map<String, Object>> data;
-    public Integer offset = 0;
 
 
     public AnoAdapter(Context context, List<? extends Map<String, ?>> data, int resource, String[] from, int[] to) {
