@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 
+import com.example.mApp;
 import com.example.myapplication111.R;
 
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ public class cnt extends AppCompatActivity {
         try {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_cnt);
+            setTitle("Кладовая ОВК - ".concat(mApp.userId));
 
             tvPki = findViewById(R.id.tvPki);
             tTreb = findViewById(R.id.tvTreb);

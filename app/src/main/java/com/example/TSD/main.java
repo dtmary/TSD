@@ -59,6 +59,7 @@ public class main extends AppCompatActivity {
                     mApp.tabn = edtTabn.getText().toString();
                     mApp.userId = (String) qUser.getData().get(0).get("LOGIN");
                     Intent intent = new Intent(activity, skladlist.class);
+                    setTitle("Кладовая ОВК - ".concat(mApp.userId));
                     startActivityForResult(intent, REQ_CREATEDOC);
                 }
             }

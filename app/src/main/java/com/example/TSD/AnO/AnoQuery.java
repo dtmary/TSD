@@ -57,7 +57,8 @@ public class AnoQuery {
     private  int _recordcount = 0;
     private int resultcode;
     private String resultmessage;
-    public Handler handler;
+    private Handler handler;
+    public Handler beforeDrawGrid;
     public int rowlayout;
     public String[] from;
     public int[] to;
@@ -117,7 +118,10 @@ public class AnoQuery {
     public void setColor(int position, int color) {
         try {
             data.get(position).put("DESELECTEDCOLOR", color);
-            view.getChildAt(position - view.getFirstVisiblePosition()).setBackgroundResource(color);
+            if (selected!=position) {
+                data.get(position).put("COLOR", color);
+                view.getChildAt(position - view.getFirstVisiblePosition()).setBackgroundResource(color);
+            }
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -208,9 +212,9 @@ public class AnoQuery {
             while (!connected) {
                 try {
                     //Реальный
-                    //dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.5:1521:ORA","skladuser","sklad");
+                    dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.5:1521:ORA","skladuser","sklad");
                     //Тестовый
-                    dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.105:1521:ORA","skladuser","sklad");
+                    //dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.105:1521:ORA","skladuser","sklad");
                //     dbconnection = DriverManager.getConnection(activity.getString(R.string.oraconnectionreal),
               //              activity.getString(R.string.oralogin),
               //              activity.getString(R.string.orapassword));
@@ -271,6 +275,7 @@ public class AnoQuery {
             parseParams();
             handler = new Handler(activity.getMainLooper()) {
                 public void handleMessage(Message msg) {
+                    if (beforeDrawGrid!=null) {beforeDrawGrid.sendEmptyMessage(0);};
                     drawgrid();
                 }
             };

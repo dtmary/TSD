@@ -9,6 +9,7 @@ declare
   v_docform varchar2(255);
   v_company_id number;
   v_kodoper number;
+  v_operator varchar2(255);
 
   v_skladin varchar2(5);
   v_skladout varchar2(5);
@@ -81,7 +82,7 @@ begin
                                   in_skladout => v_skladin,
                                   in_skladin => v_skladout,
                                   in_oper => v_kodoper,
-                                  in_user_id => 'TSD',
+                                  in_user_id => v_operator,
                                   is_otlog => 'N',
                                   in_par_opnum => null,
                                   in_kod_post => null,
@@ -101,7 +102,8 @@ begin
                                   pmg_nbr_rec => v_pmg_nbr_rec,
                                   pmg_lot_rec => v_pmg_lot_rec,
                                   ptyp_pkib_rec => v_ptyp_pkib_rec,
-                                  pspz_rec => v_pspz_rec);
+                                  pspz_rec => v_pspz_rec,
+                                  in_program => 'TSD');
 
   Raise_application_error(-20999, 'Документ сохранен под номером '||v_docnum);
 end;

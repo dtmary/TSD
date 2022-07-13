@@ -14,6 +14,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 import com.example.TSD.AnO.AnoQuery;
+import com.example.mApp;
 import com.example.myapplication111.R;
 
 import java.util.ArrayList;
@@ -46,6 +47,7 @@ public class Activity_zam extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_zam);
+        setTitle("Кладовая ОВК - ".concat(mApp.userId));
 
         Bundle arguments = getIntent().getExtras();
         pki = arguments.get("PKI").toString();

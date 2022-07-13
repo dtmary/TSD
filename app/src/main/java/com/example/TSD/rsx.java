@@ -53,7 +53,6 @@ public class rsx extends AppCompatActivity {
     private int to[] = {R.id.pki,R.id.cell ,R.id.treb,R.id.ost,R.id.otp,R.id.headizd};
 
     private Activity activity = this;
-    private Handler handler;
     private Handler prochandler;
     private ListView ltRoot;
     private String scanCode = "";
@@ -86,6 +85,7 @@ public class rsx extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rsx);
+        setTitle("Кладовая ОВК - ".concat(mApp.userId));
         ltRoot = findViewById(R.id.ltRoot);
         tScan = findViewById(R.id.tScan);
         tScan.setFocusableInTouchMode(false);
@@ -97,19 +97,24 @@ public class rsx extends AppCompatActivity {
         TextView txtBatch = (TextView)findViewById(R.id.txtBatch);
         txtBatch.setText(batch);
 
-
-
-
         tScan.setOnEditorActionListener(edtPKIOnEditorActionListener);
         prochandler = new Handler(getBaseContext().getMainLooper()) {
             public void handleMessage(Message msg) {finishSave(msg.what);}
         };
 
-        qrsx = new AnoQuery(activity, R.raw.qrsx);
+        //qrsx = new AnoQuery(activity, R.raw.qrsx);
         qrsx = new AnoQuery(activity, R.raw.qrsx,R.layout.sostrow,from,to,ltRoot);
         qrsx.setParamString("sklad",skladin);
         qrsx.setParamString("batch",batch);
         qrsx.setParamString("company_id","1");
+        qrsx.beforeDrawGrid = new Handler(getBaseContext().getMainLooper()) {
+            public void handleMessage(Message msg) {
+                for (int i = 0; i < qrsx.getData().size(); i++) {
+                    UpdateHighlite(i);
+                }
+            }
+        };
+
         qrsx.Open();
 
         ltRoot.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -264,6 +269,7 @@ public class rsx extends AppCompatActivity {
             }
             if (requestCode == REQ_CLOSEWIND) {
                 if (resultCode == RESULT_OK) {
+                    setResult(RESULT_OK, intent);
                     activity.finish();
                 }
             }
@@ -344,6 +350,7 @@ public class rsx extends AppCompatActivity {
         sql.append("v_skladin := '" + skladin + "';");
         sql.append("v_skladout := '" + skladout + "';");
         sql.append("v_folder := '" + folder + "';");
+        sql.append("v_operator := '" + mApp.userId + "';");
         for (int idx = 0; idx < qrsx.getData().size(); idx++) {
             Map<String, Object> m = (HashMap) qrsx.getData().get(idx);
             String pki = (String) m.get("PKI");

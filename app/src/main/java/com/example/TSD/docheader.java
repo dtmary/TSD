@@ -11,12 +11,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.mApp;
 import com.example.myapplication111.R;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class docheader extends AppCompatActivity {
+
+    private  static  int REQ_NEXT = 1;
     String batch;
     String sklad;
     TextView txtSkladin;
@@ -30,6 +33,7 @@ public class docheader extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_docheader);
+        setTitle("Кладовая ОВК - ".concat(mApp.userId));
 
         txtSkladin = findViewById(R.id.txtSkladin);
         txtBatch = findViewById(R.id.txtBatch);
@@ -54,13 +58,16 @@ public class docheader extends AppCompatActivity {
         intent.putExtra("skladin",sklad);
         intent.putExtra("skladout",edtSkladout.getText().toString());
         intent.putExtra("folder",edtFolder.getText().toString());
-        startActivityForResult(intent,1);
+        startActivityForResult(intent,REQ_NEXT);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        if (resultCode == RESULT_OK) {
-            super.onActivityResult(requestCode, resultCode, intent);
-            finish();
+        if (requestCode == REQ_NEXT) {
+            if (resultCode == RESULT_OK) {
+                super.onActivityResult(requestCode, resultCode, intent);
+                setResult(RESULT_OK);
+                finish();
+            }
         }
     }
 

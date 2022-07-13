@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.example.TSD.AnO.AnoQuery;
 import com.example.TSD.AnO.AnoStoredProc;
+import com.example.mApp;
 import com.example.myapplication111.R;
 
 
@@ -30,6 +31,8 @@ import static com.example.myapplication111.R.string.streblisthead;
 
 
 public class TrebList extends AppCompatActivity {
+
+    private static final int REQ_NEXT = 1;
 
   static String LOG_TAG = "mainlog";
   String sklad;
@@ -45,6 +48,7 @@ public class TrebList extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_treb_list);
+        setTitle("Кладовая ОВК - ".concat(mApp.userId));
 
         Bundle arguments = getIntent().getExtras();
         sklad= arguments.get("SKLAD").toString();
@@ -59,7 +63,7 @@ public class TrebList extends AppCompatActivity {
                 String s = (String)m.get("BATCH");
                 intent.putExtra("BATCH",s);
                 intent.putExtra("SKLAD",sklad);
-                startActivityForResult(intent,1);
+                startActivityForResult(intent,REQ_NEXT);
             }
         });
 
@@ -70,7 +74,12 @@ public class TrebList extends AppCompatActivity {
 
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
-        finish();
+        if (requestCode==REQ_NEXT) {
+            if (resultCode == RESULT_OK) {
+                setResult(RESULT_OK, intent);
+                finish();
+            }
+        }
     }
 
 

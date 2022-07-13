@@ -19,6 +19,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 import com.example.TSD.AnO.AnoQuery;
+import com.example.mApp;
 import com.example.myapplication111.BuildConfig;
 import com.example.myapplication111.R;
 
@@ -34,6 +35,7 @@ public class skladlist extends AppCompatActivity {
 
     private static final int MES_DRAW_LIST = 1;
     private static final int MES_NEED_UPDATE = 2;
+    private static final int REQ_NEXT = 3;
 
 
 
@@ -53,6 +55,7 @@ public class skladlist extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_skladlist);
+        setTitle("Кладовая ОВК - ".concat(mApp.userId));
         lskladlist = (ListView)findViewById(R.id.lsRoot);
 
         qSkladlist = new AnoQuery(activity, R.raw.qsklad,R.layout.skladraw,from,to,lskladlist);
@@ -65,11 +68,19 @@ public class skladlist extends AppCompatActivity {
                 Map<String, Object> m = qSkladlist.getData().get(position);
                 String s = (String)m.get("SKLAD");
                 intent.putExtra("SKLAD",s);
-                startActivity(intent);
+                startActivityForResult(intent,REQ_NEXT);
             }
         });
+    }
 
-
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        if (requestCode==REQ_NEXT) {
+            if (resultCode == RESULT_OK) {
+                setResult(RESULT_OK, intent);
+                finish();
+            }
+        }
     }
 
 
