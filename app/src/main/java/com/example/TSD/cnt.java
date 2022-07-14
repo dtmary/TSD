@@ -39,7 +39,11 @@ public class cnt extends AppCompatActivity {
             Bundle arguments = getIntent().getExtras();
             tvPki.setText(arguments.get("namepki").toString());
             tTreb.setText(arguments.get("treb").toString());
-            tCnt.setText(arguments.get("otp").toString());
+            if (Integer.valueOf(arguments.get("otp").toString())==0) {
+                tCnt.setText(arguments.get("treb").toString());
+            } else {
+                tCnt.setText(arguments.get("otp").toString());
+            }
             tCnt.selectAll();
             tCnt.setOnEditorActionListener(cntEditorActionListener);
         } catch (Throwable e) {
