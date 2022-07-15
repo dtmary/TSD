@@ -374,7 +374,7 @@ public class rsx extends AppCompatActivity {
                     fost = Float.parseFloat(stost);
                 }
                 if (!streb.equals("")) {
-                    ftreb = Float.parseFloat(stost);
+                    ftreb = Float.parseFloat(streb);
                 }
                 if (fitc < ftreb) {
                     deficit = true;
@@ -402,8 +402,4 @@ public class rsx extends AppCompatActivity {
         intent.putExtra("message", "Прервать операцию?");
         startActivityForResult(intent,REQ_CLOSEWIND);
     }
-
-
-
-
 }
