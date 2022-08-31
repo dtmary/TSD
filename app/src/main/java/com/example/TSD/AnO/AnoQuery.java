@@ -87,9 +87,41 @@ public class AnoQuery {
         return _recordcount;
     }
 
-    public void setSelectedFieldValue (String fieldName, Object value) {
-        Map<String, Object> m = (HashMap) getData().get(selected);
-        m.put(fieldName, value);
+    public void setValue (String fieldName, Object value) {
+        setValue(selected, fieldName, value);
+    }
+
+    public void setValue (int RecNo, String fieldName, Object value) {
+        Map<String, Object> m = (HashMap) getData().get(RecNo);
+        m.put(fieldName,value);
+    }
+
+
+    public int getInt(int RecNo, String fieldName) {
+        Map<String, Object> m = (HashMap) getData().get(RecNo);
+        return Integer.valueOf(String.valueOf(m.get(fieldName)));
+    }
+
+    public int getInt(String fieldName) {
+        return getInt(selected(), fieldName);
+    }
+
+    public String getString(int RecNo, String fieldName) {
+        Map<String, Object> m = (HashMap) getData().get(RecNo);
+        return (String) m.get(fieldName);
+    }
+
+    public String getString( String fieldName) {
+        return getString(selected(),fieldName);
+    }
+
+    public float getFloat(int RecNo, String fieldName) {
+        Map<String, Object> m = (HashMap) getData().get(RecNo);
+        return Float.valueOf(String.valueOf(m.get(fieldName)));
+    }
+
+    public float getFloat(String fieldName) {
+        return getFloat(selected(),fieldName);
     }
 
     public void deselect() {
@@ -215,10 +247,10 @@ public class AnoQuery {
             while (!connected) {
                 try {
                     //Реальный
-               //     dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.5:1521:ORA","skladuser","sklad");
+                    dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.5:1521:ORA","skladuser","sklad");
                     //Тестовый
-                    dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.105:1521:ORA","skladuser","sklad");
-               //     dbconnection = DriverManager.getConnection(activity.getString(R.string.oraconnectionreal),
+                   // dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.105:1521:ORA","skladuser","sklad");
+                    //dbconnection = DriverManager.getConnection(activity.getString(R.string.oraconnectionreal),
               //              activity.getString(R.string.oralogin),
               //              activity.getString(R.string.orapassword));
                     connected = true;

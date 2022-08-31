@@ -57,7 +57,7 @@ begin
                                    in_kodoper => v_kodoper);
 
   i := 0;
-  for rec in (select * from skladuser.pkibsklraspres p) loop
+  for rec in (select p.* from skladuser.pkibsklraspres p) loop
     i := i + 1;
     v_ppkib_rec(i) := rec.pkib;
     v_ppki_rec(i) := rec.pki;
@@ -73,6 +73,7 @@ begin
     v_ptyp_pkib_rec(i) := 0;
     v_pspz_rec(i) := rec.spz;
   end loop;
+  cntrec := i;
 
   v_saveresult := pcgsklad.savesklrsx(in_action => 0,
                                   in_opnum => v_opnum,

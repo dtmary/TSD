@@ -62,6 +62,7 @@ public class rsx extends AppCompatActivity {
     private AnoQuery qSaveRsx;
     private AnoQuery qrsx;
     private boolean deficit = false;
+    private DecimalFormat dF;
 
     void UpdateHighlite(int position) {
         try {
@@ -86,6 +87,7 @@ public class rsx extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rsx);
         setTitle("Кладовая ОВК - ".concat(mApp.userId));
+        dF = new DecimalFormat("#.###");
         ltRoot = findViewById(R.id.ltRoot);
         tScan = findViewById(R.id.tScan);
         tScan.setFocusableInTouchMode(false);
@@ -183,21 +185,33 @@ public class rsx extends AppCompatActivity {
                     curPos = -1;
                     for (int idx = 0; idx < qrsx.getData().size(); idx++) {
                         Map<String, Object> m = (HashMap)qrsx.getData().get(idx);
+                        String stitc = (String) m.get("OTP");
+                        String streb = (String) m.get("TREB");
+                        Integer iitc = 0;
+                        Integer itreb = 0;
+                        if (!stitc.equals("")) {
+                            iitc = Integer.parseInt(stitc);
+                        }
+                        if (!streb.equals("")) {
+                            itreb = Integer.parseInt(streb);
+                        }
                         String s = (String)m.get("PKI");
                         String s1 = tScan.getText().toString();
-                        if (s.equals(s1)) {
+                        if (s.equals(s1)&&(iitc < itreb)) {
                             curPos = idx;
+                            break;
                         }
                     }
                     if (curPos == -1) {
                         mApp.mSoundPool.play(mApp.soundIdbad, 1, 1, 1, 0, 1f);
                     }
                     else {
+                        qrsx.deselect();
                         qrsx.select(curPos);
                         Intent intent = new Intent(activity, cnt.class);
                         Map<String, Object> m = (HashMap)qrsx.getData().get(qrsx.selected());
                         intent.putExtra("namepki",(String)m.get("PKI"));
-                        intent.putExtra("treb",(String)m.get("TREB"));
+                        intent.putExtra("treb",(String)m.get("TREBALL"));
                         intent.putExtra("otp",(String)m.get("OTP"));
                         startActivityForResult(intent,REQ_CNT);
                     }
@@ -218,8 +232,22 @@ public class rsx extends AppCompatActivity {
         }
         try {
             if (requestCode == REQ_CNT) {
-                qrsx.setSelectedFieldValue("OTP",intent.getStringExtra("otp"));
-                UpdateHighlite(qrsx.selected());
+                float curost = Float.valueOf(intent.getStringExtra("otp"));
+                float curotp;
+                String curpki = qrsx.getString("PKI");
+                for(int i = 0; i < qrsx.getFloat("CNTZAP"); i++) {
+                    if (!curpki.equals(qrsx.getString(qrsx.selected()+i,"PKI"))) {
+                        break;
+                    };
+                    if (curost >= qrsx.getInt(qrsx.selected() ,"TREB")) {
+                        curotp = qrsx.getFloat(qrsx.selected() + i, "TREB");
+                    } else {
+                        curotp = curost;
+                    }
+                    qrsx.setValue(qrsx.selected() + i, "OTP", dF.format(curotp));
+                    curost = curost - curotp;
+                    UpdateHighlite(qrsx.selected()+i);
+                }
                 qrsx.drawgrid();
             }
             if (requestCode == REQ_MESSAGE) {
@@ -303,7 +331,7 @@ public class rsx extends AppCompatActivity {
             Intent intent = new Intent(activity, cnt.class);
             Map<String, Object> m = (HashMap)qrsx.getData().get(qrsx.selected());
             intent.putExtra("namepki",(String)m.get("PKI"));
-            intent.putExtra("treb",(String)m.get("TREB"));
+            intent.putExtra("treb",(String)m.get("TREBALL"));
             intent.putExtra("otp",(String)m.get("OTP"));
             startActivityForResult(intent,REQ_CNT);
         }
