@@ -59,9 +59,7 @@ public class TrebList extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
                 Intent intent = new Intent(activity, docheader.class);
-                Map<String, Object> m = (HashMap)qTreblist.getData().get(position);
-                String s = (String)m.get("BATCH");
-                intent.putExtra("BATCH",s);
+                intent.putExtra("BATCH",qTreblist.getString(position,"BATCH"));
                 intent.putExtra("SKLAD",sklad);
                 startActivityForResult(intent,REQ_NEXT);
             }

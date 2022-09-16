@@ -32,6 +32,7 @@ import com.example.TSD.AnO.AnoQuery;
 import com.example.mApp;
 import com.example.myapplication111.R;
 
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -149,10 +150,6 @@ public class rsx extends AppCompatActivity {
                 Intent intent = new Intent(activity, message.class);
                 intent.putExtra("message", qSaveRsx.GetResultMessage());
                 startActivityForResult(intent, REQ_MESSAGE);
-            } else {
-                Intent intent = new Intent(activity, message.class);
-                intent.putExtra("message", qSaveRsx.GetResultMessage());
-                startActivityForResult(intent, ERR_MESSAGE);
             }
         }catch (Throwable e) {
             e.printStackTrace();
@@ -239,7 +236,7 @@ public class rsx extends AppCompatActivity {
                     if (!curpki.equals(qrsx.getString(qrsx.selected()+i,"PKI"))) {
                         break;
                     };
-                    if (curost >= qrsx.getInt(qrsx.selected() ,"TREB")) {
+                    if (curost >= qrsx.getInt(qrsx.selected()+i ,"TREB")) {
                         curotp = qrsx.getFloat(qrsx.selected() + i, "TREB");
                     } else {
                         curotp = curost;
@@ -340,21 +337,20 @@ public class rsx extends AppCompatActivity {
 
 
     public void saveRsx() {
-        StringBuilder errString = new StringBuilder();
-        if (!testData(errString)) {
-            if (deficit) {
-                Intent intent = new Intent(activity, messageyesno.class);
-                intent.putExtra("message", errString.toString().concat("Создать дефицитное требование?"));
-                startActivityForResult(intent,REQ_CREATEDEFICIT);
+            StringBuilder errString = new StringBuilder();
+            if (!testData(errString)) {
+                if (deficit) {
+                    Intent intent = new Intent(activity, messageyesno.class);
+                    intent.putExtra("message", errString.toString().concat("Создать дефицитное требование?"));
+                    startActivityForResult(intent, REQ_CREATEDEFICIT);
+                } else {
+                    Intent intent = new Intent(activity, message.class);
+                    intent.putExtra("message", errString.toString());
+                    startActivityForResult(intent, ERR_MESSAGE);
+                }
             } else {
-                Intent intent = new Intent(activity, message.class);
-                intent.putExtra("message", errString.toString());
-                startActivityForResult(intent, ERR_MESSAGE);
+                createDocument();
             }
-        }
-        else {
-            createDocument();
-        }
     }
 
     void createDocument() {

@@ -65,9 +65,7 @@ public class skladlist extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
                 Intent intent = new Intent(activity, TrebList.class);
-                Map<String, Object> m = qSkladlist.getData().get(position);
-                String s = (String)m.get("SKLAD");
-                intent.putExtra("SKLAD",s);
+                intent.putExtra("SKLAD",qSkladlist.getString(position,"SKLAD"));
                 startActivityForResult(intent,REQ_NEXT);
             }
         });

@@ -2,6 +2,7 @@ package com.example.TSD.AnO;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import com.example.TSD.message;
 import com.example.TSD.rsx;
 import com.example.myapplication111.R;
 
@@ -89,6 +91,10 @@ public class AnoQuery {
 
     public void setValue (String fieldName, Object value) {
         setValue(selected, fieldName, value);
+    }
+
+    public static Connection getDbconnection() {
+        return  dbconnection;
     }
 
     public void setValue (int RecNo, String fieldName, Object value) {
@@ -249,7 +255,7 @@ public class AnoQuery {
                     //Реальный
                     dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.5:1521:ORA","skladuser","sklad");
                     //Тестовый
-                   // dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.105:1521:ORA","skladuser","sklad");
+                    //dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.105:1521:ORA","skladuser","sklad");
                     //dbconnection = DriverManager.getConnection(activity.getString(R.string.oraconnectionreal),
               //              activity.getString(R.string.oralogin),
               //              activity.getString(R.string.orapassword));
@@ -373,11 +379,21 @@ public class AnoQuery {
             } catch (SQLException e) {
                 resultcode = e.getErrorCode();
                 resultmessage = e.getMessage();
-                if (resultcode == statSuccessfully) {
-                    int pos = resultmessage.indexOf("\n");
-                    resultmessage = resultmessage.substring(1,pos);
-                    resultmessage = resultmessage.substring(10);
+                int pos = resultmessage.indexOf("\n");
+                resultmessage = resultmessage.substring(1,pos);
+                resultmessage = resultmessage.substring(10);
+                if (resultcode != statSuccessfully) {
+                    try {
+                        dbconnection.rollback();
+                        dbconnection.close();
+                    } catch (SQLException throwables) {
+                        throwables.printStackTrace();
+                    }
+                    Intent intent = new Intent(activity, message.class);
+                    intent.putExtra("message", resultmessage);
+                    activity.startActivityForResult(intent,0);
                 }
+
             }
             catch (Exception throwables) {
                 throwables.printStackTrace();
