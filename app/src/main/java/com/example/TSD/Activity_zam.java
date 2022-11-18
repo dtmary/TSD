@@ -30,8 +30,8 @@ public class Activity_zam extends AppCompatActivity {
     private String sklad;
     private ListView ltRoot;
 
-    private String from[] = {"PKI", "CELL", "CNT"};
-    private int to[] = {R.id.pki,R.id.cell ,R.id.cnt};
+    private String from[] = {"PKI", "CELL", "CNTFORMAT"};
+    private int to[] = {R.id.pki,R.id.cell ,R.id.cntformat};
 
     private class SAdapter extends SimpleAdapter {
 
@@ -64,7 +64,7 @@ public class Activity_zam extends AppCompatActivity {
                 intent.putExtra("pkizam", (String)m.get("PKI"));
                 intent.putExtra("cellzam", (String)m.get("CELL"));
                 intent.putExtra("namezam", (String)m.get("NAMEPKI"));
-                intent.putExtra("cntzam", (String)m.get("CNT"));
+                intent.putExtra("cntzam", (String)m.get("CNTFULL"));
                 intent.putExtra("ostzam",(String)m.get("OST"));
                 setResult(RESULT_OK, intent);
                 activity.finish();

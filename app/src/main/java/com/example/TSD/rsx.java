@@ -269,8 +269,9 @@ public class rsx extends AppCompatActivity {
 
                 //добавление замены
                 m.put("PKI", pkizam);
-                DecimalFormat decimalFormat = new DecimalFormat("#.####");
+                DecimalFormat decimalFormat = new DecimalFormat("#.###");
                 m.put("TREB", decimalFormat.format(cnttreb*cntzam));
+                m.put("OTP", String.valueOf((int)Math.ceil(cnttreb*cntzam)));
                 m.put("CELL", cellzam);
                 m.put("NAMEPKI",namezam);
                 m.put("OST",ostzam);
@@ -300,8 +301,13 @@ public class rsx extends AppCompatActivity {
         if (item.getItemId() == R.id.act_rsx_save) {
             saveRsx();
         }
+        //Для всех остальных опций должна быть выбрана позиция
+        if (qrsx.selected()==-1) {
+            return super.onOptionsItemSelected(item);
+        }
         //Показываем позиции замены
         if (item.getItemId() == R.id.act_zam) {
+
             Intent intent = new Intent(activity, Activity_zam.class);
             Map<String, Object> m = (HashMap) qrsx.getData().get(qrsx.selected());
             intent.putExtra("PKI", (String) m.get("PKI"));
@@ -398,6 +404,7 @@ public class rsx extends AppCompatActivity {
                     fost = Float.parseFloat(stost);
                 }
                 if (!streb.equals("")) {
+                    streb = streb.replace(',', '.');
                     ftreb = Float.parseFloat(streb);
                 }
                 if (fitc < ftreb) {

@@ -77,7 +77,7 @@
             android:textSize="@dimen/font_base" />
 
         <TextView
-            android:id="@+id/cnt"
+            android:id="@+id/cntformat"
             android:layout_width="match_parent"
             android:layout_height="@dimen/height_base"
             android:text="Норма"
