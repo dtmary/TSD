@@ -56,7 +56,7 @@ public class main extends AppCompatActivity {
                     intent.putExtra("message", "Пользователь не найден!");
                     startActivityForResult(intent, ERR_MESSAGE);
                 } else {
-                    mApp.tabn = edtTabn.getText().toString();
+                    mApp.tabn = edtTabn.getText().toString().substring(4);
                     mApp.userId = (String) qUser.getData().get(0).get("LOGIN");
                     Intent intent = new Intent(activity, skladlist.class);
                     setTitle("Кладовая ОВК - ".concat(mApp.userId));

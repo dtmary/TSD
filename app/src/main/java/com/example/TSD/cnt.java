@@ -39,7 +39,7 @@ public class cnt extends AppCompatActivity {
             Bundle arguments = getIntent().getExtras();
             tvPki.setText(arguments.get("namepki").toString());
             tTreb.setText(arguments.get("treb").toString());
-            if (Integer.valueOf(arguments.get("otp").toString())==0) {
+            if (Float.valueOf(arguments.get("otp").toString())==0) {
                 tCnt.setText(arguments.get("treb").toString());
             } else {
                 tCnt.setText(arguments.get("otp").toString());
@@ -55,17 +55,17 @@ public class cnt extends AppCompatActivity {
         @Override
         public boolean onEditorAction(TextView textView, int i, KeyEvent event) {
             try {
-                if (Float.valueOf(tCnt.getText().toString()) > Float.valueOf(tTreb.getText().toString())) {
+              /*  if (Float.valueOf(tCnt.getText().toString()) > Float.valueOf(tTreb.getText().toString())) {
                     mApp.mSoundPool.play(mApp.soundIdbad, 1, 1, 1, 0, 1f);
                     Intent intent = new Intent(activity, message.class);
                     intent.putExtra("message", "Отпущенное кол-во не может быть больше требуемого");
                     startActivity(intent);
-                } else {
+                } else { */
                     Intent intent = new Intent();
                     intent.putExtra("otp", tCnt.getText().toString());
                     setResult(RESULT_OK, intent);
                     activity.finish();
-                }
+             //   }
             }
             catch (Throwable e) {
                 e.printStackTrace();

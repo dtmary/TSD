@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.icu.number.Precision;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
@@ -28,6 +29,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import com.example.TSD.AnO.AnoMath;
 import com.example.TSD.AnO.AnoQuery;
 import com.example.mApp;
 import com.example.myapplication111.R;
@@ -67,13 +69,13 @@ public class rsx extends AppCompatActivity {
 
     void UpdateHighlite(int position) {
         try {
-            HashMap rec = (HashMap) qrsx.getData().get(position);
-            int iTreb = Integer.valueOf((String) rec.get("TREB"));
-            int iOtp =  Integer.valueOf((String) rec.get("OTP"));
-            int iOst =  Integer.valueOf((String) rec.get("OST"));
-            if (iOst == 0 || iOst < iOtp) {
+
+            float fTreb = qrsx.getFloat(position,"TREB");
+            float fOtp =  qrsx.getFloat(position,"OTP"); //Float.valueOf((String) rec.get("OTP"));
+            float fOst =  qrsx.getFloat(position,"OST");
+            if (fOst == 0 || fOst < fOtp) {
                 qrsx.setColor(position, R.color.WhiteRed); //Не хватает остатков
-            } else if (iTreb == iOtp) {
+            } else if (fTreb <= fOtp) {
                 qrsx.setColor(position, R.color.WhiteGreen); //Полностью отпущено
             } else {
                 qrsx.setColor(position, R.color.white);
@@ -236,13 +238,18 @@ public class rsx extends AppCompatActivity {
                     if (!curpki.equals(qrsx.getString(qrsx.selected()+i,"PKI"))) {
                         break;
                     };
-                    if (curost >= qrsx.getInt(qrsx.selected()+i ,"TREB")) {
+                    if (curost >= qrsx.getFloat(qrsx.selected()+i ,"TREB")) {
                         curotp = qrsx.getFloat(qrsx.selected() + i, "TREB");
                     } else {
                         curotp = curost;
                     }
-                    qrsx.setValue(qrsx.selected() + i, "OTP", dF.format(curotp));
-                    curost = curost - curotp;
+                    //На последнюю списываем все оставшиеся
+                    if (i == qrsx.getFloat("CNTZAP")-1) {
+                        qrsx.setFloat(qrsx.selected() + i, "OTP", curost);
+                    } else {
+                        qrsx.setFloat(qrsx.selected() + i, "OTP", curotp);
+                        curost = AnoMath.round(curost - curotp,3);
+                    }
                     UpdateHighlite(qrsx.selected()+i);
                 }
                 qrsx.drawgrid();
@@ -332,10 +339,9 @@ public class rsx extends AppCompatActivity {
 
         if (item.getItemId()==R.id.act_cnt) {
             Intent intent = new Intent(activity, cnt.class);
-            Map<String, Object> m = (HashMap)qrsx.getData().get(qrsx.selected());
-            intent.putExtra("namepki",(String)m.get("PKI"));
-            intent.putExtra("treb",(String)m.get("TREBALL"));
-            intent.putExtra("otp",(String)m.get("OTP"));
+            intent.putExtra("namepki",qrsx.getString("PKI"));
+            intent.putExtra("treb",qrsx.getFloat("TREBALL"));
+            intent.putExtra("otp",qrsx.getFloat("OTP"));
             startActivityForResult(intent,REQ_CNT);
         }
         return super.onOptionsItemSelected(item);

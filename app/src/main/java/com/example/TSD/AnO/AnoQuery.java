@@ -102,6 +102,15 @@ public class AnoQuery {
         m.put(fieldName,value);
     }
 
+    public void setFloat (int RecNo, String fieldName, float value) {
+        Map<String, Object> m = (HashMap) getData().get(RecNo);
+        m.put(fieldName,value);
+    }
+
+    public void setDouble (int RecNo, String fieldName, double value) {
+        Map<String, Object> m = (HashMap) getData().get(RecNo);
+        m.put(fieldName,value);
+    }
 
     public int getInt(int RecNo, String fieldName) {
         Map<String, Object> m = (HashMap) getData().get(RecNo);
