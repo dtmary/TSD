@@ -93,17 +93,8 @@ public class AnoQuery {
         return _recordcount;
     }
 
-    public void setValue (String fieldName, Object value) {
-        setValue(selected, fieldName, value);
-    }
-
     public static Connection getDbconnection() {
         return  dbconnection;
-    }
-
-    public void setValue (int RecNo, String fieldName, Object value) {
-        Map<String, Object> m = (HashMap) getData().get(RecNo);
-        m.put(fieldName,value);
     }
 
     public void setString (int RecNo, String fieldName, String value) {

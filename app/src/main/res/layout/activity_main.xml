@@ -19,16 +19,16 @@
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="212dp"
-        android:layout_height="116dp"
+        android:layout_width="271dp"
+        android:layout_height="171dp"
         android:gravity="center"
-        android:text="Отсканируйте свой QR код"
+        android:text="Для начала отборки отсканируйте свой QR-код"
         android:textColor="@color/black"
         android:textSize="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintHorizontal_bias="0.476"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.301" />
+        app:layout_constraintVertical_bias="0.112" />
 </androidx.constraintlayout.widget.ConstraintLayout>
