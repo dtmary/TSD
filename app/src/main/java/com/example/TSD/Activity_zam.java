@@ -59,13 +59,16 @@ public class Activity_zam extends AppCompatActivity {
 
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                Map<String, Object> m = (HashMap)qZam.getData().get(position);
                 Intent intent = new Intent();
-                intent.putExtra("pkizam", (String)m.get("PKI"));
-                intent.putExtra("cellzam", (String)m.get("CELL"));
-                intent.putExtra("namezam", (String)m.get("NAMEPKI"));
-                intent.putExtra("cntzam", (String)m.get("CNTFULL"));
-                intent.putExtra("ostzam",(String)m.get("OST"));
+                intent.putExtra("pkizam", qZam.getString(position,"PKI"));
+                intent.putExtra("cellzam", qZam.getString(position,"CELL"));
+                intent.putExtra("namezam", qZam.getString(position,"NAMEPKI"));
+                intent.putExtra("cntzam", qZam.getString(position,"CNTFULL"));
+                intent.putExtra("ostzam",qZam.getString(position,"OST"));
+                intent.putExtra("edzam",qZam.getString(position,"KOD_EI"));
+
+
+
                 setResult(RESULT_OK, intent);
                 activity.finish();
             }

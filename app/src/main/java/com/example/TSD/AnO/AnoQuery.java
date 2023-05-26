@@ -61,8 +61,12 @@ public class AnoQuery {
     private String resultmessage;
     private Handler handler;
     private Handler hBeforeDrawGrid;
+    private Handler hAfterOpen;
     public void sethBeforeDrawGrid(Handler h) {
         hBeforeDrawGrid = h;
+    }
+    public void sethAfterOpen(Handler h) {
+        hAfterOpen = h;
     }
     public int rowlayout;
     public String[] from;
@@ -102,14 +106,22 @@ public class AnoQuery {
         m.put(fieldName,value);
     }
 
+    public void setString (int RecNo, String fieldName, String value) {
+        Map<String, Object> m = (HashMap) getData().get(RecNo);
+        m.put(fieldName,value);
+    }
+
+    public void setString (String fieldName, String value) {
+        setString (selected(), fieldName, value);
+    }
+
     public void setFloat (int RecNo, String fieldName, float value) {
         Map<String, Object> m = (HashMap) getData().get(RecNo);
         m.put(fieldName,value);
     }
 
-    public void setDouble (int RecNo, String fieldName, double value) {
-        Map<String, Object> m = (HashMap) getData().get(RecNo);
-        m.put(fieldName,value);
+    public void setFloat (String fieldName, float value) {
+        setFloat (selected(), fieldName, value);
     }
 
     public int getInt(int RecNo, String fieldName) {
@@ -126,7 +138,7 @@ public class AnoQuery {
         return (String) m.get(fieldName);
     }
 
-    public String getString( String fieldName) {
+    public String getString(String fieldName) {
         return getString(selected(),fieldName);
     }
 
@@ -430,6 +442,7 @@ public class AnoQuery {
                         m.put("DESELECTEDCOLOR",R.color.white);
                         data.add(m);
                     } while (resultSet.next());
+                    if (hAfterOpen!=null) {hAfterOpen.sendEmptyMessage(0);}
                 } catch (Throwable throwables) {
                     throwables.printStackTrace();
                 }

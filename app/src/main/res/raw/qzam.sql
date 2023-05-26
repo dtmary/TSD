@@ -7,7 +7,8 @@ select v.PKI_CHG as PKI, round(v.QTY_CHG,3) as CNTFORMAT,
           and s.pkib = pk.pkib
           and pk.pki = v.PKI_CHG
           and s.acc like '10%') as OST,
-          v.QTY_CHG as CNTFULL
+          v.QTY_CHG as CNTFULL,
+          pk.kod_ei
   from skladuser.vedom_zam v,
        skladuser.pki pk
 where v.PKI_CHG = pk.pki

@@ -17,5 +17,6 @@
     <string name="oralogin">skladuser</string>
     <string name="orapassword">sklad</string>
     <string name="title_activity_zam">Позиции замены</string>
+    <string name="title_activity_pki_info">Номенклатурная позиция</string>
 
 </resources>

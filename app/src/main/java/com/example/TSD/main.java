@@ -84,13 +84,18 @@ public class main extends AppCompatActivity {
                     edtTabn.setFocusableInTouchMode(false);
                     String qr = edtTabn.getText().toString();
                     String pref = qr.substring(0,4);
+                    //Если отсканированное начинается на TABN, то ищем табельный номер
                     if (pref.equals("TABN")) {
                         String tabn = qr.substring(4);
                         qUser = new AnoQuery(activity, R.raw.quser, qhandler);
                         qUser.setParamString("TABN",tabn);
                         qUser.Open();
                     } else {
-                        mApp.mSoundPool.play(mApp.soundIdbad, 1, 1, 1, 0, 1f);
+                        //mApp.mSoundPool.play(mApp.soundIdbad, 1, 1, 1, 0, 1f);
+                        //Показываем номенклатурную позицию
+                        Intent intent = new Intent(activity, ActivityPkiInfo.class);
+                        intent.putExtra("pki", qr);
+                        startActivity(intent);
                     }
                 }
                 catch (Exception throwables) {

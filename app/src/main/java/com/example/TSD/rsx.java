@@ -183,20 +183,10 @@ public class rsx extends AppCompatActivity {
                     //Проверка на наличие
                     curPos = -1;
                     for (int idx = 0; idx < qrsx.getData().size(); idx++) {
-                        Map<String, Object> m = (HashMap)qrsx.getData().get(idx);
-                        String stitc = (String) m.get("OTP");
-                        String streb = (String) m.get("TREB");
-                        Integer iitc = 0;
-                        Integer itreb = 0;
-                        if (!stitc.equals("")) {
-                            iitc = Integer.parseInt(stitc);
-                        }
-                        if (!streb.equals("")) {
-                            itreb = Integer.parseInt(streb);
-                        }
-                        String s = (String)m.get("PKI");
+                        float ftitc = qrsx.getFloat(idx,"OTP");
+                        float ftreb = qrsx.getFloat(idx,"TREB");
                         String s1 = tScan.getText().toString();
-                        if (s.equals(s1)&&(iitc < itreb)) {
+                        if (s1.equals(qrsx.getString(idx,"PKI"))&&(ftitc < ftreb)) {
                             curPos = idx;
                             break;
                         }
@@ -208,10 +198,9 @@ public class rsx extends AppCompatActivity {
                         qrsx.deselect();
                         qrsx.select(curPos);
                         Intent intent = new Intent(activity, cnt.class);
-                        Map<String, Object> m = (HashMap)qrsx.getData().get(qrsx.selected());
-                        intent.putExtra("namepki",(String)m.get("PKI"));
-                        intent.putExtra("treb",(String)m.get("TREBALL"));
-                        intent.putExtra("otp",(String)m.get("OTP"));
+                        intent.putExtra("namepki",qrsx.getString("PKI"));
+                        intent.putExtra("treb",qrsx.getString("TREBALL"));
+                        intent.putExtra("otp",qrsx.getString("OTP"));
                         startActivityForResult(intent,REQ_CNT);
                     }
                 }
@@ -255,34 +244,35 @@ public class rsx extends AppCompatActivity {
                 qrsx.drawgrid();
             }
             if (requestCode == REQ_MESSAGE) {
-                setResult(RESULT_OK, intent);
-                activity.finish();
+                    setResult(RESULT_OK, intent);
+                    activity.finish();
             }
             if (requestCode == REQ_ZAM) {
-                Map<String, Object> m = (HashMap) qrsx.getData().get(qrsx.selected());
                 String pkizam = intent.getStringExtra("pkizam");
                 String cellzam = intent.getStringExtra("cellzam");
                 String namezam = intent.getStringExtra("namezam");
-                String ostzam = intent.getStringExtra("ostzam");
+                float ostzam = Float.valueOf(intent.getStringExtra("ostzam"));
                 float cntzam = Float.valueOf(intent.getStringExtra("cntzam"));
-                float cnttreb = Float.parseFloat((String)m.get("TREB"));
+                String edzam = intent.getStringExtra("edzam");
 
                 //сохранение данных по позиции состава
-                m.put("OLDPKI", m.get("PKI"));
-                m.put("OLDTREB", m.get("TREB"));
-                m.put("OLDCELL", m.get("CELL"));
-                m.put("OLDNAME",m.get("NAMEPKI"));
-                m.put("OLDOST", m.get("OST"));
+                qrsx.setString("OLDPKI", qrsx.getString("PKI"));
+                qrsx.setFloat("OLDTREB", qrsx.getFloat("TREB"));
+                qrsx.setString("OLDCELL", qrsx.getString("CELL"));
+                qrsx.setString("OLDNAME", qrsx.getString("NAMEPKI"));
+                qrsx.setFloat("OLDOST", qrsx.getFloat("OST"));
 
                 //добавление замены
-                m.put("PKI", pkizam);
-                DecimalFormat decimalFormat = new DecimalFormat("#.###");
-                m.put("TREB", decimalFormat.format(cnttreb*cntzam));
-                m.put("OTP", String.valueOf((int)Math.ceil(cnttreb*cntzam)));
-                m.put("CELL", cellzam);
-                m.put("NAMEPKI",namezam);
-                m.put("OST",ostzam);
-                qrsx.getData().set(qrsx.selected(), m);
+                qrsx.setString("PKI", pkizam);
+                qrsx.setFloat("TREB", qrsx.getFloat("TREB")*cntzam);
+                qrsx.setFloat("OTP", qrsx.getFloat("TREB")*cntzam);
+                //Если единица измерения штуки, то отпущенное количество округляем в большую
+                if (edzam.equals("01")) {
+                    qrsx.setFloat("OTP", (float) Math.ceil(qrsx.getFloat("OTP")));
+                };
+                qrsx.setString("CELL", cellzam);
+                qrsx.setString("NAMEPKI",namezam);
+                qrsx.setFloat("OST",ostzam);
                 UpdateHighlite(qrsx.selected());
                 qrsx.drawgrid();
             }
@@ -323,15 +313,13 @@ public class rsx extends AppCompatActivity {
         }
         //Возврат замены
         if (item.getItemId()==R.id.act_notzam) {
-            Map<String, Object> m = (HashMap) qrsx.getData().get(qrsx.selected());
-            if (m.get("OLDPKI")!=null) {
-                m.put("PKI", m.get("OLDPKI"));
-                m.put("TREB", m.get("OLDTREB"));
-                m.put("CELL", m.get("OLDCELL"));
-                m.put("NAMEPKI", m.get("OLDNAME"));
-                m.put("OST",m.get("OLDOST"));
-                m.put("OLDPKI", null);
-                qrsx.getData().set(qrsx.selected(), m);
+            if (qrsx.getString("OLDPKI")!=null) {
+                qrsx.setString("PKI", qrsx.getString("OLDPKI"));
+                qrsx.setFloat("TREB", qrsx.getFloat("OLDTREB"));
+                qrsx.setString("CELL", qrsx.getString("OLDCELL"));
+                qrsx.setString("NAMEPKI", qrsx.getString("OLDNAME"));
+                qrsx.setFloat("OST",qrsx.getFloat("OLDOST"));
+                qrsx.setString("OLDPKI", null);
                 UpdateHighlite(qrsx.selected());
                 qrsx.drawgrid();
             }
@@ -374,14 +362,13 @@ public class rsx extends AppCompatActivity {
         sql.append("v_folder := '" + folder + "';");
         sql.append("v_operator := '" + mApp.userId + "';");
         for (int idx = 0; idx < qrsx.getData().size(); idx++) {
-            Map<String, Object> m = (HashMap) qrsx.getData().get(idx);
-            String pki = (String) m.get("PKI");
-            String itc = (String) m.get("OTP");
-            String mgnbr = (String) m.get("DOCNUM");
-            String mglot = (String) m.get("INDNUM");
-            String spz = (String) m.get("SHPZ");
+            String pki = (String) qrsx.getString(idx,"PKI");
+            String itc = Float.toString(qrsx.getFloat(idx,"OTP"));
+            String mgnbr = (String) qrsx.getString(idx,"DOCNUM");
+            String mglot = (String) qrsx.getString(idx,"INDNUM");
+            String spz = (String) qrsx.getString(idx,"SHPZ");
 
-            if (!itc.equals("0") && !itc.equals("")) {
+            if (qrsx.getFloat(idx,"OTP") != 0) {
                 sql.append("insert into pkibsklrasp(pki, item_count, mg_nbr, mg_lot, recid, spz, accc, accd)values('" + pki + "', " + itc + ", '" + mgnbr + "', '" + mglot + "', " + idx + ", '" + spz + "', null, null);");
                 sql.append("cntrec := cntrec + 1;");
             }
@@ -395,30 +382,16 @@ public class rsx extends AppCompatActivity {
         try {
             deficit = false;
             for (int idx = 0; idx < qrsx.getData().size(); idx++) {
-                Map<String, Object> m = (HashMap) qrsx.getData().get(idx);
-                float fitc = 0;
-                float fost = 0;
-                float ftreb = 0;
-                String pki   = (String) m.get("PKI");
-                String stitc = (String) m.get("OTP");
-                String stost = (String) m.get("OST");
-                String streb = (String) m.get("TREB");
-                if (!stitc.equals("")) {
-                    fitc = Float.parseFloat(stitc);
-                }
-                if (!stost.equals("")) {
-                    fost = Float.parseFloat(stost);
-                }
-                if (!streb.equals("")) {
-                    streb = streb.replace(',', '.');
-                    ftreb = Float.parseFloat(streb);
-                }
-                if (fitc < ftreb) {
+                float fotp = qrsx.getFloat(idx, "OTP");
+                float fost = qrsx.getFloat(idx, "OST");;
+                float ftreb = qrsx.getFloat(idx, "TREB");
+                String pki   = qrsx.getString(idx, "PKI");
+                if (fotp < ftreb) {
                     deficit = true;
                     result = false;
                     s.append("ПКИ "+pki+": есть неотпущенное количество\n");
                 }
-                if (fitc>fost) {
+                if (fotp>fost) {
                     result = false;
                     s.append("ПКИ "+pki+": не хватает остатков\n");
                 }
