@@ -34,9 +34,10 @@ from (select t4.part, t4.opnum, t4.opsubnum, countopen as treb,
              (select p.sklad
               from skladuser.pki p
               where p.pki=t4.part) as sklad
-      from (select t4.opnum, t4.part, t4.opsubnum, countopen, t4.count_req, t4.count_rsx
+      from (select t4.opnum, t4.part, t4.opsubnum, round(countopen, 3) countopen, t4.count_req, t4.count_rsx
             from table(mfg.SubQuerySost133Treb(:batch, :company_id, :sklad, :buyer)) t4
-            ) t4) t
+            ) t4
+            where countopen>0) t
 where (t.headizd in (select ps_what
                            from (select CONNECT_BY_ROOT(t2.ps_decnumwhere) ps_decnumwhere, t2.ps_what
                                  from skladuser.wo_ps_struct_plan t2

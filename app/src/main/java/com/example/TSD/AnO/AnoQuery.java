@@ -269,8 +269,8 @@ public class AnoQuery {
                     //Тестовый
                     //dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.105:1521:ORA","skladuser","sklad");
                     //dbconnection = DriverManager.getConnection(activity.getString(R.string.oraconnectionreal),
-              //              activity.getString(R.string.oralogin),
-              //              activity.getString(R.string.orapassword));
+                    //activity.getString(R.string.oralogin),
+                    //activity.getString(R.string.orapassword));
                     connected = true;
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
