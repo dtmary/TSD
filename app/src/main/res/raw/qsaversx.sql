@@ -5,6 +5,7 @@ declare
   v_makeresult varchar2(255);
   v_saveresult boolean;
   cntrec number;
+  cntall number;
   v_docdate varchar2(10);
   v_docform varchar2(255);
   v_company_id number;
@@ -57,6 +58,7 @@ begin
                                    in_kodoper => v_kodoper);
 
   i := 0;
+  cntall := 0;
   for rec in (select p.* from skladuser.pkibsklraspres p) loop
     i := i + 1;
     v_ppkib_rec(i) := rec.pkib;
@@ -64,6 +66,7 @@ begin
     v_pcshid_rec(i) := rec.schid;
     v_postatok_rec(i) := 0;
     v_pitem_count_rec(i) := rec.item_count;
+    cntall := cntall + rec.item_count;
     v_pprice_rec(i) := rec.price;
     v_psumma_rec(i) := rec.summa;
     v_paccd_rec(i) := rec.accd;
@@ -106,5 +109,7 @@ begin
                                   pspz_rec => v_pspz_rec,
                                   in_program => 'TSD');
 
-  Raise_application_error(-20999, 'Документ сохранен под номером '||v_docnum);
+  Raise_application_error(-20999, 'Документ сохранен под номером '||v_docnum||CHR(10)||
+                                  'Кол-во строк '||cntrec||CHR(10)||
+                                  'Общее кол-во '||cntall);
 end;

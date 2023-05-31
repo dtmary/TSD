@@ -391,9 +391,9 @@ public class AnoQuery {
             } catch (SQLException e) {
                 resultcode = e.getErrorCode();
                 resultmessage = e.getMessage();
-                int pos = resultmessage.indexOf("\n");
-                resultmessage = resultmessage.substring(1,pos);
                 resultmessage = resultmessage.substring(10);
+                int pos = resultmessage.indexOf("\nORA");
+                resultmessage = resultmessage.substring(1,pos);
                 if (resultcode != statSuccessfully) {
                     try {
                         dbconnection.rollback();
