@@ -201,6 +201,7 @@ public class rsx extends AppCompatActivity {
                         intent.putExtra("namepki",qrsx.getString("PKI"));
                         intent.putExtra("treb",qrsx.getString("TREBALL"));
                         intent.putExtra("otp",qrsx.getString("OTP"));
+                        intent.putExtra("scan",true);
                         startActivityForResult(intent,REQ_CNT);
                     }
                 }
@@ -222,24 +223,31 @@ public class rsx extends AppCompatActivity {
             if (requestCode == REQ_CNT) {
                 float curost = Float.valueOf(intent.getStringExtra("otp"));
                 float curotp;
+                boolean scan = intent.getBooleanExtra("scan", false);
                 String curpki = qrsx.getString("PKI");
-                for(int i = 0; i < qrsx.getFloat("CNTZAP"); i++) {
-                    if (!curpki.equals(qrsx.getString(qrsx.selected()+i,"PKI"))) {
-                        break;
-                    };
-                    if (curost >= qrsx.getFloat(qrsx.selected()+i ,"TREB")) {
-                        curotp = qrsx.getFloat(qrsx.selected() + i, "TREB");
-                    } else {
-                        curotp = curost;
+
+                if (scan) {
+                    for (int i = 0; i < qrsx.getFloat("CNTZAP"); i++) {
+                        if (!curpki.equals(qrsx.getString(qrsx.selected() + i, "PKI"))) {
+                            break;
+                        }
+                        ;
+                        if (curost >= qrsx.getFloat(qrsx.selected() + i, "TREB")) {
+                            curotp = qrsx.getFloat(qrsx.selected() + i, "TREB");
+                        } else {
+                            curotp = curost;
+                        }
+                        //На последнюю списываем все оставшиеся
+                        if (i == qrsx.getFloat("CNTZAP") - 1) {
+                            qrsx.setFloat(qrsx.selected() + i, "OTP", curost);
+                        } else {
+                            qrsx.setFloat(qrsx.selected() + i, "OTP", curotp);
+                            curost = AnoMath.round(curost - curotp, 3);
+                        }
+                        UpdateHighlite(qrsx.selected() + i);
                     }
-                    //На последнюю списываем все оставшиеся
-                    if (i == qrsx.getFloat("CNTZAP")-1) {
-                        qrsx.setFloat(qrsx.selected() + i, "OTP", curost);
-                    } else {
-                        qrsx.setFloat(qrsx.selected() + i, "OTP", curotp);
-                        curost = AnoMath.round(curost - curotp,3);
-                    }
-                    UpdateHighlite(qrsx.selected()+i);
+                } else {
+                    qrsx.setFloat("OTP", curost);
                 }
                 qrsx.drawgrid();
             }
@@ -267,9 +275,9 @@ public class rsx extends AppCompatActivity {
                 qrsx.setFloat("TREB", qrsx.getFloat("TREB")*cntzam);
                 qrsx.setFloat("OTP", qrsx.getFloat("TREB")*cntzam);
                 //Если единица измерения штуки, то отпущенное количество округляем в большую
-                if (edzam.equals("01")) {
-                    qrsx.setFloat("OTP", (float) Math.ceil(qrsx.getFloat("OTP")));
-                };
+                //  if (edzam.equals("01")) {
+                //      qrsx.setFloat("OTP", (float) Math.ceil(qrsx.getFloat("OTP")));
+                //  };
                 qrsx.setString("CELL", cellzam);
                 qrsx.setString("NAMEPKI",namezam);
                 qrsx.setFloat("OST",ostzam);
@@ -328,8 +336,9 @@ public class rsx extends AppCompatActivity {
         if (item.getItemId()==R.id.act_cnt) {
             Intent intent = new Intent(activity, cnt.class);
             intent.putExtra("namepki",qrsx.getString("PKI"));
-            intent.putExtra("treb",qrsx.getFloat("TREBALL"));
+            intent.putExtra("treb",qrsx.getFloat("TREB"));
             intent.putExtra("otp",qrsx.getFloat("OTP"));
+            intent.putExtra("scan", false);
             startActivityForResult(intent,REQ_CNT);
         }
         return super.onOptionsItemSelected(item);

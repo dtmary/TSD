@@ -24,6 +24,7 @@ public class cnt extends AppCompatActivity {
     private EditText tCnt;
     private TextView tTreb;
     private Activity activity = this;
+    private boolean scan;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +38,7 @@ public class cnt extends AppCompatActivity {
             tCnt = findViewById(R.id.tCnt);
 
             Bundle arguments = getIntent().getExtras();
+            scan = arguments.getBoolean("scan");
             tvPki.setText(arguments.get("namepki").toString());
             tTreb.setText(arguments.get("treb").toString());
             if (Float.valueOf(arguments.get("otp").toString())==0) {
@@ -63,6 +65,7 @@ public class cnt extends AppCompatActivity {
                 } else { */
                     Intent intent = new Intent();
                     intent.putExtra("otp", tCnt.getText().toString());
+                    intent.putExtra("scan",scan);
                     setResult(RESULT_OK, intent);
                     activity.finish();
              //   }
