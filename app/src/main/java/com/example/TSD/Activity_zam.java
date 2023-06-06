@@ -29,6 +29,7 @@ public class Activity_zam extends AppCompatActivity {
     private String pki;
     private String sklad;
     private ListView ltRoot;
+    private boolean zamall;
 
     private String from[] = {"PKI", "CELL", "CNTFORMAT"};
     private int to[] = {R.id.pki,R.id.cell ,R.id.cntformat};
@@ -52,6 +53,7 @@ public class Activity_zam extends AppCompatActivity {
         Bundle arguments = getIntent().getExtras();
         pki = arguments.get("PKI").toString();
         sklad = arguments.get("SKLAD").toString();
+        zamall = arguments.getBoolean("ZAMALL");
 
         ltRoot = findViewById(R.id.ltRoot);
 
@@ -66,8 +68,7 @@ public class Activity_zam extends AppCompatActivity {
                 intent.putExtra("cntzam", qZam.getString(position,"CNTFULL"));
                 intent.putExtra("ostzam",qZam.getString(position,"OST"));
                 intent.putExtra("edzam",qZam.getString(position,"KOD_EI"));
-
-
+                intent.putExtra("zamall",zamall);
 
                 setResult(RESULT_OK, intent);
                 activity.finish();

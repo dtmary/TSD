@@ -256,32 +256,57 @@ public class rsx extends AppCompatActivity {
                     activity.finish();
             }
             if (requestCode == REQ_ZAM) {
+
                 String pkizam = intent.getStringExtra("pkizam");
                 String cellzam = intent.getStringExtra("cellzam");
                 String namezam = intent.getStringExtra("namezam");
+
+                boolean zamall = intent.getBooleanExtra("zamall",false);
                 float ostzam = Float.valueOf(intent.getStringExtra("ostzam"));
                 float cntzam = Float.valueOf(intent.getStringExtra("cntzam"));
                 String edzam = intent.getStringExtra("edzam");
 
-                //сохранение данных по позиции состава
-                qrsx.setString("OLDPKI", qrsx.getString("PKI"));
-                qrsx.setFloat("OLDTREB", qrsx.getFloat("TREB"));
-                qrsx.setString("OLDCELL", qrsx.getString("CELL"));
-                qrsx.setString("OLDNAME", qrsx.getString("NAMEPKI"));
-                qrsx.setFloat("OLDOST", qrsx.getFloat("OST"));
+                if (zamall) {
+                    String curpki = qrsx.getString("PKI");
+                    for (int i = 0; i < qrsx.recordcount(); i++) {
+                        qrsx.deselect();
+                        if (qrsx.getString(i,"PKI").equals(curpki)) {
+                            qrsx.select(i);
+                            qrsx.setString("OLDPKI", qrsx.getString("PKI"));
+                            qrsx.setFloat("OLDTREB", qrsx.getFloat("TREB"));
+                            qrsx.setString("OLDCELL", qrsx.getString("CELL"));
+                            qrsx.setString("OLDNAME", qrsx.getString("NAMEPKI"));
+                            qrsx.setFloat("OLDOST", qrsx.getFloat("OST"));
 
-                //добавление замены
-                qrsx.setString("PKI", pkizam);
-                qrsx.setFloat("TREB", qrsx.getFloat("TREB")*cntzam);
-                qrsx.setFloat("OTP", qrsx.getFloat("TREB")*cntzam);
-                //Если единица измерения штуки, то отпущенное количество округляем в большую
-                //  if (edzam.equals("01")) {
-                //      qrsx.setFloat("OTP", (float) Math.ceil(qrsx.getFloat("OTP")));
-                //  };
-                qrsx.setString("CELL", cellzam);
-                qrsx.setString("NAMEPKI",namezam);
-                qrsx.setFloat("OST",ostzam);
-                UpdateHighlite(qrsx.selected());
+                            //добавление замены
+                            qrsx.setString("PKI", pkizam);
+                            qrsx.setFloat("TREB", qrsx.getFloat("TREB") * cntzam);
+                            qrsx.setFloat("OTP", qrsx.getFloat("TREB") * cntzam);
+
+                            qrsx.setString("CELL", cellzam);
+                            qrsx.setString("NAMEPKI", namezam);
+                            qrsx.setFloat("OST", ostzam);
+                            UpdateHighlite(qrsx.selected());
+                        }
+                    }
+                } else {
+                    //сохранение данных по позиции состава
+                    qrsx.setString("OLDPKI", qrsx.getString("PKI"));
+                    qrsx.setFloat("OLDTREB", qrsx.getFloat("TREB"));
+                    qrsx.setString("OLDCELL", qrsx.getString("CELL"));
+                    qrsx.setString("OLDNAME", qrsx.getString("NAMEPKI"));
+                    qrsx.setFloat("OLDOST", qrsx.getFloat("OST"));
+
+                    //добавление замены
+                    qrsx.setString("PKI", pkizam);
+                    qrsx.setFloat("TREB", qrsx.getFloat("TREB") * cntzam);
+                    qrsx.setFloat("OTP", qrsx.getFloat("TREB") * cntzam);
+
+                    qrsx.setString("CELL", cellzam);
+                    qrsx.setString("NAMEPKI", namezam);
+                    qrsx.setFloat("OST", ostzam);
+                    UpdateHighlite(qrsx.selected());
+                }
                 qrsx.drawgrid();
             }
             if (requestCode == REQ_CLOSEWIND) {
@@ -314,11 +339,21 @@ public class rsx extends AppCompatActivity {
         if (item.getItemId() == R.id.act_zam) {
 
             Intent intent = new Intent(activity, Activity_zam.class);
-            Map<String, Object> m = (HashMap) qrsx.getData().get(qrsx.selected());
-            intent.putExtra("PKI", (String) m.get("PKI"));
+            intent.putExtra("PKI", qrsx.getString("PKI"));
             intent.putExtra("SKLAD", skladin);
+            intent.putExtra("ZAMALL", false);
             startActivityForResult(intent, REQ_ZAM);
         }
+        //Замены всех одинаковых позиций
+        if (item.getItemId() == R.id.act_zam_all) {
+
+            Intent intent = new Intent(activity, Activity_zam.class);
+            intent.putExtra("PKI", qrsx.getString("PKI"));
+            intent.putExtra("SKLAD", skladin);
+            intent.putExtra("ZAMALL", true);
+            startActivityForResult(intent, REQ_ZAM);
+        }
+
         //Возврат замены
         if (item.getItemId()==R.id.act_notzam) {
             if (qrsx.getString("OLDPKI")!=null) {
