@@ -8,6 +8,5 @@ public class mApp extends Application {
     public static String userId;
     public static SoundPool mSoundPool;
     public static int soundIdbad;
-
-
+    public static boolean testmode = false;
 }

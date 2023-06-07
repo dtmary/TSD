@@ -19,6 +19,7 @@ import androidx.core.app.NotificationManagerCompat;
 
 import com.example.TSD.message;
 import com.example.TSD.rsx;
+import com.example.mApp;
 import com.example.myapplication111.R;
 
 import java.io.ByteArrayOutputStream;
@@ -36,6 +37,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static android.provider.Settings.System.getString;
+import static com.example.mApp.testmode;
 import static java.lang.Thread.sleep;
 
 public class AnoQuery {
@@ -44,6 +46,7 @@ public class AnoQuery {
     public static final int stexecuted = 1;
     public static final int stactive = 2;
     public static final int statSuccessfully = 20999;
+
 
     private static boolean connected = false;
 
@@ -91,6 +94,11 @@ public class AnoQuery {
 
     public int recordcount() {
         return _recordcount;
+    }
+
+    public static void disconnect() throws SQLException {
+        dbconnection = null;
+        connected = false;
     }
 
     public static Connection getDbconnection() {
@@ -265,12 +273,13 @@ public class AnoQuery {
             while (!connected) {
                 try {
                     //Реальный
-                    //dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.5:1521:ORA","skladuser","sklad");
-                    //Тестовый
-                    dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.105:1521:ORA","skladuser","sklad");
-                    //dbconnection = DriverManager.getConnection(activity.getString(R.string.oraconnectionreal),
-                    //activity.getString(R.string.oralogin),
-                    //activity.getString(R.string.orapassword));
+                    if (mApp.testmode) {
+                        //Тестовый
+                        dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.105:1521:ORA","skladuser","sklad");
+                    } else {
+                        //Реальный
+                        dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.5:1521:ORA", "skladuser", "sklad");
+                    }
                     connected = true;
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();

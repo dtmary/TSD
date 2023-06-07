@@ -90,6 +90,11 @@ public class main extends AppCompatActivity {
                         qUser = new AnoQuery(activity, R.raw.quser, qhandler);
                         qUser.setParamString("TABN",tabn);
                         qUser.Open();
+                    } else if (qr.equals("ACTIVATETESTMODE")) {
+                        //Подключение к тестовому ораклу
+                        AnoQuery.disconnect();
+                        mApp.testmode = true;
+                        edtTabn.setText("Testmode=on");
                     } else {
                         //mApp.mSoundPool.play(mApp.soundIdbad, 1, 1, 1, 0, 1f);
                         //Показываем номенклатурную позицию
