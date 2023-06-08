@@ -51,6 +51,7 @@ public class rsx extends AppCompatActivity {
     private String skladin;
     private String skladout;
     private String folder;
+    private boolean operationstarted = false;
 
     private String from[] = {"NAMEPKI","CELL", "TREB","OST","OTP","HEADIZD"};
     private int to[] = {R.id.pki,R.id.cell ,R.id.treb,R.id.ost,R.id.otp,R.id.headizd};
@@ -225,7 +226,7 @@ public class rsx extends AppCompatActivity {
                 float curotp;
                 boolean scan = intent.getBooleanExtra("scan", false);
                 String curpki = qrsx.getString("PKI");
-
+                if (curost > 0) {operationstarted = true;}
                 if (scan) {
                     for (int i = 0; i < qrsx.getFloat("CNTZAP"); i++) {
                         if (!curpki.equals(qrsx.getString(qrsx.selected() + i, "PKI"))) {
@@ -452,8 +453,12 @@ public class rsx extends AppCompatActivity {
     @Override
     public void onBackPressed()
     {
-        Intent intent = new Intent(activity, messageyesno.class);
-        intent.putExtra("message", "Прервать операцию?");
-        startActivityForResult(intent,REQ_CLOSEWIND);
+        if (operationstarted) {
+            Intent intent = new Intent(activity, messageyesno.class);
+            intent.putExtra("message", "Прервать операцию?");
+            startActivityForResult(intent, REQ_CLOSEWIND);
+        } else {
+            activity.finish();
+        }
     }
 }
