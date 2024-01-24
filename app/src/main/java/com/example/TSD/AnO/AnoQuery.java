@@ -275,10 +275,10 @@ public class AnoQuery {
                     //Реальный
                     if (mApp.testmode) {
                         //Тестовый
-                        dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.105:1521:ORA","skladuser","sklad");
+                        dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@172.16.116.26:1521:ORA","skladuser","sklad");
                     } else {
                         //Реальный
-                        dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.5:1521:ORA", "skladuser", "sklad");
+                        dbconnection = DriverManager.getConnection("jdbc:oracle:thin:@172.16.116.5:1521:ORA", "skladuser", "sklad");
                     }
                     connected = true;
                 } catch (SQLException throwables) {

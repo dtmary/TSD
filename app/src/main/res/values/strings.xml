@@ -11,9 +11,9 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="streblisthead">:список требований</string>
 
-    <string name="updateurl">smb://192.168.0.25/pub/apps/newpm/TSDOVK/</string>
-    <string name="oraconnectiontest">jdbc:oracle:thin:@192.168.0.105:1521:ORA</string>
-    <string name="oraconnectionreal">jdbc:oracle:thin:@192.168.0.5:1521:ORA</string>
+    <string name="updateurl">smb://172.16.116.11/public/apps/newpm/TSDOVK/</string>
+    <string name="oraconnectiontest">jdbc:oracle:thin:@172.16.116.26:1521:ORA</string>
+    <string name="oraconnectionreal">jdbc:oracle:thin:@172.16.116.5:1521:ORA</string>
     <string name="oralogin">skladuser</string>
     <string name="orapassword">sklad</string>
     <string name="title_activity_zam">Позиции замены</string>
